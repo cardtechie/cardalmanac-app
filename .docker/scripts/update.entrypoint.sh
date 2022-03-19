@@ -20,12 +20,10 @@ composer dump-autoload -o
 
 # These are commands run INSIDE of the container after an update is deployed
 # These commands will run for EVERY code update
-php artisan migrate --database=mysql --force
-php artisan migrate --database=cards --force
+php artisan migrate
 php artisan queue:restart
 php artisan view:cache
 
-php artisan ziggy:generate --url=${APP_URL}
 npm run build
 
 exec "$@"
