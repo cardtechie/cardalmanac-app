@@ -3,4 +3,4 @@ set -ex
 
 cd /var/www/app
 
-php artisan migrate
+#php artisan migrate
