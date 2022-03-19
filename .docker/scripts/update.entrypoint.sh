@@ -20,10 +20,10 @@ composer dump-autoload -o
 
 # These are commands run INSIDE of the container after an update is deployed
 # These commands will run for EVERY code update
-php artisan migrate
+#php artisan migrate
 php artisan queue:restart
 php artisan view:cache
 
-npm run build
+#npm run build
 
 exec "$@"

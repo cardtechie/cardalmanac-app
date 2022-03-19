@@ -225,11 +225,11 @@ COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
 RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
 
 WORKDIR /var/www
-#COPY --chown=www-data:www-data ./package.json ./package-lock.json ./
-#RUN npm install
+COPY --chown=www-data:www-data ./package.json ./package-lock.json ./
+RUN npm install
 
-ENV COMPOSER_VENDOR_DIR=/var/www/app/vendor
-#    NODE_PATH=/var/www/app/node_modules
+ENV COMPOSER_VENDOR_DIR=/var/www/app/vendor \
+    NODE_PATH=/var/www/app/node_modules
 
 WORKDIR /var/www/app
 COPY ./.docker/config/php.app.ini /usr/local/etc/php/conf.d/app.ini
@@ -247,8 +247,8 @@ COPY --chown=www-data:www-data . .
 # Create symlinks into /var/www/app. We do this so the image has these available in the app directory,
 # but also to ensure that when we bind-mount code in a dev enviroment these directories are still available
 # to copy into the local dev environment
-RUN ln -s /var/www/vendor /var/www/app/vendors
-#    && ln -s /var/www/node_modules /var/www/app/node_modules
+RUN ln -s /var/www/vendor /var/www/app/vendors \
+    && ln -s /var/www/node_modules /var/www/app/node_modules
 
 # Copy the .env.local as the base for environment variables within the image. Dev systems will bind-mount on top of
 # this and instead pass the environment values into the container environment through the compose env_file values.
@@ -257,7 +257,6 @@ RUN ln -s /var/www/vendor /var/www/app/vendors
 RUN cp .env.local .env
 
 #RUN composer dump-autoload -o
-#RUN php artisan ziggy:generate --url=${APP_URL}
 #RUN npm run build
 
 # Run entrypoint
