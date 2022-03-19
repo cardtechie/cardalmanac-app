@@ -201,10 +201,10 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Copy node into our image
-#COPY --from=node:10 /usr/local/bin/node /usr/local/bin/node
-#RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
-#COPY --from=node:10 /usr/local/lib/node_modules /usr/local/lib/node_modules
-#RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+COPY --from=node:16 /usr/local/bin/node /usr/local/bin/node
+RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
+COPY --from=node:16 /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 # Copy mysqldump into our image
 COPY --from=mysql:8.0 /usr/bin/mysqldump /usr/bin/mysqldump
