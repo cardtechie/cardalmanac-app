@@ -11,9 +11,9 @@ services:
         environment:
             TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
             TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
-        #working_dir: /var/www/app
+        working_dir: /var/www/app
         volumes:
-            #- .:/var/www/app:consistent
+            - .:/var/www/app:consistent
             #- ./.docker/config/local.supervisord-watch.conf:/etc/supervisor/conf.d/watch.conf
             #- ./.docker/scripts/local.provision-packages.sh:/var/www/app/.docker/init.d/01-init.sh
             #- ./.docker/scripts/local.provision-database.sh:/var/www/app/.docker/init.d/02-init.sh
