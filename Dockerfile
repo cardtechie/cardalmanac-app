@@ -216,7 +216,7 @@ RUN chmod 0600 /root/.ssh \
     && ssh-keyscan -t rsa bitbucket.org >> known_hosts \
     && ssh-keyscan -t rsa github.com >> known_hosts
 
-#ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules/.bin:$PATH"
+ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules/.bin:$PATH"
 
 # Install composer packages
 WORKDIR /var/www/app
