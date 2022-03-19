@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+
+    admin:
+        image: picklewagon/tradingcardapi-admin:${DOCKER_TAG_ADMIN:-latest}
+        entrypoint: /var/www/app/.docker/scripts/update.entrypoint.sh
+        command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+        environment:
+            APP_DEBUG: "false"
+            APP_ENABLE_REGISTRATION: "true"
+            APP_ENV: production
+            APP_KEY: "base64:aBwrr5rpmQSrCP/bNeRJNOc2mxKgl1j/cU3P4IglcZ0="
+            APP_LOG_LEVEL: error
+            APP_URL: https://admin.tradingcardapi.com
+            CARDS_DB_HOST: db-mysql-sfo2-43849-do-user-814541-0.b.db.ondigitalocean.com
+            CARDS_DB_PASSWORD: v8q930gcsvmkh2b2
+            CARDS_DB_PORT: 25060
+            CARDS_DB_USERNAME: tradingcardadmin
+            DB_DATABASE: cardadmin
+            DB_HOST: db-mysql-sfo2-43849-do-user-814541-0.b.db.ondigitalocean.com
+            DB_PASSWORD: v8q930gcsvmkh2b2
+            DB_PORT: 25060
+            DB_USERNAME: tradingcardadmin
+            NODE_ENV: production
+            PHP_OPCACHE_ENABLE: 1
+            TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
+            TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
+            TRADINGCARDAPI_SSL_VERIFY: "true"
+            TRADINGCARDAPI_URL: https://api.tradingcardapi.com
+        working_dir: /var/www/app
+        volumes:
+            - /var/www/admin.tradingcardapi.com/storage:/var/www/app/storage:delegated
+            - /var/www/admin.tradingcardapi.com/certs:/etc/letsencrypt
+            - ./.docker/scripts/install-cert.sh:/var/www/app/.docker/init.d/01-init.sh
+        ports:
+            - "80:80"
+            - "443:443"
+        networks:
+            - overlay
+        healthcheck:
+            test: curl -fk https://localhost/ping
+            interval: 1m
+            timeout: 3s
+            retries: 30
+            start_period: 30s
+
+networks:
+    overlay:
