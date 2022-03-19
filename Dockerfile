@@ -236,10 +236,10 @@ COPY ./.docker/config/php.app.ini /usr/local/etc/php/conf.d/app.ini
 COPY ./.docker/config/local.phpfpm-app.conf /usr/local/etc/php-fpm.d/zzz-app.conf
 COPY ./.docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 #COPY ./.docker/config/laravel-worker.supervisord.conf /etc/supervisor/conf.d/laravel-worker.conf
-#COPY ./.docker/config/nginx.conf /etc/nginx/nginx.conf
-#COPY ./.docker/config/nginx-laravel.conf /etc/nginx/conf.d/server/nginx-laravel.conf
-#COPY ./.docker/config/nginx-status.conf /etc/nginx/conf.d/server/nginx-status.conf
-#COPY ./.docker/config/nginx-site-prod.conf /etc/nginx/conf.d/default.conf
+COPY ./.docker/config/nginx.conf /etc/nginx/nginx.conf
+COPY ./.docker/config/nginx-laravel.conf /etc/nginx/conf.d/server/nginx-laravel.conf
+COPY ./.docker/config/nginx-status.conf /etc/nginx/conf.d/server/nginx-status.conf
+COPY ./.docker/config/nginx-site-prod.conf /etc/nginx/conf.d/default.conf
 
 # Copy in app code as late as possible, as it changes the most
 COPY --chown=www-data:www-data . .
