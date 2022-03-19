@@ -15,8 +15,8 @@ services:
         volumes:
             - .:/var/www/app:consistent
             #- ./.docker/config/local.supervisord-watch.conf:/etc/supervisor/conf.d/watch.conf
-            #- ./.docker/scripts/local.provision-packages.sh:/var/www/app/.docker/init.d/01-init.sh
-            #- ./.docker/scripts/local.provision-database.sh:/var/www/app/.docker/init.d/02-init.sh
+            - ./.docker/scripts/local.provision-packages.sh:/var/www/app/.docker/init.d/01-init.sh
+            - ./.docker/scripts/local.provision-database.sh:/var/www/app/.docker/init.d/02-init.sh
             - ./.docker/cert/admin.tradingcardapi.dev.crt:/etc/nginx/ssl/cert.crt
             - ./.docker/cert/admin.tradingcardapi.dev.key:/etc/nginx/ssl/key.pem
             - ./.docker/config/nginx-site-dev.conf:/etc/nginx/conf.d/default.conf
