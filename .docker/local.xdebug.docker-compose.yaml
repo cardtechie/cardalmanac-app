@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+
+    admin:
+        volumes:
+            - ./.docker/config/local.php-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+        environment:
+            PHP_IDE_CONFIG: serverName=admin
+            XDEBUG_ENABLED: 1
