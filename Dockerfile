@@ -198,7 +198,7 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Copy the Composer PHAR from the Composer image into our image
-#COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Copy node into our image
 #COPY --from=node:10 /usr/local/bin/node /usr/local/bin/node
