@@ -198,13 +198,13 @@ RUN ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Copy the Composer PHAR from the Composer image into our image
-#COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Copy node into our image
-#COPY --from=node:10 /usr/local/bin/node /usr/local/bin/node
-#RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
-#COPY --from=node:10 /usr/local/lib/node_modules /usr/local/lib/node_modules
-#RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+COPY --from=node:16 /usr/local/bin/node /usr/local/bin/node
+RUN ln -s /usr/local/bin/node /usr/local/bin/nodejs
+COPY --from=node:16 /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
 # Copy mysqldump into our image
 COPY --from=mysql:8.0 /usr/bin/mysqldump /usr/bin/mysqldump
@@ -216,30 +216,30 @@ RUN chmod 0600 /root/.ssh \
     && ssh-keyscan -t rsa bitbucket.org >> known_hosts \
     && ssh-keyscan -t rsa github.com >> known_hosts
 
-#ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules/.bin:$PATH"
+ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules/.bin:$PATH"
 
 # Install composer packages
 WORKDIR /var/www/app
-#COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
+COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
 #RUN composer config github-oauth.github.com 3126a3ccf2873a0af021d0d1776434eb21e71ed4
-#RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
+RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
 
-#WORKDIR /var/www
-#COPY --chown=www-data:www-data ./package.json ./package-lock.json ./
-#RUN npm install
+WORKDIR /var/www
+COPY --chown=www-data:www-data ./package.json ./package-lock.json ./
+RUN npm install
 
-#ENV COMPOSER_VENDOR_DIR=/var/www/app/vendor \
-#    NODE_PATH=/var/www/app/node_modules
+ENV COMPOSER_VENDOR_DIR=/var/www/app/vendor \
+    NODE_PATH=/var/www/app/node_modules
 
 WORKDIR /var/www/app
 COPY ./.docker/config/php.app.ini /usr/local/etc/php/conf.d/app.ini
 COPY ./.docker/config/local.phpfpm-app.conf /usr/local/etc/php-fpm.d/zzz-app.conf
 COPY ./.docker/config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 #COPY ./.docker/config/laravel-worker.supervisord.conf /etc/supervisor/conf.d/laravel-worker.conf
-#COPY ./.docker/config/nginx.conf /etc/nginx/nginx.conf
-#COPY ./.docker/config/nginx-laravel.conf /etc/nginx/conf.d/server/nginx-laravel.conf
-#COPY ./.docker/config/nginx-status.conf /etc/nginx/conf.d/server/nginx-status.conf
-#COPY ./.docker/config/nginx-site-prod.conf /etc/nginx/conf.d/default.conf
+COPY ./.docker/config/nginx.conf /etc/nginx/nginx.conf
+COPY ./.docker/config/nginx-laravel.conf /etc/nginx/conf.d/server/nginx-laravel.conf
+COPY ./.docker/config/nginx-status.conf /etc/nginx/conf.d/server/nginx-status.conf
+COPY ./.docker/config/nginx-site-prod.conf /etc/nginx/conf.d/default.conf
 
 # Copy in app code as late as possible, as it changes the most
 COPY --chown=www-data:www-data . .
@@ -247,8 +247,8 @@ COPY --chown=www-data:www-data . .
 # Create symlinks into /var/www/app. We do this so the image has these available in the app directory,
 # but also to ensure that when we bind-mount code in a dev enviroment these directories are still available
 # to copy into the local dev environment
-#RUN ln -s /var/www/vendor /var/www/app/vendor \
-#    && ln -s /var/www/node_modules /var/www/app/node_modules
+RUN ln -s /var/www/vendor /var/www/app/vendors \
+    && ln -s /var/www/node_modules /var/www/app/node_modules
 
 # Copy the .env.local as the base for environment variables within the image. Dev systems will bind-mount on top of
 # this and instead pass the environment values into the container environment through the compose env_file values.
@@ -257,7 +257,6 @@ COPY --chown=www-data:www-data . .
 RUN cp .env.local .env
 
 #RUN composer dump-autoload -o
-#RUN php artisan ziggy:generate --url=${APP_URL}
 #RUN npm run build
 
 # Run entrypoint
