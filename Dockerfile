@@ -79,7 +79,9 @@ RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
 #    readline \
-    zip
+    zip \
+    # for wordpress
+    mysqli
 
 #
 # XDEBUG INSTALL
