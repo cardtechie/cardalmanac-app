@@ -83,7 +83,8 @@ define( 'WP_DEBUG', getenv('WP_DEBUG') );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
-
+define( 'WP_SITEURL', getenv('WP_SITE_URL') );
+define( 'WP_HOME', getenv('WP_HOME') );
 
 /* That's all, stop editing! Happy publishing. */
 
