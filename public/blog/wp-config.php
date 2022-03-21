@@ -86,6 +86,9 @@ define( 'WP_DEBUG', getenv('WP_DEBUG') );
 define( 'WP_SITEURL', getenv('WP_SITE_URL') );
 define( 'WP_HOME', getenv('WP_HOME') );
 
+define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/content' );
+define( 'WP_CONTENT_URL', getenv('WP_HOME') . '/content' );
+
 /* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */
