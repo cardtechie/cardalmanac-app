@@ -18,3 +18,9 @@ CONFIG_SAMPLE=/var/www/app/public/blog/wordpress/wp-config-sample.php
 if [ -f ${CONFIG_SAMPLE} ]; then
     rm ${CONFIG_SAMPLE}
 fi
+
+# Remove default content directory
+ORIGINAL_CONTENT=/var/www/app/public/blog/wordpress/wp-content
+if [ -d ${ORIGINAL_CONTENT} ]; then
+    rm -rf ${ORIGINAL_CONTENT}
+fi
