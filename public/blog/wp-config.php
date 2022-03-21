@@ -79,7 +79,7 @@ $table_prefix = 'wp_';
  *
  * @link https://wordpress.org/support/article/debugging-in-wordpress/
  */
-define( 'WP_DEBUG', getenv('WP_DEBUG') );
+define( 'WP_DEBUG', false );
 
 /* Add any custom values between this line and the "stop editing" line. */
 
@@ -88,6 +88,7 @@ define( 'WP_HOME', getenv('WP_HOME') );
 
 define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/content' );
 define( 'WP_CONTENT_URL', getenv('WP_HOME') . '/content' );
+define( 'WP_DEBUG_DISPLAY', false );
 
 /* That's all, stop editing! Happy publishing. */
 
