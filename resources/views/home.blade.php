@@ -5,4 +5,6 @@
 @section('content')
     Hello, World!
     <example-component></example-component>
+
+    <mailing-list-form></mailing-list-form>
 @endsection
