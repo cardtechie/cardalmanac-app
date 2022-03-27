@@ -47,20 +47,6 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
-    <script>
-        $(document).on('click', '.panel-buttons span.clickable', function(e) {
-            var $this = $(this);
-            if(!$this.hasClass('panel-collapsed')) {
-                $this.parents('.panel').find('.card-body').slideUp();
-                $this.addClass('panel-collapsed');
-                $this.removeClass('fa-chevron-down').addClass('fa-chevron-left');
-            } else {
-                $this.parents('.panel').find('.card-body').slideDown();
-                $this.removeClass('panel-collapsed');
-                $this.removeClass('fa-chevron-left').addClass('fa-chevron-down');
-            }
-        })
-    </script>
     @stack('scripts')
 </body>
 </html>
