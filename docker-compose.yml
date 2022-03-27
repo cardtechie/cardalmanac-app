@@ -24,8 +24,8 @@ services:
         entrypoint: /var/www/app/.docker/scripts/local.entrypoint.sh
         command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
         ports:
-            - "${ADMIN_PORT_HTTP:-8380}:80"
-            - "${ADMIN_PORT_HTTPS:-8480}:443"
+            - "${ADMIN_PORT_HTTP:-8580}:80"
+            - "${ADMIN_PORT_HTTPS:-8543}:443"
             - "${ADMIN_PORT_DEBUG:-9001}:9001"
         depends_on:
             - mysql
