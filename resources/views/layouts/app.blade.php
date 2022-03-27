@@ -23,7 +23,7 @@
 <body>
     <div id="app">
         <div class="container">
-            @isset($title)
+            @if(isset($showPageTitle) && $showPageTitle === true)
             <div class="row">
                 <div class="col-md-12">
                     <h2>{{ $title }}</h2>
