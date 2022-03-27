@@ -13,7 +13,7 @@
 
         <div class="mt-24">
             <a href="https://twitter.com/cardalmanac">
-                <font-awesome-icon :icon="['fab', 'twitter']" />
+                <span class="fab fa-twitter"></span>
                 Follow Card Almanac on Twitter
             </a>
         </div>
