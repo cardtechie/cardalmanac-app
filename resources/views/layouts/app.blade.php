@@ -23,11 +23,13 @@
 <body>
     <div id="app">
         <div class="container">
+            @isset($title)
             <div class="row">
                 <div class="col-md-12">
-                    <h2>@yield('title')</h2>
+                    <h2>{{ $title }}</h2>
                 </div>
             </div>
+            @endif
 
             <div class="row">
                 <div class="col-md-9">

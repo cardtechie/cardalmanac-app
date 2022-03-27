@@ -1,6 +1,6 @@
-@extends('layouts.app')
-
-@section('title', 'Home')
+@extends('layouts.app', [
+    'title' => 'Home',
+])
 
 @section('content')
     <div class="home main text-center container max-w-sm max-w-md max-w-lg mx-auto">
