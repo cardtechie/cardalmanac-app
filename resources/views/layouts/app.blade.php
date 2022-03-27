@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    @include('layouts.title')
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
@@ -23,11 +23,13 @@
 <body>
     <div id="app">
         <div class="container">
+            @if(isset($showPageTitle) && $showPageTitle === true)
             <div class="row">
                 <div class="col-md-12">
-                    <h2>@yield('title')</h2>
+                    <h2>{{ $title }}</h2>
                 </div>
             </div>
+            @endif
 
             <div class="row">
                 <div class="col-md-9">
@@ -47,20 +49,6 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
-    <script>
-        $(document).on('click', '.panel-buttons span.clickable', function(e) {
-            var $this = $(this);
-            if(!$this.hasClass('panel-collapsed')) {
-                $this.parents('.panel').find('.card-body').slideUp();
-                $this.addClass('panel-collapsed');
-                $this.removeClass('fa-chevron-down').addClass('fa-chevron-left');
-            } else {
-                $this.parents('.panel').find('.card-body').slideDown();
-                $this.removeClass('panel-collapsed');
-                $this.removeClass('fa-chevron-left').addClass('fa-chevron-down');
-            }
-        })
-    </script>
     @stack('scripts')
 </body>
 </html>
