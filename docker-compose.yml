@@ -14,7 +14,7 @@ services:
         working_dir: /var/www/app
         volumes:
             - .:/var/www/app:consistent
-            #- ./.docker/config/local.supervisord-watch.conf:/etc/supervisor/conf.d/watch.conf
+            - ./.docker/config/local.supervisord-watch.conf:/etc/supervisor/conf.d/watch.conf
             - ./.docker/scripts/local.provision-packages.sh:/var/www/app/.docker/init.d/01-init.sh
             - ./.docker/scripts/local.provision-database.sh:/var/www/app/.docker/init.d/02-init.sh
             - ./.docker/scripts/local.provision-wordpress.sh:/var/www/app/.docker/init.d/03-init.sh
