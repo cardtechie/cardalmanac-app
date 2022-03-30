@@ -11,6 +11,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build container
-        run: docker-compose up --build
+        run: docker-compose up -d --build
       - name: Terminate container
         run: docker-compose down
