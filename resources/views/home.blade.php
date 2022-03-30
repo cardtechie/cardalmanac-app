@@ -3,7 +3,7 @@
 ])
 
 @section('content')
-    <div class="home main text-center container max-w-sm max-w-md max-w-lg mx-auto">
+    <div class="home main text-center container max-w-sm max-w-md max-w-lg mx-auto mt-32">
         <p class="font-medium pb-6 uppercase">Stay Tuned</p>
         <h2>Card Almanac is Launching Soon</h2>
         <p>
