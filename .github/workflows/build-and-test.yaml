@@ -3,34 +3,14 @@ name: Build and Test
 on:
   pull_request:
 
-env:
-  VERSION: 0.1.${{ github.run_number }}
-  SERVICE_NAME: cardalmanac-app
-  NODE_VERSION: 16.x
-  VASION_BOT_TOKEN: ${{ secrets.VASION_BOT_TOKEN }}
-
 jobs:
   testing:
-    name: Lint and Test
+    name: Build Docker Container
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Load node cache
-        uses: actions/cache@v2
-        env:
-          cache-name: ${{ env.SERVICE_NAME }}-node-cache
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
-      - name: Install dependencies
-        if: steps.${{ env.SERVICE_NAME }}-node-cache.outputs.cache-hit != 'true'
-        run: npm install
-        #env:
-        #  NODE_AUTH_TOKEN: ${{ secrets.VASION_BOT_TOKEN }}
+      - name: Build container
+        run: docker-compose up --build
+      - name: Terminate container
+        run: docker-compose down
