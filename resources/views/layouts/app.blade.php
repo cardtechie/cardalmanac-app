@@ -23,7 +23,7 @@
 <body>
     <div id="app">
         <div class="container">
-            @if(isset($showPageTitle) && $showPageTitle === true)
+            @if (isset($showPageTitle) && $showPageTitle === true)
             <div class="row">
                 <div class="col-md-12">
                     <h2>{{ $title }}</h2>
@@ -32,12 +32,18 @@
             @endif
 
             <div class="row">
-                <div class="col-md-9">
+                <div
+                    {!! (isset($showSidebar) && $showSidebar === true) ? "class='col-md-9'" : "class='col-md-12'" !!}
+                >
                     @yield('content')
                 </div>
+                @isset($showSidebar)
+                    @if ($showSidebar)
                 <div class="col-md-3">
                     @stack('sidebar')
                 </div>
+                    @endif
+                @endisset
             </div>
         </div>
     </div>

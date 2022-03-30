@@ -28,7 +28,7 @@
 </template>
 
 <script>
-//import sendinblueApi from '@/api/send-in-blue/sendinblue.api';
+import sendinblueApi from '../api/send-in-blue/sendinblue.api';
 
 export default {
   name: 'MailingListForm',
@@ -54,19 +54,19 @@ export default {
         this.errors.push('Please provide a valid email address');
         this.state = null;
       } else {
-        /*try {
+        try {
           await sendinblueApi.subscribe(this.email);
-          this.$gtag.event('signup', {
+          /*this.$gtag.event('signup', {
             event_category: 'newsletter',
             event_label: 'coming soon',
-          });
+          });*/
           this.state = 'success';
         } catch (e) {
           this.errors.push(
             'Unable to add your email address to the mailing list.'
           );
           this.state = null;
-        }*/
+        }
       }
     },
     validEmail(email) {
