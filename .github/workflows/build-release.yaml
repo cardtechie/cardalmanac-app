@@ -31,6 +31,6 @@ jobs:
       - name: Create Release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.CARDTECHIE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CARDALMANAC_APP_TOKEN }}
         with:
           tag_name: ${{ env.VERSION }}
