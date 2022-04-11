@@ -40,6 +40,11 @@ jobs:
           docker tag picklewagon/${SERVICE_NAME}:${VERSION} picklewagon/${SERVICE_NAME}:${NEW_TAG}
           docker push picklewagon/${SERVICE_NAME}:${NEW_TAG}
 
+  update-status:
+    name: Update deployment status
+    runs-on: ubuntu-latest
+    needs: docker-tag-release
+    steps:
       - uses: avakar/set-deployment-status@v1
         name: "Deployment: Failed"
         if: failure()
