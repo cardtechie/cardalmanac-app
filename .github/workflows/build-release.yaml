@@ -34,3 +34,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.CARDALMANAC_APP_TOKEN }}
         with:
           tag_name: ${{ env.VERSION }}
+
+  trigger-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - uses: avakar/create-deployment@v1
+        id: deployment
+        with:
+          ref: ${{ env.VERSION }}
+          auto_merge: false
+          environment: production
+          transient_environment: true
+          required_contexts: ""
+        env:
+          GITHUB_TOKEN: ${{ secrets.CARDALMANAC_APP_TOKEN }}
+      - uses: avakar/set-deployment-status@v1
+        with:
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          state: queued
+        env:
+          GITHUB_TOKEN: ${{ secrets.CARDALMANAC_APP_TOKEN }}
