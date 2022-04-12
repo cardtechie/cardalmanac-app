@@ -2,37 +2,22 @@ version: '3.7'
 
 services:
 
-    admin:
-        image: picklewagon/tradingcardapi-admin:${DOCKER_TAG_ADMIN:-latest}
+    caapp:
+        image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
         entrypoint: /var/www/app/.docker/scripts/update.entrypoint.sh
         command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
         environment:
             APP_DEBUG: "false"
-            APP_ENABLE_REGISTRATION: "true"
             APP_ENV: production
-            APP_KEY: "base64:aBwrr5rpmQSrCP/bNeRJNOc2mxKgl1j/cU3P4IglcZ0="
+            APP_KEY: "base64:+dkZjG9FPdJfNH9GGG9xeq2+2Z5pgmp6XiEQW/aFwY8="
             APP_LOG_LEVEL: error
-            APP_URL: https://admin.tradingcardapi.com
-            CARDS_DB_HOST: db-mysql-sfo2-43849-do-user-814541-0.b.db.ondigitalocean.com
-            CARDS_DB_PASSWORD: v8q930gcsvmkh2b2
-            CARDS_DB_PORT: 25060
-            CARDS_DB_USERNAME: tradingcardadmin
-            DB_DATABASE: cardadmin
-            DB_HOST: db-mysql-sfo2-43849-do-user-814541-0.b.db.ondigitalocean.com
-            DB_PASSWORD: v8q930gcsvmkh2b2
-            DB_PORT: 25060
-            DB_USERNAME: tradingcardadmin
+            APP_URL: https://cardalmanac.com
             NODE_ENV: production
             PHP_OPCACHE_ENABLE: 1
-            TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
-            TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
-            TRADINGCARDAPI_SSL_VERIFY: "true"
-            TRADINGCARDAPI_URL: https://api.tradingcardapi.com
         working_dir: /var/www/app
         volumes:
-            - /var/www/admin.tradingcardapi.com/storage:/var/www/app/storage:delegated
-            - /var/www/admin.tradingcardapi.com/certs:/etc/letsencrypt
-            - ./.docker/scripts/install-cert.sh:/var/www/app/.docker/init.d/01-init.sh
+            - /var/www/cardalmanac.com/storage:/var/www/app/storage:delegated
+            - /var/www/cardalmanac.com/certs:/etc/letsencrypt
         ports:
             - "80:80"
             - "443:443"
