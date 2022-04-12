@@ -45,13 +45,22 @@ jobs:
     runs-on: ubuntu-latest
     needs: docker-tag-release
     steps:
-      name: Deploy app
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        script: whoami
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Upload deployment script
+        run: scp .github/deploy.sh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:~/deploy.sh
+      - name: Deploy app
+        uses: appleboy/ssh-action@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo '$DOCKER_TOKEN' | docker login -u '$DOCKER_USERNAME' --password-stdin
+            ~/deploy.sh
 
   update-status:
     name: Update deployment status
