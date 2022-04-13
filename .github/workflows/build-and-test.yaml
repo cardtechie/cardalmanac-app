@@ -19,10 +19,10 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-caapp-buildx-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-multi-buildx
-      - name: Build production image
+            ${{ runner.os }}-caapp-buildx
+      - name: Build docker image
         uses: docker/build-push-action@v2
         with:
           context: .
