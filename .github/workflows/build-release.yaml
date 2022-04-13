@@ -36,6 +36,7 @@ jobs:
       - name: Build and Push Image
         uses: docker/build-push-action@v2
         with:
+          builder: ${{ steps.buildx.outputs.name }}
           tags: 'picklewagon/${{ env.SERVICE_NAME }}:${{ env.VERSION }}'
           push: true
           build-args: |
