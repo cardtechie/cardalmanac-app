@@ -39,8 +39,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Upload deployment script
-        run: scp .github/deploy.sh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:~/deploy.sh
+#      - name: Upload deployment script
+#        run: scp .github/deploy.sh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:~/deploy.sh
       - name: Deploy app
         uses: appleboy/ssh-action@master
         env:
@@ -52,7 +52,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             echo '$DOCKER_TOKEN' | docker login -u '$DOCKER_USERNAME' --password-stdin
-            ~/deploy.sh
+            #~/deploy.sh
       - uses: avakar/set-deployment-status@v1
         name: "Deployment: Failed"
         if: failure()
