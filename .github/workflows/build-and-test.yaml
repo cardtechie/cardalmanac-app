@@ -10,6 +10,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: SSH
+        uses: appleboy/ssh-action@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          debug: true
+          script: whoami
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
