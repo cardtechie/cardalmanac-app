@@ -17,7 +17,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          source: "../deploy.sh"
+          source: ".github/deploy.sh"
           target: "~"
       - name: SSH
         uses: appleboy/ssh-action@master
