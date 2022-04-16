@@ -20,6 +20,7 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           debug: true
+          envs: DOCKER_USERNAME,DOCKER_TOKEN
           script: |
             echo '$DOCKER_TOKEN' | docker login -u '$DOCKER_USERNAME' --password-stdin
             ~/deploy.sh
