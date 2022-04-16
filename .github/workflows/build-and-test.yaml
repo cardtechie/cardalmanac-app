@@ -14,7 +14,7 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           host: 138.68.236.170
-          username: ${{ secrets.USERNAME }}
+          username: github
           key: ${{ secrets.SSH_KEY }}
           source: ".docker/scripts/deploy.sh"
           target: "~/deploy/"
