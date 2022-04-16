@@ -10,7 +10,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - run: ls -laR
       - name: SCP
         uses: appleboy/scp-action@master
         with:
@@ -18,7 +17,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           source: ".docker/scripts/deploy.sh"
-          target: "~/deploy"
+          target: "~/deploy/"
       - name: SSH
         uses: appleboy/ssh-action@master
         env:
