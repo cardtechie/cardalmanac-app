@@ -11,14 +11,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: SCP
-        uses: appleboy/scp-action@master
-        env:
+        uses: garygrossgarten/github-action-scp@release
+        with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          source: ".docker/scripts/deploy.sh"
-          target: "~/deploy/"
+          privateKey: ${{ secrets.SSH_KEY }}
+          local: .docker/scripts/deploy.sh
+          remote: ~/deploy/deploy.sh
       - name: SSH
         uses: appleboy/ssh-action@master
         env:
