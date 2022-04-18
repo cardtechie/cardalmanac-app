@@ -10,14 +10,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-#      - name: SCP
-#        uses: appleboy/scp-action@master
-#        with:
-#          host: 138.68.236.170
-#          username: github
-#          key: ${{ secrets.SSH_KEY }}
-#          source: ".docker/scripts/deploy.sh"
-#          target: "~/deploy/"
+      - name: SCP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          debug: true
+          source: ".docker/scripts/deploy.sh"
+          target: "~/deploy/"
       - name: SSH
         uses: appleboy/ssh-action@master
         env:
