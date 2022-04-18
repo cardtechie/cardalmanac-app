@@ -10,14 +10,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: SCP
-        uses: appleboy/scp-action@master
-        with:
-          host: 138.68.236.170
-          username: github
-          key: ${{ secrets.SSH_KEY }}
-          source: ".docker/scripts/deploy.sh"
-          target: "~/deploy/"
+#      - name: SCP
+#        uses: appleboy/scp-action@master
+#        with:
+#          host: 138.68.236.170
+#          username: github
+#          key: ${{ secrets.SSH_KEY }}
+#          source: ".docker/scripts/deploy.sh"
+#          target: "~/deploy/"
       - name: SSH
         uses: appleboy/ssh-action@master
         env:
@@ -30,8 +30,9 @@ jobs:
           debug: true
           envs: DOCKER_USERNAME,DOCKER_TOKEN
           script: |
-            echo '$DOCKER_TOKEN' | docker login -u '$DOCKER_USERNAME' --password-stdin
-            ~/deploy.sh
+            whoami
+            #echo '$DOCKER_TOKEN' | docker login -u '$DOCKER_USERNAME' --password-stdin
+            #~/deploy.sh
 #      - name: Set up Docker Buildx
 #        id: buildx
 #        uses: docker/setup-buildx-action@master
