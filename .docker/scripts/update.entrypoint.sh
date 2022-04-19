@@ -23,6 +23,6 @@ cd /var/www/app
 
 #npm run build
 
-/var/www/app/.docker/scripts/install-cert.sh
+#/var/www/app/.docker/scripts/install-cert.sh
 
 exec "$@"
