@@ -15,9 +15,6 @@ cd /var/www/app
 # Setup the laravel directory structure
 /var/www/app/.docker/scripts/laravel.sh
 
-# refresh libraries now that our code is bind-mounted in place optimized for production
-composer dump-autoload -o
-
 # These are commands run INSIDE of the container after an update is deployed
 # These commands will run for EVERY code update
 #php artisan migrate
