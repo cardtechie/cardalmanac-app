@@ -7,8 +7,8 @@ set -ex
 
 if [ -d /etc/letsencrypt/live/cardalmanac.com ]; then
     echo "Certs already exist on the server"
-    certbot renew --renew-hook 'service nginx reload'
+    sudo certbot renew --renew-hook 'service nginx reload'
 else
-    certbot --nginx -m josh@picklewagon.com -d cardalmanac.com --agree-tos certonly
-    cat /var/log/letsencrypt/letsencrypt.log
+    sudo certbot --nginx -m josh@picklewagon.com -d cardalmanac.com --agree-tos certonly
+    sudo cat /var/log/letsencrypt/letsencrypt.log
 fi
