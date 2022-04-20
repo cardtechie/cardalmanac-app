@@ -249,7 +249,7 @@ COPY --chown=www-data:www-data . .
 # Create symlinks into /var/www/app. We do this so the image has these available in the app directory,
 # but also to ensure that when we bind-mount code in a dev enviroment these directories are still available
 # to copy into the local dev environment
-RUN ln -s /var/www/vendor /var/www/app/vendors \
+RUN ln -s /var/www/vendor /var/www/app/vendor \
     && ln -s /var/www/node_modules /var/www/app/node_modules
 
 # Copy the .env.local as the base for environment variables within the image. Dev systems will bind-mount on top of
