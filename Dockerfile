@@ -258,7 +258,7 @@ RUN ln -s /var/www/vendor /var/www/app/vendor \
 # application layer through the container's environment vars.
 RUN cp .env.local .env
 
-#RUN composer dump-autoload -o
+RUN composer dump-autoload -o
 #RUN npm run build
 
 # Run entrypoint
