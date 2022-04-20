@@ -55,15 +55,10 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: SSH
         uses: appleboy/ssh-action@master
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          debug: true
-          envs: DOCKER_USERNAME,DOCKER_TOKEN
           script: |
             ~/deploy/.docker/scripts/deploy.sh
       - uses: avakar/set-deployment-status@v1
