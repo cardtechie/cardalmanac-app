@@ -259,7 +259,7 @@ RUN ln -s /var/www/vendor /var/www/app/vendor \
 RUN cp .env.local .env
 
 RUN composer dump-autoload -o
-#RUN npm run build
+RUN npm run prod
 
 # Run entrypoint
 RUN chmod 775 ./.docker/scripts/*.sh
