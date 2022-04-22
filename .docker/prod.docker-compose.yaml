@@ -19,13 +19,13 @@ services:
             WP_DB_PASSWORD: AVNS_8pWcz1Tod7Lvl7F
             WP_DB_HOST: db-mysql-sfo2-43849-do-user-814541-0.b.db.ondigitalocean.com
             WP_AUTH_KEY: ".j8`J,/Z_[2c>Q!0xTKivF6s1}2b J@gm/ p^2-+KNc>T&+nAHAJs:9qj+t%3{pH"
-            WP_SECURE_AUTH_KEY: "$Zjod%P5|{@;>uj5+1yua4<F^#N$|AQ/hl_KTWQ(>-w[QCB4eNly++sTdF?|WobY"
+            WP_SECURE_AUTH_KEY: "$$Zjod%P5|{@;>uj5+1yua4<F^#N$$|AQ/hl_KTWQ(>-w[QCB4eNly++sTdF?|WobY"
             WP_LOGGED_IN_KEY: "{Ob?7{{}d[LYNaB(mvS3+aW+5[}@FZ^ghVjjP(f3Rn7:!BmhyN9B5UC(we>zW<gq"
-            WP_NONCE_KEY: "UflE#4(vU.YM~GJw4zcYH|2@KAMtW|UXGEci3Z $zITZ<25W6}M d1FKq^9+-ln9"
-            WP_AUTH_SALT: "ITPAoB%q/{!kYWNh,c%+$WENh2aFP98Q&xGi(7yJl]d=.cA.dR+.BmM]]4~p^Rbh"
+            WP_NONCE_KEY: "UflE#4(vU.YM~GJw4zcYH|2@KAMtW|UXGEci3Z $$zITZ<25W6}M d1FKq^9+-ln9"
+            WP_AUTH_SALT: "ITPAoB%q/{!kYWNh,c%+$$WENh2aFP98Q&xGi(7yJl]d=.cA.dR+.BmM]]4~p^Rbh"
             WP_SECURE_AUTH_SALT: "uR|l5c,nc29[zZw(?xd(;GL--W^X`BHk[e|eBWwwCtmSs;X+NaVX2~L_kwXBKhOe"
-            WP_LOGGED_IN_SALT: "uq_-]IDSYtrGT:{zGq$&!3x>5*fZJGk^&nt&U$8L;m/5xM3|fF(EN-y3@xUs9Gwb"
-            WP_NONCE_SALT: "7Y8BW,h]fh(h+}<vpiB%!Cz-RCom@k97|37/>Tj8$N%Ee7D=2JILrsgdruxp<!vX"
+            WP_LOGGED_IN_SALT: "uq_-]IDSYtrGT:{zGq$$&!3x>5*fZJGk^&nt&U$$8L;m/5xM3|fF(EN-y3@xUs9Gwb"
+            WP_NONCE_SALT: "7Y8BW,h]fh(h+}<vpiB%!Cz-RCom@k97|37/>Tj8$$N%Ee7D=2JILrsgdruxp<!vX"
             WP_HOME: "${APP_URL}/blog"
             WP_SITE_URL: "${WP_HOME}/wordpress"
         working_dir: /var/www/app
