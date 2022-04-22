@@ -1,5 +1,4 @@
 # Ignore WordPress install
 blog/wordpress
-blog/index.php
 
 mix-manifest.json
