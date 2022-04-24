@@ -19,24 +19,8 @@
 
 set -e
 
-while [[ $# -gt 0 ]]; do
-    key="$1"
-    case $key in
-    -t | --token)
-        token="$2"
-        shift # past argument
-        shift # past value
-        ;;
-    --droplet-name)
-        droplet_name="$3"
-        shift # past argument
-        shift # past value
-        ;;
-    *) # unknown option
-        shift # past argument
-        ;;
-    esac
-done
+token="$2"
+droplet_name="$3"
 
 if [[ -z "${token}" ]]; then
     # token must be passed in as an argument

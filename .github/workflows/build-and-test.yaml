@@ -15,7 +15,7 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Deploy server
-        run: .docker/scripts/create-host.sh --token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} --droplet-name cardalmanac
+        run: .docker/scripts/create-host.sh ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} cardalmanac
       - name: Upload deploy files
         uses: appleboy/scp-action@master
         with:
