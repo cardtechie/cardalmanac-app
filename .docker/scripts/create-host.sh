@@ -19,8 +19,8 @@
 
 set -e
 
-token="$2"
-droplet_name="$3"
+token="$1"
+droplet_name="$2"
 
 if [[ -z "${token}" ]]; then
     # token must be passed in as an argument
@@ -33,8 +33,6 @@ if [[ -z "${droplet_name}" ]]; then
     echo "No droplet name defined."
     exit 1
 fi
-
-#droplet_name="tradingcardapi-api"
 
 # Get the current droplets
 droplets_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet list -o json)
@@ -53,12 +51,12 @@ fi
 # Since the server does not exist yet, we are assuming everything else needs to be created.
 
 # Create a volume
-volume_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute volume create tradingcardapi-api --size 1GiB --fs-type ext4 --region sfo2 --tag volume,cardtechie,tradingcardapi-api,prod,api-tradingcardapi-com -o json || echo "error creating volume")
+volume_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute volume create ${droplet_name} --size 1GiB --fs-type ext4 --region sfo2 --tag volume,cardtechie,cardalmanac,prod,cardalmanac-com -o json || echo "error creating volume")
 volume_id=$(echo ${volume_json} | jq .[0].id)
 echo "Volume ${volume_id} created"
 
 # Create the droplet
-create_droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet create tradingcardapi-api --region sfo2 --image 66694567 --size s-1vcpu-1gb --enable-monitoring --tag-names app,api,cardtechie,tradingcardapi-api,docker,nginx,laravel,prod,api-tradingcardapi-com --volumes ${volume_id} -o json)
+create_droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet create ${droplet_name} --region sfo2 --image 106820420 --size s-1vcpu-1gb --enable-monitoring --tag-names app,cardtechie,docker,nginx,laravel,prod,cardalmanac,cardalmanac-com,wordpress,tradingcardapi --volumes ${volume_id} -o json)
 droplet_id=$(echo ${create_droplet_json} | jq .[0].id)
 echo "Droplet ${droplet_id} created"
 
@@ -79,14 +77,14 @@ echo "IP Address: ${droplet_ip_address}"
 docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl projects resources assign 414b5efb-debd-4e91-bc5f-b81949522392 --resource=do:droplet:${droplet_id}
 
 # Create the A DNS records for the new site
-docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute domain records create --record-type A --record-name api --record-data ${droplet_ip_address} tradingcardapi.com
+docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute domain records create --record-type A --record-name api --record-data ${droplet_ip_address} cardalmanac.com
 
 # Mount the volume
 # When we attempt to connect to our new droplet, the connection will timeout until the server is ready
 connect=false
 while [ "${connect}" = false ]; do
     connect=true
-    ssh -o ConnectTimeout=5 circleci@${droplet_ip_address} "mkdir -p /mnt/tradingcardapi_api; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_tradingcardapi-api /mnt/tradingcardapi_api; echo /dev/disk/by-id/scsi-0DO_Volume_tradingcardapi-api /mnt/tradingcardapi_api ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab" || connect=false
+    ssh -o ConnectTimeout=5 circleci@${droplet_ip_address} "mkdir -p /mnt/cardalmanac; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac; echo /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab" || connect=false
     if [[ "${connect}" == false ]]; then
         sleep 20
     fi
