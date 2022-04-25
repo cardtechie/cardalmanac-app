@@ -77,7 +77,7 @@ echo "IP Address: ${droplet_ip_address}"
 docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl projects resources assign 414b5efb-debd-4e91-bc5f-b81949522392 --resource=do:droplet:${droplet_id}
 
 # Create the A DNS records for the new site
-docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute domain records create --record-type A --record-name api --record-data ${droplet_ip_address} cardalmanac.com
+docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute domain records create --record-type A --record-name @ --record-data ${droplet_ip_address} cardalmanac.com
 
 # Mount the volume
 # When we attempt to connect to our new droplet, the connection will timeout until the server is ready
