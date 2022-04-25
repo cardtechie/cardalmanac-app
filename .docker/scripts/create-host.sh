@@ -44,6 +44,7 @@ if [[ " ${existing_droplets[@]} " =~ "${droplet_name}" ]]; then
     # The droplet we were going to create has already been created
     droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet get ${droplet_name} -o json)
     droplet_ip_address=$(echo ${droplet_json} | jq .[0].networks.v4[0].ip_address)
+    droplet_ip_address=$(echo ${droplet_ip_address} | xargs echo)
     echo "droplet ${droplet_name} (${droplet_ip_address}) already exists"
     echo "::set-output name=ip_address::${droplet_ip_address}"
     exit 0
