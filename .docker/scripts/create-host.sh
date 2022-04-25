@@ -42,9 +42,9 @@ existing_droplets=$(echo ${droplets_json} | jq .[].name)
 # Search the array
 if [[ " ${existing_droplets[@]} " =~ "${droplet_name}" ]]; then
     # The droplet we were going to create has already been created
-    echo "droplet ${droplet_name} already exists"
     droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet get ${droplet_name} -o json)
     droplet_ip_address=$(echo ${droplet_json} | jq .[0].networks.v4[0].ip_address)
+    echo "droplet ${droplet_name} (${droplet_ip_address}) already exists"
     echo "::set-output name=ip_address::${droplet_ip_address}"
     exit 0
 fi
@@ -75,6 +75,7 @@ while [ "${droplet_ip_address}" = null ]; do
 done
 droplet_ip_address=$(echo ${droplet_ip_address} | xargs echo)
 echo "IP Address: ${droplet_ip_address}"
+echo "::set-output name=ip_address::${droplet_ip_address}"
 
 # Add the droplet to the cardtechie project
 docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl projects resources assign 414b5efb-debd-4e91-bc5f-b81949522392 --resource=do:droplet:${droplet_id}
