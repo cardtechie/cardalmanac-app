@@ -88,4 +88,7 @@ while [ "${connect}" = false ]; do
     if [[ "${connect}" == false ]]; then
         sleep 20
     fi
+    volume_json=${docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute volume get ${volume_id} -o json}
+    volume_droplet=$(echo ${volume_json} | jq .[0].droplet_ids[0])
+    echo "Volume droplet: ${volume_droplet}"
 done
