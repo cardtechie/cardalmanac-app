@@ -84,7 +84,8 @@ docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl comp
 connect=false
 while [ "${connect}" = false ]; do
     connect=true
-    ssh -o ConnectTimeout=5 github@${droplet_ip_address} "mkdir -p /mnt/cardalmanac; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac; echo /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab" || connect=false
+    ssh -o ConnectTimeout=5 github@${droplet_ip_address} "mkdir -p /mnt/cardalmanac; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac; echo /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab"
+    echo $?
     if [[ "${connect}" == false ]]; then
         sleep 20
     fi
