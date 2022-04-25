@@ -13,7 +13,7 @@ trap onerror EXIT
 start="$(date +%s)"
 
 if [[ ! -d "/var/www/cardalmanac.com" ]]; then
-    mkdir -p /var/www/cardalmanac.com
+    sudo mkdir -p /var/www/cardalmanac.com
     sudo chown github:deploy /var/www/cardalmanac.com
 fi
 
