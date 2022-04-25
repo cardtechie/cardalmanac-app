@@ -43,6 +43,9 @@ existing_droplets=$(echo ${droplets_json} | jq .[].name)
 if [[ " ${existing_droplets[@]} " =~ "${droplet_name}" ]]; then
     # The droplet we were going to create has already been created
     echo "droplet ${droplet_name} already exists"
+    droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet get ${droplet_name} -o json)
+    droplet_ip_address=$(echo ${droplet_json} | jq .[0].networks.v4[0].ip_address)
+    echo "::set-output name=ip_address::${droplet_ip_address}"
     exit 0
 fi
 
@@ -81,14 +84,7 @@ docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl comp
 
 # Mount the volume
 # When we attempt to connect to our new droplet, the connection will timeout until the server is ready
-connect=false
 while test $? -gt 0; do
-    #connect=true
     ssh -o ConnectTimeout=5 github@${droplet_ip_address} "mkdir -p /mnt/cardalmanac; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac; echo /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab"
     sleep 5
-    #echo "Connect: ${connect}"
-    #volume_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute volume get ${volume_id} -o json)
-    #echo "${volume_json}"
-    #volume_droplet=$(echo ${volume_json} | jq .[0].droplet_ids[0])
-    #echo "Volume droplet: ${volume_droplet}"
 done
