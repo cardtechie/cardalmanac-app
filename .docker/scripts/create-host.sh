@@ -60,7 +60,7 @@ volume_id=$(echo ${volume_json} | jq .[0].id)
 echo "Volume ${volume_id} created"
 
 # Create the droplet
-create_droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet create ${droplet_name} --region sfo2 --image 106895966 --size s-1vcpu-1gb --enable-monitoring --tag-names app,cardtechie,docker,nginx,laravel,prod,cardalmanac,cardalmanac-com,wordpress,tradingcardapi --volumes ${volume_id} -o json)
+create_droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet create ${droplet_name} --region sfo2 --image 106970226 --size s-1vcpu-1gb --enable-monitoring --tag-names app,cardtechie,docker,nginx,laravel,prod,cardalmanac,cardalmanac-com,wordpress,tradingcardapi --volumes ${volume_id} -o json)
 droplet_id=$(echo ${create_droplet_json} | jq .[0].id)
 echo "Droplet ${droplet_id} created"
 
