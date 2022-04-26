@@ -90,3 +90,4 @@ docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl comp
 #    ssh -o ConnectTimeout=5 github@${droplet_ip_address} "mkdir -p /mnt/cardalmanac; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac; echo /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab"
 #    sleep 5
 #done
+sleep 60
