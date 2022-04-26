@@ -86,7 +86,7 @@ docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl comp
 
 # Mount the volume
 # When we attempt to connect to our new droplet, the connection will timeout until the server is ready
-while test $? -gt 0; do
-    ssh -o ConnectTimeout=5 github@${droplet_ip_address} "mkdir -p /mnt/cardalmanac; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac; echo /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab"
-    sleep 5
-done
+#while test $? -gt 0; do
+#    ssh -o ConnectTimeout=5 github@${droplet_ip_address} "mkdir -p /mnt/cardalmanac; mount -o discard,defaults /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac; echo /dev/disk/by-id/scsi-0DO_Volume_cardalmanac /mnt/cardalmanac ext4 defaults,nofail,discard 0 0 | sudo tee -a /etc/fstab"
+#    sleep 5
+#done
