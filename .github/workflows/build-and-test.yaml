@@ -30,11 +30,16 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Deploy site
         uses: appleboy/ssh-action@master
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_PASSWORD }}
         with:
           host: ${{ steps.deploy_server.outputs.ip_address }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
+          envs: DOCKER_USERNAME,DOCKER_TOKEN
           script: |
+            echo '$DOCKER_TOKEN' | docker login -u '$DOCKER_USER' --password-stdin
             ~/deploy/.docker/scripts/deploy.sh
 #      - name: Set up Docker Buildx
 #        id: buildx
