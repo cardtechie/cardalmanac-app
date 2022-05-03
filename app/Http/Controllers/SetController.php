@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Api\Facades\TradingCardApi;
+
 /**
  * Class SetController
  */
@@ -24,6 +26,7 @@ class SetController extends Controller
      */
     public function index()
     {
-        echo "Sets";
+        $sets = TradingCardApi::set()->list();
+        dump($sets);
     }
 }
