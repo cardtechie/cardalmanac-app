@@ -8,14 +8,14 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('layouts.title')
+    @include('partials.title')
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
 
     <!-- Scripts -->
 @if (app()->environment('production'))
-    @include('layouts.analytics')
+    @include('partials.analytics')
 @endif
     <script>
         window.Laravel = {!! json_encode([
