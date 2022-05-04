@@ -1,4 +1,4 @@
-@extends('layouts.app', [
+@extends('layouts.marketing', [
     'title' => 'Home',
 ])
 
