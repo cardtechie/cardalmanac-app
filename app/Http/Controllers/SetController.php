@@ -33,4 +33,16 @@ class SetController extends Controller
             'sets' => $sets,
         ]);
     }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
+     */
+    public function show($id)
+    {
+        echo $id;
+    }
 }

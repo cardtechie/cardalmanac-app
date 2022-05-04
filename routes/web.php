@@ -20,3 +20,4 @@ Route::get('/welcome', function () {
 Route::get('/', 'IndexController@index')->name('home');
 
 Route::get('/sets', 'SetController@index');
+Route::get('/sets/{id}', 'SetController@show');
