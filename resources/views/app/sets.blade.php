@@ -9,7 +9,7 @@
         @if ($loop->first)
             <ul>
         @endif
-        <li>{{ $set->name }}</li>
+            <li><a href="/sets/{{ $set->id }}">{{ $set->name }}</a></li>
         @if ($loop->last)
             </ul>
         @endif
