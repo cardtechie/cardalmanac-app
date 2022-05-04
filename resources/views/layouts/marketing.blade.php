@@ -14,6 +14,9 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
 
     <!-- Scripts -->
+@if (app()->environment('production'))
+    @include('layouts.analytics')
+@endif
     <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
