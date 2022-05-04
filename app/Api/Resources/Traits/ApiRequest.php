@@ -44,7 +44,6 @@ trait ApiRequest
         $defaultHeaders = [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $this->token,
-            'X-TCAPI-Ignore-Status' => '1',
         ];
 
         $theRequest = array_merge($defaultRequest, $request);
