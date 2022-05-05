@@ -27,7 +27,7 @@ class SetController extends Controller
     public function index()
     {
         $sets = TradingCardApi::set()->list();
-        dump($sets);
+        //dump($sets);
 
         return view('app.sets', [
             'sets' => $sets,
@@ -43,6 +43,11 @@ class SetController extends Controller
      */
     public function show($id)
     {
-        echo $id;
+        $set = TradingCardApi::set()->get($id);
+        //dump($set);
+
+        return view('app.set', [
+            'set' => $set,
+        ]);
     }
 }
