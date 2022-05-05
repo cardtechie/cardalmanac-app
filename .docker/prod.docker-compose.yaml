@@ -14,6 +14,9 @@ services:
             APP_URL: https://cardalmanac.com
             NODE_ENV: production
             PHP_OPCACHE_ENABLE: 1
+            TRADINGCARDAPI_URL: https://api.tradingcardapi.com
+            TRADINGCARDAPI_CLIENT_ID: ${TRADINGCARDAPI_CLIENT_ID}
+            TRADINGCARDAPI_CLIENT_SECRET: ${TRADINGCARDAPI_CLIENT_SECRET}
             WP_DB_NAME: cardalmanac_blog
             WP_DB_USER: cardalmanac_blog
             WP_DB_PASSWORD: ***REMOVED***
