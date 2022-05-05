@@ -62,7 +62,7 @@ class Set
     public function get(string $id, string $includes = '') : SetModel
     {
         if (empty($includes)) {
-            $includes = 'genre,manufacturer,brand,year,parentset,subsets,checklist';
+            $includes = 'genre,manufacturer,brand,year,parentset,subsets';
         }
         $url = sprintf('/sets/%s?include=%s', $id, $includes);
         $response = $this->makeRequest($url);
