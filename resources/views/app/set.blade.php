@@ -3,8 +3,8 @@
 ])
 
 @section('content')
-    <div class="home main container mx-auto mt-32">
-        <h1>{{ $set->name }}</h1>
+    <div class="mx-auto mt-32">
+        <h2>{{ $set->name }}</h2>
         <dl>
             <dt>Total Cards</dt>
             <dd>{{ $set->card_count }}</dd>
