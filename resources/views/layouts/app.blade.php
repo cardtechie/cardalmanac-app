@@ -27,7 +27,7 @@
     <div id="app" class="container">
         @include('layouts.app.header')
 
-        @if (isset($showPageTitle) && $showPageTitle === true)
+        @if (!isset($showPageTitle) || $showPageTitle !== false)
         <div class="row">
             <div class="col-md-12">
                 <h2>{{ $title }}</h2>

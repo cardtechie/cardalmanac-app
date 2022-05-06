@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="mx-auto mt-32">
-        <h2>{{ $set->name }}</h2>
         <dl>
             <dt>Total Cards</dt>
             <dd>{{ $set->card_count }}</dd>
