@@ -25,6 +25,8 @@
 </head>
 <body>
     <div id="app" class="container">
+        @include('layouts.app.header')
+
         @if (isset($showPageTitle) && $showPageTitle === true)
         <div class="row">
             <div class="col-md-12">

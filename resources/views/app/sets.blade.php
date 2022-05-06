@@ -3,8 +3,8 @@
 ])
 
 @section('content')
-    <div class="home main container mx-auto mt-32">
-        <h1>Sets</h1>
+    <div class="mx-auto mt-32">
+        <h2>Sets</h2>
     @forelse ($sets as $set)
         @if ($loop->first)
             <ul>
