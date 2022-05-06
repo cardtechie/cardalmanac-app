@@ -24,14 +24,7 @@
 <body>
     <div id="app" class="container">
         @include('layouts.app.header')
-
-        @if (!isset($showPageTitle) || $showPageTitle !== false)
-        <div class="row">
-            <div class="col-md-12">
-                <h2>{{ $title }}</h2>
-            </div>
-        </div>
-        @endif
+        @include('layouts.app.page-title')
 
         <div class="row">
             <div
