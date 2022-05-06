@@ -66,6 +66,7 @@ jobs:
           script: |
             export TRADINGCARDAPI_CLIENT_ID=$TRADINGCARDAPI_CLIENT_ID
             export TRADINGCARDAPI_CLIENT_SECRET=$TRADINGCARDAPI_CLIENT_SECRET
+            printenv | grep TRADINGCARDAPI
             ~/deploy/.docker/scripts/deploy.sh
       - uses: avakar/set-deployment-status@v1
         name: "Deployment: Failed"
