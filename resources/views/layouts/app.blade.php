@@ -14,9 +14,7 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
 
     <!-- Scripts -->
-@if (app()->environment('production'))
     @include('partials.analytics')
-@endif
     <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
