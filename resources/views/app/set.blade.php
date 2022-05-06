@@ -3,7 +3,7 @@
 ])
 
 @section('content')
-    <div class="home main container max-w-sm max-w-md max-w-lg mx-auto mt-32">
+    <div class="home main container mx-auto mt-32">
         <h1>{{ $set->name }}</h1>
         <dl>
             <dt>Total Cards</dt>
