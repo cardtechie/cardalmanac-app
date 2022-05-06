@@ -4,7 +4,6 @@
 
 @section('content')
     <div class="mx-auto mt-32">
-        <h2>Sets</h2>
     @forelse ($sets as $set)
         @if ($loop->first)
             <ul>
