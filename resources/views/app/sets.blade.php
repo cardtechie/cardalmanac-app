@@ -3,7 +3,7 @@
 ])
 
 @section('content')
-    <div class="mx-auto mt-32">
+    <div>
     @forelse ($sets as $set)
         @if ($loop->first)
             <ul>
