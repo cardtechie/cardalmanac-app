@@ -8,15 +8,13 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @include('partials.title')
+    @include('partials.head-title')
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
 
     <!-- Scripts -->
-@if (app()->environment('production'))
     @include('partials.analytics')
-@endif
     <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
@@ -24,30 +22,23 @@
     </script>
 </head>
 <body>
-    <div id="app">
-        <div class="container">
-            @if (isset($showPageTitle) && $showPageTitle === true)
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>{{ $title }}</h2>
-                </div>
-            </div>
-            @endif
+    <div id="app" class="container">
+        @include('layouts.app.header')
+        @include('layouts.app.page-title')
 
-            <div class="row">
-                <div
-                    {!! (isset($showSidebar) && $showSidebar === true) ? "class='col-md-9'" : "class='col-md-12'" !!}
-                >
-                    @yield('content')
-                </div>
-                @isset($showSidebar)
-                    @if ($showSidebar)
-                <div class="col-md-3">
-                    @stack('sidebar')
-                </div>
-                    @endif
-                @endisset
+        <div class="row">
+            <div
+                {!! (isset($showSidebar) && $showSidebar === true) ? "class='col-md-9'" : "class='col-md-12'" !!}
+            >
+                @yield('content')
             </div>
+            @isset($showSidebar)
+                @if ($showSidebar)
+            <div class="col-md-3">
+                @stack('sidebar')
+            </div>
+                @endif
+            @endisset
         </div>
     </div>
     <footer class="container">

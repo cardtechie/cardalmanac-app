@@ -1,3 +1,4 @@
+@if (app()->environment('production'))
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-26467066-4"></script>
 <script>
@@ -7,3 +8,4 @@
 
     gtag('config', 'UA-26467066-4');
 </script>
+@endif
