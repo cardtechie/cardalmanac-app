@@ -2,10 +2,14 @@ module.exports = {
   content: [
     "./resources/**/*.blade.php",
     "./resources/**/*.js",
-    "./resources/**/*.vue"
+    "./resources/**/*.vue",
+    "./app/resources/js/**/*.{html,js}",
+    "./node_modules/tw-elements/dist/js/**/*.js"
   ],
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require('tw-elements/dist/plugin')
+  ],
 }
