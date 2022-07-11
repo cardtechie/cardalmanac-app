@@ -16,38 +16,26 @@
             >Details</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a href="#tabs-profile" class="
-      nav-link
-      block
-      font-medium
-      text-xs
-      leading-tight
-      uppercase
-      border-x-0 border-t-0 border-b-2 border-transparent
-      px-6
-      py-3
-      my-2
-      hover:border-transparent hover:bg-gray-100
-      focus:border-transparent
-    " id="tabs-profile-tab" data-bs-toggle="pill" data-bs-target="#tabs-profile" role="tab"
-               aria-controls="tabs-profile" aria-selected="false">Profile</a>
+            <a href="#tabs-checklist"
+               class="nav-link block font-medium text-xs leading-tight uppercase border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 hover:border-transparent hover:bg-gray-100 focus:border-transparent"
+               id="tabs-checklist-tab"
+               data-bs-toggle="pill"
+               data-bs-target="#tabs-checklist"
+               role="tab"
+               aria-controls="tabs-checklist"
+               aria-selected="false"
+            >Checklist</a>
         </li>
         <li class="nav-item" role="presentation">
-            <a href="#tabs-messages" class="
-      nav-link
-      block
-      font-medium
-      text-xs
-      leading-tight
-      uppercase
-      border-x-0 border-t-0 border-b-2 border-transparent
-      px-6
-      py-3
-      my-2
-      hover:border-transparent hover:bg-gray-100
-      focus:border-transparent
-    " id="tabs-messages-tab" data-bs-toggle="pill" data-bs-target="#tabs-messages" role="tab"
-               aria-controls="tabs-messages" aria-selected="false">Messages</a>
+            <a href="#tabs-subsets"
+               class="nav-link block font-medium text-xs leading-tight uppercase border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 hover:border-transparent hover:bg-gray-100 focus:border-transparent"
+               id="tabs-subsets-tab"
+               data-bs-toggle="pill"
+               data-bs-target="#tabs-subsets"
+               role="tab"
+               aria-controls="tabs-subsets"
+               aria-selected="false"
+            >Subsets</a>
         </li>
     </ul>
     <div class="tab-content" id="tabs-tabContent">
@@ -74,14 +62,11 @@
                 </div>
             </dl>
         </div>
-        <div class="tab-pane fade" id="tabs-profile" role="tabpanel" aria-labelledby="tabs-profile-tab">
-            Tab 2 content
+        <div class="tab-pane fade" id="tabs-checklist" role="tabpanel" aria-labelledby="tabs-checklist-tab">
+            Checklist
         </div>
-        <div class="tab-pane fade" id="tabs-messages" role="tabpanel" aria-labelledby="tabs-profile-tab">
-            Tab 3 content
-        </div>
-        <div class="tab-pane fade" id="tabs-contact" role="tabpanel" aria-labelledby="tabs-contact-tab">
-            Tab 4 content
+        <div class="tab-pane fade" id="tabs-subsets" role="tabpanel" aria-labelledby="tabs-subsets-tab">
+            Subsets
         </div>
     </div>
 @endsection
