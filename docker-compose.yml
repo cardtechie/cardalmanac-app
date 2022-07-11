@@ -45,6 +45,9 @@ services:
             - ./.docker/storage/api/storage:/var/www/app/storage
             - ./.docker/scripts/laravel.sh:/var/www/app/.docker/init.d/01-init.sh
             - ./.docker/scripts/local.provision-api.sh:/var/www/app/.docker/init.d/02-init.sh
+            - ./.docker/api/api.tradingcardapi.dev.crt:/etc/nginx/ssl/cert.crt
+            - ./.docker/api/api.tradingcardapi.dev.key:/etc/nginx/ssl/key.pem
+            - ./.docker/api/nginx-site-dev.conf:/etc/nginx/conf.d/default.conf
         ports:
             - "${TCAPI_PORT_HTTP:-8243}:443"
         depends_on:
