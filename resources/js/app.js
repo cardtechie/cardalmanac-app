@@ -1,6 +1,5 @@
 import Example from './components/ExampleComponent';
 import MailingListForm from './components/MailingListForm';
-import SetTabs from './components/SetTabs';
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -25,7 +24,6 @@ window.Vue = require('vue').default;
 
 Vue.component('example-component', Example);
 Vue.component('mailing-list-form', MailingListForm);
-Vue.component('set-tabs', SetTabs);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
