@@ -44,7 +44,7 @@ class SetController extends Controller
     {
         $set = TradingCardApi::set()->get($id);
 
-        return view('app.set-details', [
+        return view('app.set.details', [
             'set' => $set,
         ]);
     }
