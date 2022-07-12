@@ -21,3 +21,5 @@ Route::get('/', 'IndexController@index')->name('home');
 
 Route::get('/sets', 'SetController@index');
 Route::get('/sets/{id}', 'SetController@show');
+Route::get('/sets/{id}/checklist', 'SetController@checklist');
+Route::get('/sets/{id}/subsets', 'SetController@subsets');
