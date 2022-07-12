@@ -51,11 +51,19 @@ class SetController extends Controller
 
     public function checklist(string $id)
     {
-        echo 'checklist';
+        $set = TradingCardApi::set()->get($id);
+
+        return view('app.set.checklist', [
+            'set' => $set,
+        ]);
     }
 
     public function subsets(string $id)
     {
-        echo 'subsets';
+        $set = TradingCardApi::set()->get($id);
+
+        return view('app.set.subsets', [
+            'set' => $set,
+        ]);
     }
 }
