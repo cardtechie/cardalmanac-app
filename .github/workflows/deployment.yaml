@@ -39,6 +39,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Create environment file
+        run: |
+          echo "TRADINGCARDAPI_CLIENT_ID=${{ secrets.TRADINGCARDAPI_CLIENT_ID }}" > cardalmanac.env
+          echo "TRADINGCARDAPI_CLIENT_SECRET=${{ secrets.TRADINGCARDAPI_CLIENT_SECRET }}" >> cardalmanac.env
       - name: Deploy server
         id: deploy_server
         run: .docker/scripts/create-host.sh ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} cardalmanac
@@ -50,7 +54,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           rm: true
           timeout: 60s
-          source: ".docker/scripts/deploy.sh, .docker/prod.docker-compose.yaml"
+          source: ".docker/scripts/deploy.sh, .docker/prod.docker-compose.yaml, cardalmanac.env"
           target: "~/deploy/"
       - name: Deploy site
         uses: appleboy/ssh-action@master
