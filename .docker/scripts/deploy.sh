@@ -32,6 +32,7 @@ if [[ ! -L /var/www/cardalmanac.com/certs || ! -e /var/www/cardalmanac.com/certs
     ln -s /mnt/cardalmanac/certs /var/www/cardalmanac.com/certs
 fi
 
+cp ~/deploy/cardalmanac.env /var/www/cardalmanac.com/.env
 cp ~/deploy/.docker/prod.docker-compose.yaml /var/www/cardalmanac.com/docker-compose.yaml
 cd /var/www/cardalmanac.com
 
