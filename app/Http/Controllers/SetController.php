@@ -27,7 +27,6 @@ class SetController extends Controller
     public function index()
     {
         $sets = TradingCardApi::set()->list();
-        //dump($sets);
 
         return view('app.sets', [
             'sets' => $sets,
@@ -37,16 +36,33 @@ class SetController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $id
      *
      * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
      */
-    public function show($id)
+    public function show(string $id)
     {
         $set = TradingCardApi::set()->get($id);
-        //dump($set);
 
-        return view('app.set', [
+        return view('app.set.details', [
+            'set' => $set,
+        ]);
+    }
+
+    public function checklist(string $id)
+    {
+        $set = TradingCardApi::set()->get($id);
+
+        return view('app.set.checklist', [
+            'set' => $set,
+        ]);
+    }
+
+    public function subsets(string $id)
+    {
+        $set = TradingCardApi::set()->get($id);
+
+        return view('app.set.subsets', [
             'set' => $set,
         ]);
     }
