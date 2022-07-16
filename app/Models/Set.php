@@ -7,7 +7,7 @@ namespace App\Models;
  */
 class Set extends Model
 {
-    private $checklistIndex = null;
+    private string $checklistIndex = '';
 
     /**
      * Retrieve the genre of the set.
