@@ -21,38 +21,33 @@
         ]) !!};
     </script>
 </head>
-<body>
-    <div id="app">
-        <div class="container">
-            @if (isset($showPageTitle) && $showPageTitle === true)
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>{{ $title }}</h2>
-                </div>
+<body class="flex flex-col min-h-screen">
+    <div id="app" class="container max-w-4xl mb-12">
+        @if (isset($showPageTitle) && $showPageTitle === true)
+        <div class="row">
+            <div class="col-md-12">
+                <h2>{{ $title }}</h2>
             </div>
-            @endif
+        </div>
+        @endif
 
-            <div class="row">
-                <div
-                    {!! (isset($showSidebar) && $showSidebar === true) ? "class='col-md-9'" : "class='col-md-12'" !!}
-                >
-                    @yield('content')
-                </div>
-                @isset($showSidebar)
-                    @if ($showSidebar)
-                <div class="col-md-3">
-                    @stack('sidebar')
-                </div>
-                    @endif
-                @endisset
+        <div class="row">
+            <div
+                {!! (isset($showSidebar) && $showSidebar === true) ? "class='col-md-9'" : "class='col-md-12'" !!}
+            >
+                @yield('content')
             </div>
+            @isset($showSidebar)
+                @if ($showSidebar)
+            <div class="col-md-3">
+                @stack('sidebar')
+            </div>
+                @endif
+            @endisset
         </div>
     </div>
-    <footer class="container">
-        <div id="app-version" class="text-center">
-            {{ config('app.version') }}
-        </div>
-    </footer>
+
+    @include('partials.footer')
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
