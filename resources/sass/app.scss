@@ -39,3 +39,12 @@
 .main {
     clear: both;
 }
+.site-header {
+    background-color: $body-header-bg;
+    a {
+        color: #EBEBEB;
+        &:hover {
+            color: #C0C0C0;
+        }
+    }
+}
