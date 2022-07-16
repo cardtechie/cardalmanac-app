@@ -10,12 +10,5 @@
             Subscribe to get updates in your inbox as the product is being developed.
         </p>
         <mailing-list-form></mailing-list-form>
-
-        <div class="mt-24">
-            <a href="https://twitter.com/cardalmanac">
-                <span class="fab fa-twitter"></span>
-                Follow Card Almanac on Twitter
-            </a>
-        </div>
     </div>
 @endsection
