@@ -40,12 +40,9 @@
                 @endif
             @endisset
         </div>
+
+        @include('partials.footer')
     </div>
-    <footer class="container">
-        <div id="app-version" class="text-center">
-            {{ config('app.version') }}
-        </div>
-    </footer>
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
