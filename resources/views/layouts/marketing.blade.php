@@ -22,8 +22,10 @@
     </script>
 </head>
 <body>
-    <div id="app">
-        <div class="container">
+    <div id="app" class="flex flex-col min-h-screen">
+        @include('partials.header')
+
+        <div class="container max-w-4xl mb-12">
             @if (isset($showPageTitle) && $showPageTitle === true)
             <div class="row">
                 <div class="col-md-12">
@@ -47,12 +49,9 @@
                 @endisset
             </div>
         </div>
+
+        @include('partials.footer')
     </div>
-    <footer class="container">
-        <div id="app-version" class="text-center">
-            {{ config('app.version') }}
-        </div>
-    </footer>
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>

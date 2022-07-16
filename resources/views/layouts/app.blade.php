@@ -22,11 +22,11 @@
     </script>
 </head>
 <body>
-    <div id="app" class="container">
+    <div id="app" class="flex flex-col min-h-screen">
         @include('layouts.app.header')
         @include('layouts.app.page-title')
 
-        <div class="row">
+        <div class="container max-w-6xl">
             <div
                 {!! (isset($showSidebar) && $showSidebar === true) ? "class='col-md-9'" : "class='col-md-12'" !!}
             >
@@ -40,12 +40,9 @@
                 @endif
             @endisset
         </div>
+
+        @include('partials.footer')
     </div>
-    <footer class="container">
-        <div id="app-version" class="text-center">
-            {{ config('app.version') }}
-        </div>
-    </footer>
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
