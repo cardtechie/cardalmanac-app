@@ -4,7 +4,7 @@
 
         <nav class="flex-auto w-1/2 mt-3">
             <ul class="float-right">
-                <li class="w-16"><a href="/about">About</a></li>
+                <li class="w-16 text-right uppercase"><a href="/about">About</a></li>
             </ul>
         </nav>
     </div>
