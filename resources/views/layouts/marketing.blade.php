@@ -23,7 +23,7 @@
 </head>
 <body>
     <div id="app" class="flex flex-col min-h-screen">
-        @include('partials.header')
+        @include('layouts.marketing.header')
 
         <div class="container max-w-4xl mb-12">
             @if (isset($showPageTitle) && $showPageTitle === true)
