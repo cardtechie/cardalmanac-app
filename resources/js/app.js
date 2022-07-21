@@ -1,5 +1,6 @@
 import Example from './components/ExampleComponent';
 import MailingListForm from './components/MailingListForm';
+import vuetify from './vuetify';
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -33,4 +34,5 @@ Vue.component('mailing-list-form', MailingListForm);
 
 const app = new Vue({
     el: '#app',
+    vuetify,
 });
