@@ -20,7 +20,8 @@ Route::get('/welcome', function () {
 Route::get('/', 'IndexController@index')->name('home');
 Route::get('/about', 'AboutController@index')->name('about');
 
-Route::get('/app/sets', 'SetController@index');
+Route::get('/app', 'AppController@index');
+Route::get('/app/sets', 'SetController@index')->name('sets');
 Route::get('/app/sets/{id}', 'SetController@show');
 Route::get('/app/sets/{id}/checklist', 'SetController@checklist');
 Route::get('/app/sets/{id}/subsets', 'SetController@subsets');
