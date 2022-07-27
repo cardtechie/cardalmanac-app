@@ -4,3 +4,5 @@
         <li class="float-right w-16 text-right uppercase"><a href="/app">App</a></li>
     </ul>
 </nav>
+
+<nav-menu></nav-menu>
