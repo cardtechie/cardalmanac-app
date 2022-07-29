@@ -12,6 +12,8 @@
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
 
     <!-- Scripts -->
     @include('partials.analytics')
@@ -23,7 +25,7 @@
 </head>
 <body>
     <div id="app" class="flex flex-col min-h-screen">
-        @include('layouts.marketing.header')
+        <nav-menu></nav-menu>
 
         <div class="container max-w-4xl mb-12">
             @if (isset($showPageTitle) && $showPageTitle === true)
