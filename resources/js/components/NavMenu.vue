@@ -7,10 +7,15 @@
         >
             <div class="container flex">
                 <h1 class="flex-auto"><a href="/">Card Almanac</a></h1>
-                <v-app-bar-nav-icon @click="drawer = true" class="flex-auto float-right"></v-app-bar-nav-icon>
+                <!--<v-app-bar-nav-icon @click="drawer = true" class="flex-auto float-right"></v-app-bar-nav-icon>-->
+                <nav class="flex-auto w-1/2 mt-3">
+                    <ul class="float-right">
+                        <li class="float-right w-16 text-right uppercase"><a href="/about">About</a></li>
+                        <li class="float-right w-16 text-right uppercase"><a href="/app">App</a></li>
+                    </ul>
+                </nav>
             </div>
-        </v-app-bar
-            color="#004E98">
+        </v-app-bar>
 
         <v-navigation-drawer
             v-model="drawer"
@@ -21,7 +26,12 @@
             <v-list dense>
                 <v-list-item>
                     <v-list-item-content>
-                        <v-list-item-title>App</v-list-item-title>
+                        <v-list-item-title><a href="/">App</a></v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                    <v-list-item-content>
+                        <v-list-item-title><a href="/about">App</a></v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
