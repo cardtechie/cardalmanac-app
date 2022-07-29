@@ -1,6 +1,16 @@
 <template>
     <div>
-        <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+        <v-app-bar
+            color="#004E98"
+            dark
+            height="60"
+        >
+            <div class="container flex">
+                <h1 class="flex-auto"><a href="/">Card Almanac</a></h1>
+                <v-app-bar-nav-icon @click="drawer = true" class="flex-auto float-right"></v-app-bar-nav-icon>
+            </div>
+        </v-app-bar
+            color="#004E98">
 
         <v-navigation-drawer
             v-model="drawer"
@@ -28,6 +38,11 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+a {
+    color: #EBEBEB;
+    &:hover {
+        color: #C0C0C0;
+    }
+}
 </style>
