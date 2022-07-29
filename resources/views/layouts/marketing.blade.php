@@ -27,7 +27,7 @@
     <div id="app" class="flex flex-col min-h-screen">
         <nav-menu></nav-menu>
 
-        <div class="container max-w-4xl mb-12">
+        <div class="container max-w-4xl mb-12 mt-20">
             @if (isset($showPageTitle) && $showPageTitle === true)
             <div class="row">
                 <div class="col-md-12">
