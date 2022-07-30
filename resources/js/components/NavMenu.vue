@@ -7,10 +7,10 @@
         >
             <div class="container flex">
                 <h1 class="flex-auto"><a href="/">Card Almanac</a></h1>
-                <div class="float-right block md:hidden">
+                <div class="float-right block lg:hidden">
                     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
                 </div>
-                <nav class="flex-auto w-1/2 mt-3 md:block hidden">
+                <nav class="flex-auto w-1/2 mt-3 lg:block hidden">
                     <ul class="float-right">
                         <li class="float-right w-16 text-right uppercase"><a href="/about">About</a></li>
                         <li class="float-right w-16 text-right uppercase"><a href="/app">App</a></li>
@@ -27,8 +27,14 @@
         >
             <v-list dense>
                 <v-list-item>
+                    <v-list-item-icon>
+                        <v-icon>mdi-home</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title><a href="/">Home</a></v-list-item-title>
+                </v-list-item>
+                <v-list-item>
                     <v-list-item-content>
-                        <v-list-item-title><a href="/">App</a></v-list-item-title>
+                        <v-list-item-title><a href="/app">App</a></v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
                 <v-list-item>
