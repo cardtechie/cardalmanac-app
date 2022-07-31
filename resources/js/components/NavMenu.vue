@@ -12,8 +12,9 @@
                 </div>
                 <nav class="flex-auto w-1/2 mt-3 lg:block hidden">
                     <ul class="float-right">
-                        <li class="float-right w-16 text-right uppercase"><a href="/about">About</a></li>
-                        <li class="float-right w-16 text-right uppercase"><a href="/app">App</a></li>
+                        <li v-for="item in menuItems" v-bind:key="item.title" class="float-right w-16 text-right uppercase">
+                            <a :href="item.link">{{ item.title }}</a>
+                        </li>
                     </ul>
                 </nav>
             </div>
@@ -32,21 +33,11 @@
                     </v-list-item-icon>
                     <v-list-item-title><a href="/">Home</a></v-list-item-title>
                 </v-list-item>
-                <v-list-item>
+                <v-list-item v-for="item in menuItems" v-bind:key="item.title">
                     <v-list-item-icon>
-                        <v-icon>mdi-cards-variant</v-icon>
+                        <v-icon>{{ item.icon }}</v-icon>
                     </v-list-item-icon>
-                    <v-list-item-content>
-                        <v-list-item-title><a href="/app">App</a></v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                    <v-list-item-icon>
-                        <v-icon>mdi-comment-account</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                        <v-list-item-title><a href="/about">About</a></v-list-item-title>
-                    </v-list-item-content>
+                    <v-list-item-title><a :href="item.link">{{ item.title }}</a></v-list-item-title>
                 </v-list-item>
             </v-list>
         </v-navigation-drawer>
@@ -58,11 +49,26 @@ export default {
     name: 'NavMenu',
     data: () => ({
         drawer: false,
+        menuItems: [
+            {
+                title: 'App',
+                link: '/app',
+                icon: 'mdi-cards-variant',
+            },
+            {
+                title: 'About',
+                link: '/about',
+                icon: 'mdi-comment-account',
+            }
+        ],
     }),
 }
 </script>
 
 <style lang="scss" scoped>
+.v-list-item__title a {
+    color: #0000008a;
+}
 a {
     color: #EBEBEB;
     &:hover {
