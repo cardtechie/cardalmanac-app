@@ -12,6 +12,8 @@
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
 
     <!-- Scripts -->
     @include('partials.analytics')
@@ -23,7 +25,7 @@
 </head>
 <body>
     <div id="app" class="flex flex-col min-h-screen">
-        @include('layouts.app.header')
+        <nav-menu title="{{ config('app.name', 'Laravel') }}"></nav-menu>
         @include('layouts.app.page-title')
 
         <div class="container max-w-6xl">
