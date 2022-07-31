@@ -6,7 +6,7 @@
             height="60"
         >
             <div class="container flex">
-                <h1 class="flex-auto"><a href="/">Card Almanac</a></h1>
+                <h1 class="flex-auto"><a href="/">{{ title }}</a></h1>
                 <div class="float-right block lg:hidden">
                     <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
                 </div>
@@ -47,6 +47,12 @@
 <script>
 export default {
     name: 'NavMenu',
+    props: {
+        title: {
+            type: String,
+            required: true
+        },
+    },
     data: () => ({
         drawer: false,
         menuItems: [
