@@ -33,13 +33,19 @@
                     <v-list-item-title><a href="/">Home</a></v-list-item-title>
                 </v-list-item>
                 <v-list-item>
+                    <v-list-item-icon>
+                        <v-icon>mdi-cards-variant</v-icon>
+                    </v-list-item-icon>
                     <v-list-item-content>
                         <v-list-item-title><a href="/app">App</a></v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
                 <v-list-item>
+                    <v-list-item-icon>
+                        <v-icon>mdi-comment-account</v-icon>
+                    </v-list-item-icon>
                     <v-list-item-content>
-                        <v-list-item-title><a href="/about">App</a></v-list-item-title>
+                        <v-list-item-title><a href="/about">About</a></v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
