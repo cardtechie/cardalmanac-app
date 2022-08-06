@@ -40,6 +40,9 @@
         }
     },
     "scripts": {
+        "lint": [
+            "vendor/bin/parallel-lint --exclude .git --exclude vendor ."
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
