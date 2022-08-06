@@ -41,7 +41,7 @@
     },
     "scripts": {
         "lint": [
-            "vendor/bin/parallel-lint --exclude .git --exclude vendor ."
+            "vendor/bin/parallel-lint --exclude .git --exclude vendor --exclude resources/views ."
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
