@@ -40,6 +40,8 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      - name: PHP Linter
+        run: composer lint
 #      - name: Build container
 #        run: docker-compose up -d --build
 #      - name: Terminate container
