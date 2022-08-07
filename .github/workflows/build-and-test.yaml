@@ -19,3 +19,5 @@ jobs:
         run: docker-compose build caapp
       - name: PHP Linter
         run: docker-compose -f .docker/tests.docker-compose.yaml run caapp composer lint
+      - name: Prettier
+        run: docker-compose -f .docker/tests.docker-compose.yaml run caapp npm run check

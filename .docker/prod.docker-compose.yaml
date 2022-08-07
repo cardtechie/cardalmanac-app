@@ -1,51 +1,56 @@
-version: '3.7'
+version: "3.7"
 
 services:
-
-    caapp:
-        image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
-        entrypoint: /var/www/app/.docker/scripts/update.entrypoint.sh
-        command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-        environment:
-            APP_DEBUG: "false"
-            APP_ENV: production
-            APP_KEY: "base64:+dkZjG9FPdJfNH9GGG9xeq2+2Z5pgmp6XiEQW/aFwY8="
-            APP_LOG_LEVEL: error
-            APP_URL: https://cardalmanac.com
-            NODE_ENV: production
-            PHP_OPCACHE_ENABLE: 1
-            TRADINGCARDAPI_URL: https://api.tradingcardapi.com
-            TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
-            TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
-            WP_DB_NAME: cardalmanac_blog
-            WP_DB_USER: cardalmanac_blog
-            WP_DB_PASSWORD: AVNS_8pWcz1Tod7Lvl7F
-            WP_DB_HOST: db-mysql-sfo2-43849-do-user-814541-0.b.db.ondigitalocean.com:25060
-            WP_AUTH_KEY: ".j8`J,/Z_[2c>Q!0xTKivF6s1}2b J@gm/ p^2-+KNc>T&+nAHAJs:9qj+t%3{pH"
-            WP_SECURE_AUTH_KEY: "_Zjod%P5|{@;>uj5+1yua4<F^#N_|AQ/hl_KTWQ(>-w[QCB4eNly++sTdF?|WobY"
-            WP_LOGGED_IN_KEY: "{Ob?7{{}d[LYNaB(mvS3+aW+5[}@FZ^ghVjjP(f3Rn7:!BmhyN9B5UC(we>zW<gq"
-            WP_NONCE_KEY: "UflE#4(vU.YM~GJw4zcYH|2@KAMtW|UXGEci3Z _zITZ<25W6}M d1FKq^9+-ln9"
-            WP_AUTH_SALT: "ITPAoB%q/{!kYWNh,c%+_WENh2aFP98Q&xGi(7yJl]d=.cA.dR+.BmM]]4~p^Rbh"
-            WP_SECURE_AUTH_SALT: "uR|l5c,nc29[zZw(?xd(;GL--W^X`BHk[e|eBWwwCtmSs;X+NaVX2~L_kwXBKhOe"
-            WP_LOGGED_IN_SALT: "uq_-]IDSYtrGT:{zGq_&!3x>5*fZJGk^&nt&U_8L;m/5xM3|fF(EN-y3@xUs9Gwb"
-            WP_NONCE_SALT: "7Y8BW,h]fh(h+}<vpiB%!Cz-RCom@k97|37/>Tj8_N%Ee7D=2JILrsgdruxp<!vX"
-            WP_HOME: https://cardalmanac.com/blog
-            WP_SITE_URL: https://cardalmanac.com/blog/wordpress
-        working_dir: /var/www/app
-        volumes:
-            - /var/www/cardalmanac.com/storage:/var/www/app/storage:delegated
-            - /var/www/cardalmanac.com/certs:/etc/letsencrypt
-        ports:
-            - "80:80"
-            - "443:443"
-        networks:
-            - overlay
-        healthcheck:
-            test: curl -fk https://localhost/ping
-            interval: 1m
-            timeout: 3s
-            retries: 30
-            start_period: 30s
+  caapp:
+    image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
+    entrypoint: /var/www/app/.docker/scripts/update.entrypoint.sh
+    command:
+      [
+        "/usr/bin/supervisord",
+        "-n",
+        "-c",
+        "/etc/supervisor/conf.d/supervisord.conf",
+      ]
+    environment:
+      APP_DEBUG: "false"
+      APP_ENV: production
+      APP_KEY: "base64:+dkZjG9FPdJfNH9GGG9xeq2+2Z5pgmp6XiEQW/aFwY8="
+      APP_LOG_LEVEL: error
+      APP_URL: https://cardalmanac.com
+      NODE_ENV: production
+      PHP_OPCACHE_ENABLE: 1
+      TRADINGCARDAPI_URL: https://api.tradingcardapi.com
+      TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
+      TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
+      WP_DB_NAME: cardalmanac_blog
+      WP_DB_USER: cardalmanac_blog
+      WP_DB_PASSWORD: AVNS_8pWcz1Tod7Lvl7F
+      WP_DB_HOST: db-mysql-sfo2-43849-do-user-814541-0.b.db.ondigitalocean.com:25060
+      WP_AUTH_KEY: ".j8`J,/Z_[2c>Q!0xTKivF6s1}2b J@gm/ p^2-+KNc>T&+nAHAJs:9qj+t%3{pH"
+      WP_SECURE_AUTH_KEY: "_Zjod%P5|{@;>uj5+1yua4<F^#N_|AQ/hl_KTWQ(>-w[QCB4eNly++sTdF?|WobY"
+      WP_LOGGED_IN_KEY: "{Ob?7{{}d[LYNaB(mvS3+aW+5[}@FZ^ghVjjP(f3Rn7:!BmhyN9B5UC(we>zW<gq"
+      WP_NONCE_KEY: "UflE#4(vU.YM~GJw4zcYH|2@KAMtW|UXGEci3Z _zITZ<25W6}M d1FKq^9+-ln9"
+      WP_AUTH_SALT: "ITPAoB%q/{!kYWNh,c%+_WENh2aFP98Q&xGi(7yJl]d=.cA.dR+.BmM]]4~p^Rbh"
+      WP_SECURE_AUTH_SALT: "uR|l5c,nc29[zZw(?xd(;GL--W^X`BHk[e|eBWwwCtmSs;X+NaVX2~L_kwXBKhOe"
+      WP_LOGGED_IN_SALT: "uq_-]IDSYtrGT:{zGq_&!3x>5*fZJGk^&nt&U_8L;m/5xM3|fF(EN-y3@xUs9Gwb"
+      WP_NONCE_SALT: "7Y8BW,h]fh(h+}<vpiB%!Cz-RCom@k97|37/>Tj8_N%Ee7D=2JILrsgdruxp<!vX"
+      WP_HOME: https://cardalmanac.com/blog
+      WP_SITE_URL: https://cardalmanac.com/blog/wordpress
+    working_dir: /var/www/app
+    volumes:
+      - /var/www/cardalmanac.com/storage:/var/www/app/storage:delegated
+      - /var/www/cardalmanac.com/certs:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - overlay
+    healthcheck:
+      test: curl -fk https://localhost/ping
+      interval: 1m
+      timeout: 3s
+      retries: 30
+      start_period: 30s
 
 networks:
-    overlay:
+  overlay:
