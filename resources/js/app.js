@@ -35,6 +35,6 @@ Vue.component("nav-menu", NavMenu);
  */
 
 const app = new Vue({
-    el: "#app",
-    vuetify,
+  el: "#app",
+  vuetify,
 });
