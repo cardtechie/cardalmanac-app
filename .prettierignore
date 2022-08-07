@@ -1,0 +1,4 @@
+# Ignore folders:
+vendor
+node_modules
+public/blog
