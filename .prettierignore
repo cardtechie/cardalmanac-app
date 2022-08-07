@@ -5,3 +5,7 @@ public/blog
 
 # Ignore files:
 composer.lock
+
+# Ignore generated files
+public/css/app.css
+public/js/app.js
