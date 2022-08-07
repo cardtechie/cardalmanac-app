@@ -59,12 +59,14 @@ class Set
      *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function get(string $id, string $includes = '') : SetModel
+    public function get(string $id, array $params = []) : SetModel
     {
-        if (empty($includes)) {
-            $includes = 'genre,manufacturer,brand,year,parentset,subsets';
-        }
-        $url = sprintf('/sets/%s?include=%s', $id, $includes);
+        $defaultParams = [
+            'include' => 'genre,manufacturer,brand,year,parentset,subsets,checklist',
+        ];
+        $params = array_merge($defaultParams, $params);
+
+        $url = sprintf('/sets/%s?%s', $id, http_build_query($params));
         $response = $this->makeRequest($url);
         $formattedResponse = new Response(json_encode($response));
         return $formattedResponse->mainObject;
@@ -73,13 +75,20 @@ class Set
     /**
      * Retrieve a list of sets
      *
+     * @param array $params
+     *
      * @return Collection
      *
      * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function list() : Collection
+    public function list(array $params = []) : Collection
     {
-        $url = sprintf('/sets?limit=%d', 50);
+        $defaultParams = [
+            'limit' => 50,
+        ];
+        $params = array_merge($defaultParams, $params);
+
+        $url = sprintf('/sets?%s', http_build_query($params));
         $response = $this->makeRequest($url);
         return Response::parse(json_encode($response));
     }
