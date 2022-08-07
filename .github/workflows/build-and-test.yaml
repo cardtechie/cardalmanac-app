@@ -43,4 +43,4 @@ jobs:
       - name: Initialize Docker
         run: docker-compose up -d caapp
       - name: PHP Linter
-        run: docker-compose exec caapp composer lint
+        run: docker-compose exec -T caapp composer lint
