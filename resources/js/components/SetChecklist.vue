@@ -4,10 +4,17 @@
 
 <script>
 export default {
-    name: "SetChecklist"
-}
+    name: "SetChecklist",
+    props: {
+        setId: {
+            type: String,
+            required: true,
+        },
+    },
+    created() {
+        console.log("set ID: " + this.setId);
+    },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
