@@ -1,6 +1,10 @@
 <template>
     <div>
-        <div v-if="loading"><span class="fa-solid fa-spinner fa-spin container text-4xl text-center"></span></div>
+        <div v-if="loading">
+            <span
+                class="fa-solid fa-spinner fa-spin container text-4xl text-center"
+            ></span>
+        </div>
         <ul>
             <li v-for="card in checklist">
                 {{ card.attributes.name }}
