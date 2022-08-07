@@ -40,7 +40,9 @@ jobs:
 #        run: |
 #          rm -rf /tmp/.buildx-cache
 #          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-      - name: Initialize Docker
-        run: docker-compose up -d caapp
+      - name: Build Docker Image
+        run: docker-compose build caapp
       - name: PHP Linter
-        run: docker-compose exec -T caapp composer lint
+        run: docker-compose run caapp composer lint
+      - name: Stop Docker
+        run: docker-compose down
