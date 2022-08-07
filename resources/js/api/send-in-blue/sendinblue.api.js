@@ -1,4 +1,4 @@
-import sendinblueApi from './index.api';
+import sendinblueApi from "./index.api";
 
 const sibApi = {
   subscribe: async (email) => {
@@ -8,9 +8,9 @@ const sibApi = {
         4, // CardTechie Notifications
       ],
       templateId: 1,
-      redirectionUrl: 'https://cardalmanac.com/complete-newsletter-signup',
+      redirectionUrl: "https://cardalmanac.com/complete-newsletter-signup",
     };
-    await sendinblueApi.post('contacts/doubleOptinConfirmation', body);
+    await sendinblueApi.post("contacts/doubleOptinConfirmation", body);
   },
 };
 

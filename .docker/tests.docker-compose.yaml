@@ -1,18 +1,18 @@
-version: '3.7'
+version: "3.7"
 
 services:
-    caapp:
-        image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
-        env_file:
-            - ../.env.local
-        environment:
-            # Override these environment variables
-            APP_ENV: testing
-            CACHE_DRIVER: array
-            CARDS_CONNECTION: test_sqlite
-            DB_CONNECTION: test_sqlite
-            QUEUE_DB_CONNECTION: test_sqlite
-            QUEUE_DRIVER: sync
-            SESSION_DRIVER: array
-        entrypoint: /var/www/app/.docker/scripts/tests.entrypoint.sh
-        command: ["phpunit"]
+  caapp:
+    image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
+    env_file:
+      - ../.env.local
+    environment:
+      # Override these environment variables
+      APP_ENV: testing
+      CACHE_DRIVER: array
+      CARDS_CONNECTION: test_sqlite
+      DB_CONNECTION: test_sqlite
+      QUEUE_DB_CONNECTION: test_sqlite
+      QUEUE_DRIVER: sync
+      SESSION_DRIVER: array
+    entrypoint: /var/www/app/.docker/scripts/tests.entrypoint.sh
+    command: ["phpunit"]

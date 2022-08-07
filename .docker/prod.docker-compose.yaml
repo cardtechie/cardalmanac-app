@@ -1,51 +1,56 @@
-version: '3.7'
+version: "3.7"
 
 services:
-
-    caapp:
-        image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
-        entrypoint: /var/www/app/.docker/scripts/update.entrypoint.sh
-        command: ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-        environment:
-            APP_DEBUG: "false"
-            APP_ENV: production
-            APP_KEY: "***REMOVED***"
-            APP_LOG_LEVEL: error
-            APP_URL: https://cardalmanac.com
-            NODE_ENV: production
-            PHP_OPCACHE_ENABLE: 1
-            TRADINGCARDAPI_URL: https://api.tradingcardapi.com
-            TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
-            TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
-            WP_DB_NAME: cardalmanac_blog
-            WP_DB_USER: cardalmanac_blog
-            WP_DB_PASSWORD: ***REMOVED***
-            WP_DB_HOST: ***REMOVED***:25060
-            WP_AUTH_KEY: "***REMOVED***"
-            WP_SECURE_AUTH_KEY: "***REMOVED***"
-            WP_LOGGED_IN_KEY: "***REMOVED***"
-            WP_NONCE_KEY: "***REMOVED***"
-            WP_AUTH_SALT: "***REMOVED***"
-            WP_SECURE_AUTH_SALT: "***REMOVED***"
-            WP_LOGGED_IN_SALT: "***REMOVED***"
-            WP_NONCE_SALT: "***REMOVED***"
-            WP_HOME: https://cardalmanac.com/blog
-            WP_SITE_URL: https://cardalmanac.com/blog/wordpress
-        working_dir: /var/www/app
-        volumes:
-            - /var/www/cardalmanac.com/storage:/var/www/app/storage:delegated
-            - /var/www/cardalmanac.com/certs:/etc/letsencrypt
-        ports:
-            - "80:80"
-            - "443:443"
-        networks:
-            - overlay
-        healthcheck:
-            test: curl -fk https://localhost/ping
-            interval: 1m
-            timeout: 3s
-            retries: 30
-            start_period: 30s
+  caapp:
+    image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
+    entrypoint: /var/www/app/.docker/scripts/update.entrypoint.sh
+    command:
+      [
+        "/usr/bin/supervisord",
+        "-n",
+        "-c",
+        "/etc/supervisor/conf.d/supervisord.conf",
+      ]
+    environment:
+      APP_DEBUG: "false"
+      APP_ENV: production
+      APP_KEY: "***REMOVED***"
+      APP_LOG_LEVEL: error
+      APP_URL: https://cardalmanac.com
+      NODE_ENV: production
+      PHP_OPCACHE_ENABLE: 1
+      TRADINGCARDAPI_URL: https://api.tradingcardapi.com
+      TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
+      TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
+      WP_DB_NAME: cardalmanac_blog
+      WP_DB_USER: cardalmanac_blog
+      WP_DB_PASSWORD: ***REMOVED***
+      WP_DB_HOST: ***REMOVED***:25060
+      WP_AUTH_KEY: "***REMOVED***"
+      WP_SECURE_AUTH_KEY: "***REMOVED***"
+      WP_LOGGED_IN_KEY: "***REMOVED***"
+      WP_NONCE_KEY: "***REMOVED***"
+      WP_AUTH_SALT: "***REMOVED***"
+      WP_SECURE_AUTH_SALT: "***REMOVED***"
+      WP_LOGGED_IN_SALT: "***REMOVED***"
+      WP_NONCE_SALT: "***REMOVED***"
+      WP_HOME: https://cardalmanac.com/blog
+      WP_SITE_URL: https://cardalmanac.com/blog/wordpress
+    working_dir: /var/www/app
+    volumes:
+      - /var/www/cardalmanac.com/storage:/var/www/app/storage:delegated
+      - /var/www/cardalmanac.com/certs:/etc/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - overlay
+    healthcheck:
+      test: curl -fk https://localhost/ping
+      interval: 1m
+      timeout: 3s
+      retries: 30
+      start_period: 30s
 
 networks:
-    overlay:
+  overlay:
