@@ -1,6 +1,6 @@
-branchName: 'GH-${issue.number}-${issue.title,}'
+branchName: "GH-${issue.number}-${issue.title,}"
 autoCloseIssue: true
-gitSafeReplacementChar: '-'
+gitSafeReplacementChar: "-"
 branches:
   - label: bug
     prefix: hotfix/
@@ -10,5 +10,5 @@ branches:
     prefix: hotfix/
   - label: enhancement
     prefix: feature/
-  - label: '*'
+  - label: "*"
     skip: true
