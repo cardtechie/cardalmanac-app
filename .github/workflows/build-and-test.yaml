@@ -47,6 +47,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Initialize Docker
-        run: docker-compose up -d
+        run: docker-compose up -d caapp
       - name: PHP Linter
         run: docker-compose exec caapp composer lint
