@@ -43,6 +43,6 @@ jobs:
       - name: Build Docker Image
         run: docker-compose build caapp
       - name: PHP Linter
-        run: docker-compose run caapp composer lint
+        run: docker-compose -f .docker/tests.docker-compose.yaml run caapp composer lint
       - name: Stop Docker
         run: docker-compose down
