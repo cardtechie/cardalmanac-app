@@ -9,9 +9,9 @@ use Illuminate\Support\Str;
  */
 class Model
 {
-    public $attributes = [];
+    public array $attributes = [];
 
-    protected $relationships = [];
+    public array $relationships = [];
 
     /**
      * Model constructor.

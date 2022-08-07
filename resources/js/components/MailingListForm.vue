@@ -59,9 +59,9 @@ export default {
                 try {
                     await sendinblueApi.subscribe(this.email);
                     /*this.$gtag.event('signup', {
-            event_category: 'newsletter',
-            event_label: 'coming soon',
-          });*/
+                      event_category: 'newsletter',
+                      event_label: 'coming soon',
+                    });*/
                     this.state = "success";
                 } catch (e) {
                     this.errors.push(
