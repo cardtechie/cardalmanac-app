@@ -1,11 +1,8 @@
 version: '3.7'
 
 services:
-    admin:
-        image: picklewagon/tradingcardapi-admin:${DOCKER_TAG_ADMIN:-latest}
-        volumes:
-            # Mount the build directory to get unit test results easily
-            - ../build:/var/www/app/build
+    caapp:
+        image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
         env_file:
             - ../.env.local
         environment:
