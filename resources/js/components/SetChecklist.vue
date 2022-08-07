@@ -1,5 +1,9 @@
 <template>
-    <p>Set checklist component</p>
+    <ul>
+        <li v-for="card in checklist">
+            {{ card.attributes.name }}
+        </li>
+    </ul>
 </template>
 
 <script>
@@ -13,12 +17,15 @@ export default {
             required: true,
         },
     },
+    data: () => ({
+        checklist: [],
+    }),
     created() {
         console.log("set ID: " + this.setId);
     },
     async mounted() {
         const set = await setApi.getChecklist(this.setId);
-        console.log(set);
+        this.checklist = set.data.relationships.checklist;
     },
 };
 </script>
