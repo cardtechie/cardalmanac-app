@@ -2,3 +2,6 @@
 vendor
 node_modules
 public/blog
+
+# Ignore files:
+composer.lock

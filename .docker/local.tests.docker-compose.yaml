@@ -1,9 +1,9 @@
-version: '3.7'
+version: "3.7"
 
 services:
-    admin:
-        volumes:
-            # Also mount application files
-            - ../:/var/www/app
-        command: >
-            bash -c "phpunit --debug --stop-on-error --stop-on-failure"
+  admin:
+    volumes:
+      # Also mount application files
+      - ../:/var/www/app
+    command: >
+      bash -c "phpunit --debug --stop-on-error --stop-on-failure"
