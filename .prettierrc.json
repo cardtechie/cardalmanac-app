@@ -2,7 +2,7 @@
     "trailingComma": "es5",
     "overrides": [
         {
-            "files": "*.js",
+            "files": ["*.js", "*.vue"],
             "options": {
                 "tabWidth": 2
             }
