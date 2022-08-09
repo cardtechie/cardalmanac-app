@@ -17,6 +17,7 @@ services:
       APP_KEY: "***REMOVED***"
       APP_LOG_LEVEL: error
       APP_URL: https://cardalmanac.com
+      MIX_APP_URL: https://cardalmanac.com
       NODE_ENV: production
       PHP_OPCACHE_ENABLE: 1
       TRADINGCARDAPI_URL: https://api.tradingcardapi.com
