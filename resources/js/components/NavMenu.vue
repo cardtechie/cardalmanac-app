@@ -3,7 +3,7 @@
     <v-app-bar color="#004E98" dark height="60">
       <div class="container flex">
         <h1 class="flex-auto">
-          <a href="/">{{ title }}</a>
+          <a :href="this.baseUrl">{{ title }}</a>
         </h1>
         <div class="float-right block lg:hidden">
           <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
@@ -28,15 +28,17 @@
           <v-list-item-icon>
             <v-icon>mdi-home</v-icon>
           </v-list-item-icon>
-          <v-list-item-title><a href="/">Home</a></v-list-item-title>
+          <v-list-item-title>
+            <a :href="this.baseUrl">Home</a>
+          </v-list-item-title>
         </v-list-item>
         <v-list-item v-for="item in menuItems" v-bind:key="item.title">
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-icon>
-          <v-list-item-title
-            ><a :href="item.link">{{ item.title }}</a></v-list-item-title
-          >
+          <v-list-item-title>
+            <a :href="item.link">{{ item.title }}</a>
+          </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -57,15 +59,16 @@ export default {
     menuItems: [
       {
         title: "App",
-        link: "/app",
+        link: process.env.MIX_APP_URL + "/app",
         icon: "mdi-cards-variant",
       },
       {
         title: "About",
-        link: "/about",
+        link: process.env.MIX_APP_URL + "/about",
         icon: "mdi-comment-account",
       },
     ],
+    baseUrl: process.env.MIX_APP_URL,
   }),
 };
 </script>
