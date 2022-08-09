@@ -17,6 +17,7 @@ services:
       APP_KEY: "base64:+dkZjG9FPdJfNH9GGG9xeq2+2Z5pgmp6XiEQW/aFwY8="
       APP_LOG_LEVEL: error
       APP_URL: https://cardalmanac.com
+      MIX_APP_URL: https://cardalmanac.com
       NODE_ENV: production
       PHP_OPCACHE_ENABLE: 1
       TRADINGCARDAPI_URL: https://api.tradingcardapi.com
