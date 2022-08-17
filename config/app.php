@@ -179,7 +179,6 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         TradingCardApiProvider::class,
-        Spekulatius\LaravelCommonmarkBlog\CommonmarkBlogServiceProvider::class,
     ],
 
     /*
