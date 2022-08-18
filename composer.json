@@ -14,12 +14,7 @@
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^3.4",
-        "spekulatius/laravel-commonmark-blog": "dev-hotfix/laravel-9",
-        "wpackagist-plugin/akismet": "^4.2",
-        "wpackagist-theme/twentynineteen": "*",
-        "wpackagist-theme/twentytwenty": "*",
-        "wpackagist-theme/twentytwentyone": "*",
-        "wpackagist-theme/twentytwentytwo": "*"
+        "spekulatius/laravel-commonmark-blog": "dev-hotfix/laravel-9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
