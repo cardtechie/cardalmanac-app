@@ -8,21 +8,16 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.0.2",
+        "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.2",
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^3.4",
-        "wpackagist-plugin/akismet": "^4.2",
-        "wpackagist-theme/twentynineteen": "*",
-        "wpackagist-theme/twentytwenty": "*",
-        "wpackagist-theme/twentytwentyone": "*",
-        "wpackagist-theme/twentytwentytwo": "*"
+        "spekulatius/laravel-commonmark-blog": "dev-hotfix/laravel-9"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "johnpbloch/wordpress": "^5.9",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
@@ -58,40 +53,22 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ],
-        "post-install-cmd": [
-            "cp public/blog/wordpress/index.php ./public/blog/index.php",
-            "sed -i \"s/\\/wp-blog-header/\\/wordpress\\/wp-blog-header/g\" public/blog/index.php"
         ]
     },
     "repositories": [
         {
             "type": "composer",
             "url": "https://wpackagist.org"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/picklewagon/laravel-commonmark-blog"
         }
     ],
-    "extra": {
-        "installer-paths": {
-            "public/blog/content/plugins/{$name}/": [
-                "type:wordpress-plugin"
-            ],
-            "public/blog/content/themes/{$name}/": [
-                "type:wordpress-theme"
-            ]
-        },
-        "laravel": {
-            "dont-discover": []
-        },
-        "wordpress-install-dir": "public/blog/wordpress"
-    },
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "johnpbloch/wordpress-core-installer": true,
-            "composer/installers": true
-        }
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true
