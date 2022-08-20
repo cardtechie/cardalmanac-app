@@ -11,7 +11,7 @@ return [
     |
     */
 
-    'source_path' => env('BLOG_SOURCE_PATH', null),
+    'source_path' => env('BLOG_SOURCE_PATH', 'resources/content'),
 
     /*
     |--------------------------------------------------------------------------
@@ -24,8 +24,8 @@ return [
     |
     */
 
-    'article_base_template' => env('BLOG_ARTICLE_BASE_TEMPLATE', null),
-    'list_base_template' => env('BLOG_LIST_BASE_TEMPLATE', null),
+    'article_base_template' => env('BLOG_ARTICLE_BASE_TEMPLATE', 'layouts/marketing'),
+    'list_base_template' => env('BLOG_LIST_BASE_TEMPLATE', 'layouts/marketing'),
     'list_per_page' => 12,
 
     /*
