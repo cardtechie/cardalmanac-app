@@ -18,7 +18,6 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
         "php-parallel-lint/php-parallel-lint": "^1.3",
