@@ -1,4 +1,3 @@
-# Ignore WordPress install
-blog/wordpress
-
+# The blog is auto generated
+blog
 mix-manifest.json
