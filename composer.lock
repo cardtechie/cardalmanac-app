@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24f8dceb887999d39b48e743ae571c2f",
+    "content-hash": "3efce65bc8a9e237f09e449046694af8",
     "packages": [
         {
             "name": "brick/math",
@@ -3023,20 +3023,20 @@
         },
         {
             "name": "spekulatius/laravel-commonmark-blog",
-            "version": "dev-hotfix/laravel-9",
+            "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/picklewagon/laravel-commonmark-blog.git",
-                "reference": "5840194db9e1042c5d87640010da5b4ee23d7563"
+                "url": "https://github.com/spekulatius/laravel-commonmark-blog.git",
+                "reference": "98c59a3114c1a9a68e42cedae8c2ac045ae23e6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/picklewagon/laravel-commonmark-blog/zipball/5840194db9e1042c5d87640010da5b4ee23d7563",
-                "reference": "5840194db9e1042c5d87640010da5b4ee23d7563",
+                "url": "https://api.github.com/repos/spekulatius/laravel-commonmark-blog/zipball/98c59a3114c1a9a68e42cedae8c2ac045ae23e6e",
+                "reference": "98c59a3114c1a9a68e42cedae8c2ac045ae23e6e",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^7.30.4|^8.4|^9.0",
+                "laravel/framework": "^8.75|^9.0",
                 "league/commonmark": "^2.0",
                 "nesbot/carbon": "^2.0",
                 "php": "^7.4|^8.0",
@@ -3054,6 +3054,7 @@
                 "phpunit/phpunit": "^7.0|^8.0",
                 "symfony/thanks": "^1.2"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3067,19 +3068,7 @@
                     "Spekulatius\\LaravelCommonmarkBlog\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Spekulatius\\LaravelCommonmarkBlog\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "test": [
-                    "vendor/bin/phpunit"
-                ],
-                "test-coverage": [
-                    "vendor/bin/phpunit --coverage-html coverage"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -3091,19 +3080,20 @@
             ],
             "description": "A simple filesystem-based, SEO-optimized blog for Laravel using Commonmark.",
             "support": {
-                "source": "https://github.com/picklewagon/laravel-commonmark-blog/tree/hotfix/laravel-9"
+                "issues": "https://github.com/spekulatius/laravel-commonmark-blog/issues",
+                "source": "https://github.com/spekulatius/laravel-commonmark-blog/tree/main"
             },
             "funding": [
                 {
-                    "type": "github",
-                    "url": "https://github.com/spekulatius"
+                    "url": "https://www.buymeacoffee.com/spekulatius",
+                    "type": "custom"
                 },
                 {
-                    "type": "custom",
-                    "url": "https://www.buymeacoffee.com/spekulatius"
+                    "url": "https://github.com/spekulatius",
+                    "type": "github"
                 }
             ],
-            "time": "2022-08-17T04:57:37+00:00"
+            "time": "2022-08-27T11:13:15+00:00"
         },
         {
             "name": "symfony/console",
