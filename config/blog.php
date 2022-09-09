@@ -24,8 +24,8 @@ return [
     |
     */
 
-    'article_base_template' => env('BLOG_ARTICLE_BASE_TEMPLATE', 'layouts/marketing'),
-    'list_base_template' => env('BLOG_LIST_BASE_TEMPLATE', 'layouts/marketing'),
+    'article_base_template' => env('BLOG_ARTICLE_BASE_TEMPLATE', 'blog/article'),
+    'list_base_template' => env('BLOG_LIST_BASE_TEMPLATE', 'blog/list'),
     'list_per_page' => 12,
 
     /*
