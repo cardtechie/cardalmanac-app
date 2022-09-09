@@ -1,5 +1,5 @@
 @extends('layouts.marketing', [
-    'title' => 'Home',
+    'title' => 'Blog Article',
 ])
 
 @section('content')
