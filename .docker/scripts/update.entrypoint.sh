@@ -25,4 +25,6 @@ npm run production
 
 /var/www/app/.docker/scripts/install-cert.sh
 
+php artisan blog:build
+
 exec "$@"

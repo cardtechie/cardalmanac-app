@@ -13,7 +13,7 @@
             <li
               v-for="item in menuItems"
               v-bind:key="item.title"
-              class="float-right w-16 text-right uppercase"
+              class="float-right pl-5 text-right uppercase"
             >
               <a :href="item.link">{{ item.title }}</a>
             </li>
@@ -66,6 +66,11 @@ export default {
         title: "About",
         link: process.env.MIX_APP_URL + "/about",
         icon: "mdi-comment-account",
+      },
+      {
+        title: "Blog",
+        link: process.env.MIX_APP_URL + "/blog",
+        icon: "mdi-rss-box",
       },
     ],
     baseUrl: process.env.MIX_APP_URL,

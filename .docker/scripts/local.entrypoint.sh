@@ -16,4 +16,6 @@ cd /var/www/app
 
 npm run dev
 
+php artisan blog:build
+
 exec "$@"
