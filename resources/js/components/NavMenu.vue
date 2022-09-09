@@ -67,11 +67,11 @@ export default {
         link: process.env.MIX_APP_URL + "/about",
         icon: "mdi-comment-account",
       },
-        {
-            title: "Blog",
-            link: process.env.MIX_APP_URL + "/blog",
-            icon: "mdi-rss-box",
-        },
+      {
+        title: "Blog",
+        link: process.env.MIX_APP_URL + "/blog",
+        icon: "mdi-rss-box",
+      },
     ],
     baseUrl: process.env.MIX_APP_URL,
   }),
