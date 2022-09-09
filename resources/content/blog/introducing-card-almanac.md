@@ -2,6 +2,7 @@
 title: "Introducing Card Almanac"
 description: ""
 published: "2022-09-07 19:40:00"
+modified: "2022-09-07 19:40:00"
 ---
 
 Welcome to Card Almanac! Thanks for the visit. I’m excited to share with you this new project. Let me explain why I chose the name and start to share what exactly is the purpose of this site.
