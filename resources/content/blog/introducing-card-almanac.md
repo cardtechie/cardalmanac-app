@@ -9,11 +9,9 @@ Welcome to Card Almanac! Thanks for the visit. I’m excited to share with you t
 
 ## What is an almanac?
 
-![ipsa.jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/39fbb8df-24c0-473e-8c91-9802bf70e684/ipsa.jpg)
-
 When I was younger, I would save up my money to buy trading cards. I would often diverge from that and purchase video game consoles (I loved my Sega Genesis) and sports almanacs among other things.
 
-The Information Please Sport Almanacs were a thing of beauty. These sports almanacs had so many facts, stats, etc. It was a baseball card on steroids. I would read it for hours at a time. Then I would take frequent glances at it. And then I would recount what I learned to my family.
+The [Information Please Sport Almanacs](https://www.amazon.com/1993-Information-Please-Sports-Almanac/dp/0395637686) were a thing of beauty. These sports almanacs had so many facts, stats, etc. It was a baseball card on steroids. I would read it for hours at a time. Then I would take frequent glances at it. And then I would recount what I learned to my family.
 
 Wikipedia says an [almanac](https://en.wikipedia.org/wiki/Almanac) is:
 
