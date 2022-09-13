@@ -1,0 +1,28 @@
+.blog-post {
+    h1 {
+        @apply pb-14;
+    }
+    .blog-content {
+        h2 {
+            @apply pt-3;
+        }
+        p {
+            @apply pb-3;
+        }
+        ul {
+            @apply list-disc;
+            @apply pl-8;
+            @apply pb-3;
+        }
+        blockquote {
+            background: #f9f9f9;
+            border-left: 10px solid #ccc;
+            margin: 0.5em 10px 1em;
+            padding: 0.5em 10px;
+
+            p {
+                @apply pb-0;
+            }
+        }
+    }
+}
