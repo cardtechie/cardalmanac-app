@@ -13,7 +13,7 @@
         "laravel/framework": "^9.2",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
-        "spekulatius/laravel-commonmark-blog": "dev-main"
+        "spekulatius/laravel-commonmark-blog": "dev-hotfix/format-date"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
@@ -57,6 +57,10 @@
         {
             "type": "composer",
             "url": "https://wpackagist.org"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/picklewagon/laravel-commonmark-blog"
         }
     ],
     "config": {

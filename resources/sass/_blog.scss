@@ -1,8 +1,10 @@
 .blog-post {
     h1 {
-        @apply pb-14;
+        @apply pb-2;
     }
     .blog-content {
+        @apply pt-10;
+
         h2 {
             @apply pt-3;
         }
