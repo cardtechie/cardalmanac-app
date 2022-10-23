@@ -101,7 +101,12 @@ class Model
     protected function getRelationship(string $key)
     {
         if (array_key_exists($key, $this->relationships)) {
-            return $this->relationships[$key][0];
+            if (is_array($this->relationships[$key])) {
+                return $this->relationships[$key][0];
+            } else {
+                return $this->relationships[$key];
+            }
+
         }
 
         return null;
