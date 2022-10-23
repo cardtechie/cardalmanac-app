@@ -26,7 +26,9 @@ class SetController extends Controller
      */
     public function index()
     {
-        $sets = TradingCardApi::set()->list();
+        $sets = TradingCardApi::set()->list([
+            'include' => 'genre',
+        ]);
 
         return view('app.sets', [
             'sets' => $sets,
