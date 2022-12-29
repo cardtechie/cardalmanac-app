@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Api\Facades\TradingCardApi;
-
 /**
  * Class SetController
  */
@@ -26,7 +24,7 @@ class SetController extends Controller
      */
     public function index()
     {
-        $sets = TradingCardApi::set()->list([
+        $sets = tradingcardapi()->set()->list([
             'include' => 'genre',
         ]);
 
@@ -44,7 +42,7 @@ class SetController extends Controller
      */
     public function show(string $id)
     {
-        $set = TradingCardApi::set()->get($id);
+        $set = tradingcardapi()->set()->get($id);
 
         return view('app.set.details', [
             'set' => $set,
@@ -53,7 +51,7 @@ class SetController extends Controller
 
     public function checklist(string $id)
     {
-        $set = TradingCardApi::set()->get($id);
+        $set = tradingcardapi()->set()->get($id);
 
         return view('app.set.checklist', [
             'set' => $set,
@@ -62,7 +60,7 @@ class SetController extends Controller
 
     public function subsets(string $id)
     {
-        $set = TradingCardApi::set()->get($id);
+        $set = tradingcardapi()->set()->get($id);
 
         return view('app.set.subsets', [
             'set' => $set,
