@@ -41,6 +41,7 @@ jobs:
           push: true
           build-args: |
             VERSION=${{ env.VERSION }}
+            COMPOSER_TOKEN=${{ secrets.COMPOSER_TOKEN }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new
       - name: Move cache

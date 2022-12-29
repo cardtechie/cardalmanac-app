@@ -1,11 +1,15 @@
 up:
+	#export $(grep -vE "^(#.*|\s*)$" .env)
+	#printenv
 	docker-compose pull
-	docker-compose build
+	docker-compose build --build-arg COMPOSER_TOKEN=${COMPOSER_TOKEN}
 	docker-compose up
 
 upd:
+	#export $(grep -vE "^(#.*|\s*)$" .env)
+	#printenv
 	docker-compose pull
-	docker-compose build
+	docker-compose build --build-arg COMPOSER_TOKEN=${COMPOSER_TOKEN}
 	docker-compose up -d
 
 down:
