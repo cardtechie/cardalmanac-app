@@ -9,10 +9,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "cardtechie/tradingcardapi-sdk-php": "dev-main",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.2",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
+        "spatie/laravel-package-tools": "^1.13",
         "spekulatius/laravel-commonmark-blog": "dev-hotfix/format-date"
     },
     "require-dev": {
@@ -61,6 +63,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/picklewagon/laravel-commonmark-blog"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/cardtechie/tradingcardapi-sdk-php"
         }
     ],
     "config": {
