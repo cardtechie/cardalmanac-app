@@ -8,7 +8,12 @@
         @if ($loop->first)
             <ul>
         @endif
-            <li><a href="{{ config('app.url') }}/app/sets/{{ $set->id }}">{{ $set->name }}</a> ({{ $set->genre()->name }})</li>
+            <li>
+                <a href="{{ config('app.url') }}/app/sets/{{ $set->id }}">{{ $set->name }}</a>
+            @if ($set->genre())
+                ({{ $set->genre()->name }})
+            @endif
+            </li>
         @if ($loop->last)
             </ul>
         @endif
