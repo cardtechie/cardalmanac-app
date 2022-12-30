@@ -1,5 +1,7 @@
 FROM php:8.1-fpm AS build
 
+ARG COMPOSER_TOKEN
+
 ENV NGINX_VERSION=1.15.5-1~stretch \
     NJS_VERSION=1.15.5.0.2.4-1~stretch
 
@@ -223,7 +225,7 @@ ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules
 # Install composer packages
 WORKDIR /var/www/app
 COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
-#RUN composer config github-oauth.github.com 3126a3ccf2873a0af021d0d1776434eb21e71ed4
+RUN composer config github-oauth.github.com ${COMPOSER_TOKEN}
 RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
 
 WORKDIR /var/www
