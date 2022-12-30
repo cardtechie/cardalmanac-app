@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Api\Facades\TradingCardApi;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SetRequest;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +23,7 @@ class SetController extends Controller
     public function index(Request $request) : JsonResponse
     {
         $attributes = $request->all();
-        $response = TradingCardApi::set()->list($attributes);
+        $response = tradingcardapi()->set()->list($attributes);
 
         return new JsonResponse($response);
     }
@@ -39,7 +38,7 @@ class SetController extends Controller
     public function get(string $id) : JsonResponse
     {
         $params = RequestFacade::all();
-        $response = TradingCardApi::set()->get($id, $params);
+        $response = tradingcardapi()->set()->get($id, $params);
 
         return new JsonResponse($response);
     }
@@ -54,7 +53,7 @@ class SetController extends Controller
     public function create(SetRequest $request)
     {
         $attributes = $request->all();
-        $response = TradingCardApi::set()->create($attributes);
+        $response = tradingcardapi()->set()->create($attributes);
 
         return new JsonResponse($response);
     }
@@ -70,7 +69,7 @@ class SetController extends Controller
     public function update(SetRequest $request, string $id)
     {
         $attributes = $request->all();
-        $response = TradingCardApi::set()->update($id, $attributes);
+        $response = tradingcardapi()->set()->update($id, $attributes);
         return new JsonResponse($response);
     }
 
@@ -83,7 +82,7 @@ class SetController extends Controller
      */
     public function addMissingCards($id)
     {
-        $response = TradingCardApi::set()->addMissingCards($id);
+        $response = tradingcardapi()->set()->addMissingCards($id);
 
         return new JsonResponse($response);
     }
@@ -110,7 +109,7 @@ class SetController extends Controller
                 ],
             ],
         ];
-        $response = TradingCardApi::set()->addChecklist($theRequest, $id);
+        $response = tradingcardapi()->set()->addChecklist($theRequest, $id);
 
         return new JsonResponse($response);
     }
@@ -124,7 +123,7 @@ class SetController extends Controller
      */
     public function delete(string $id) : JsonResponse
     {
-        $response = TradingCardApi::set()->delete($id);
+        $response = tradingcardapi()->set()->delete($id);
 
         return (new JsonResponse($response))->setStatusCode(204);
     }
