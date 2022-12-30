@@ -21,6 +21,8 @@ class SetController extends Controller
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function index()
     {
