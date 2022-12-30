@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "526dc2edd911dcb576149c93d78efce2",
+    "content-hash": "01dd498c11167eb202d060bda46aceac",
     "packages": [
         {
             "name": "brick/math",
@@ -64,16 +64,16 @@
         },
         {
             "name": "cardtechie/tradingcardapi-sdk-php",
-            "version": "dev-main",
+            "version": "dev-hotfix/6-update-sdk-with-latest-code",
             "source": {
                 "type": "git",
                 "url": "git@github.com:cardtechie/tradingcardapi-sdk-php.git",
-                "reference": "6070904a54b7c8f9f6683453138bc926fa517bac"
+                "reference": "ae8b5004ed2373e3a9af74cbcf73d75873063784"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/6070904a54b7c8f9f6683453138bc926fa517bac",
-                "reference": "6070904a54b7c8f9f6683453138bc926fa517bac",
+                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/ae8b5004ed2373e3a9af74cbcf73d75873063784",
+                "reference": "ae8b5004ed2373e3a9af74cbcf73d75873063784",
                 "shasum": ""
             },
             "require": {
@@ -94,7 +94,6 @@
                 "phpunit/phpunit": "^9.5",
                 "spatie/laravel-ray": "^1.26"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -156,10 +155,10 @@
                 "tradingcardapi-sdk-php"
             ],
             "support": {
-                "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/main",
+                "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/hotfix/6-update-sdk-with-latest-code",
                 "issues": "https://github.com/cardtechie/tradingcardapi-sdk-php/issues"
             },
-            "time": "2022-12-29T20:16:37+00:00"
+            "time": "2022-12-29T23:49:25+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
