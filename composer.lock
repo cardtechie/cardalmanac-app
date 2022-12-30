@@ -68,12 +68,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:cardtechie/tradingcardapi-sdk-php.git",
-                "reference": "15f7a141e4f3774d493943572a4466823db3a273"
+                "reference": "49440a258bd1f1a903610421b8ac7f79ae777956"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/15f7a141e4f3774d493943572a4466823db3a273",
-                "reference": "15f7a141e4f3774d493943572a4466823db3a273",
+                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/49440a258bd1f1a903610421b8ac7f79ae777956",
+                "reference": "49440a258bd1f1a903610421b8ac7f79ae777956",
                 "shasum": ""
             },
             "require": {
@@ -159,7 +159,7 @@
                 "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/main",
                 "issues": "https://github.com/cardtechie/tradingcardapi-sdk-php/issues"
             },
-            "time": "2022-12-30T00:25:12+00:00"
+            "time": "2022-12-30T04:48:21+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
