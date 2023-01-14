@@ -25,7 +25,7 @@
 </head>
 <body>
     <div id="app" class="flex flex-col min-h-screen">
-        <nav-menu title="{{ config('app.name', 'Laravel') }}"></nav-menu>
+        @include('partials.nav-menu')
 
         <div class="container max-w-4xl mb-12 mt-20">
             @if (isset($showPageTitle) && $showPageTitle === true)
