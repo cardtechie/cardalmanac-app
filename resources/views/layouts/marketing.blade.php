@@ -57,16 +57,6 @@
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>
-    <script>
-        // Grab HTML Elements
-        const btn = document.querySelector("#header-nav-button");
-        const menu = document.querySelector("#header-nav-menu");
-
-        // Add Event Listeners
-        btn.addEventListener("click", () => {
-            menu.classList.toggle("hidden");
-        });
-    </script>
     @stack('scripts')
 </body>
 </html>
