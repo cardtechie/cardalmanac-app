@@ -1,28 +1,21 @@
 <template>
   <div>
-    <v-app-bar color="#004E98" dark height="60">
       <div class="container flex">
-        <h1 class="flex-auto">
-          <a :href="this.baseUrl">{{ title }}</a>
-        </h1>
         <div class="float-right block lg:hidden">
           <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
         </div>
-        <nav class="flex-auto w-1/2 mt-3 lg:block hidden">
-          <ul class="float-right">
-            <li
-              v-for="item in menuItems"
-              v-bind:key="item.title"
-              class="float-right pl-5 text-right uppercase"
-            >
-              <a :href="item.link">{{ item.title }}</a>
-            </li>
-          </ul>
-        </nav>
       </div>
-    </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" absolute temporary right>
+    <v-navigation-drawer v-model="drawer" absolute temporary right height="inherit">
+      <v-list-item>
+            <v-list-item-content>
+                <v-list-item-title class="text-h6">
+                    {{ title }}
+                </v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
+
+        <v-divider></v-divider>
       <v-list dense>
         <v-list-item>
           <v-list-item-icon>
@@ -48,12 +41,12 @@
 <script>
 export default {
   name: "NavMenu",
-  props: {
-    title: {
-      type: String,
-      required: true,
+    props: {
+        title: {
+            type: String,
+            required: true,
+        },
     },
-  },
   data: () => ({
     drawer: false,
     menuItems: [
@@ -79,13 +72,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-list-item__title a {
-  color: #0000008a;
+.v-btn>.v-btn__content .v-icon {
+  color: #fff;
 }
-a {
-  color: #ebebeb;
-  &:hover {
-    color: #c0c0c0;
-  }
+.v-list-item__title {
+    color: #000036;
+    padding-left: 8px;
+    a {
+        color: #000036;
+    }
 }
 </style>
