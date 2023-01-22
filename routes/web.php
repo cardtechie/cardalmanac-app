@@ -22,6 +22,6 @@ Route::get('/about', 'AboutController@index')->name('about');
 
 Route::get('/app', 'AppController@index');
 Route::get('/app/sets', 'SetController@index')->name('sets');
-Route::get('/app/sets/{id}', 'SetController@show');
+Route::get('/app/sets/{id}/{name?}', 'SetController@show');
 Route::get('/app/sets/{id}/checklist', 'SetController@checklist');
 Route::get('/app/sets/{id}/subsets', 'SetController@subsets');
