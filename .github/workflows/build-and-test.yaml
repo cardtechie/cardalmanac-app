@@ -42,7 +42,5 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-      - name: PHP Linter
-        run: docker-compose -f .docker/tests.docker-compose.yaml run caapp composer lint
-      - name: Prettier
-        run: docker-compose -f .docker/tests.docker-compose.yaml run caapp npm run check
+      - name: Run test suite
+        run: make test
