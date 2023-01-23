@@ -52,8 +52,7 @@ class SetController extends Controller
         $set = tradingcardapi()->set()->get($id);
 
         if (empty($name)) {
-            $url = sprintf('/app/sets/%s/%s', $id, Str::slug($set->name));
-            return redirect($url);
+            return redirect()->route('app.set', ['id' => $set->id, 'name' => str()->slug($set->name)]);
         }
 
         return view('app.set.details', [
