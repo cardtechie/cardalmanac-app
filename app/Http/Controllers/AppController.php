@@ -24,6 +24,6 @@ class AppController extends Controller
      */
     public function index()
     {
-        return redirect()->route('sets');
+        return redirect()->route('app.sets');
     }
 }
