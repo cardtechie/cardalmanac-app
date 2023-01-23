@@ -1,9 +1,9 @@
 version: "3.7"
 
 services:
-  admin:
+  caapp:
     volumes:
       # Also mount application files
       - ../:/var/www/app
     command: >
-      bash -c "phpunit --debug --stop-on-error --stop-on-failure"
+      bash -c "npm test"

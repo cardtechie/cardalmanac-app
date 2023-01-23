@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
+
 /**
  * Class SetController
  */
@@ -38,13 +40,22 @@ class SetController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  string  $id
+     * @param string $id
+     * @param string $name
      *
-     * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function show(string $id)
+    public function show(string $id, string $name = '')
     {
         $set = tradingcardapi()->set()->get($id);
+
+        if (empty($name)) {
+            return redirect()
+                ->route('app.set', ['id' => $set->id, 'name' => str()->slug($set->name)])
+                ->setStatusCode(301);
+        }
 
         return view('app.set.details', [
             'set' => $set,

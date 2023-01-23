@@ -1,21 +1,27 @@
 <template>
   <div>
-      <div class="container flex">
-        <div class="float-right block lg:hidden">
-          <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
-        </div>
+    <div class="container flex">
+      <div class="float-right block lg:hidden">
+        <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
       </div>
+    </div>
 
-    <v-navigation-drawer v-model="drawer" absolute temporary right height="inherit">
+    <v-navigation-drawer
+      v-model="drawer"
+      absolute
+      temporary
+      right
+      height="inherit"
+    >
       <v-list-item>
-            <v-list-item-content>
-                <v-list-item-title class="text-h6">
-                    {{ title }}
-                </v-list-item-title>
-            </v-list-item-content>
-        </v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="text-h6">
+            {{ title }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
 
-        <v-divider></v-divider>
+      <v-divider></v-divider>
       <v-list dense>
         <v-list-item>
           <v-list-item-icon>
@@ -41,12 +47,12 @@
 <script>
 export default {
   name: "NavMenu",
-    props: {
-        title: {
-            type: String,
-            required: true,
-        },
+  props: {
+    title: {
+      type: String,
+      required: true,
     },
+  },
   data: () => ({
     drawer: false,
     menuItems: [
@@ -72,14 +78,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-btn>.v-btn__content .v-icon {
+.v-btn > .v-btn__content .v-icon {
   color: #fff;
 }
 .v-list-item__title {
+  color: #000036;
+  padding-left: 8px;
+  a {
     color: #000036;
-    padding-left: 8px;
-    a {
-        color: #000036;
-    }
+  }
 }
 </style>
