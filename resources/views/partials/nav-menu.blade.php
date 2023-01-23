@@ -7,7 +7,7 @@
         <nav id="header-nav-menu" class="flex-auto w-1/2 mt-3 lg:block hidden">
             <ul class="float-right">
                 <li class="float-right pl-5 text-right uppercase">
-                    <a href="{{ config('app.url') }}/app">App</a>
+                    <a href="{{ route('app.index') }}">App</a>
                 </li>
                 <li class="float-right pl-5 text-right uppercase">
                     <a href="{{ config('app.url') }}/about">About</a>
