@@ -9,7 +9,7 @@
             <ul>
         @endif
             <li>
-                <a href="{{ config('app.url') }}/app/sets/{{ $set->id }}/{{ str()->slug($set->name) }}">{{ $set->name }}</a>
+                <a href="{{ route('app.set', ['id' => $set->id, 'name' => str()->slug($set->name)]) }}">{{ $set->name }}</a>
             @if ($set->genre())
                 ({{ $set->genre()->name }})
             @endif
