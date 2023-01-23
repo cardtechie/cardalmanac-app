@@ -9,7 +9,8 @@
         "prod": "npm run production",
         "production": "mix --production",
         "check": "node_modules/.bin/prettier --check .",
-        "format": "node_modules/.bin/prettier --write ."
+        "format": "node_modules/.bin/prettier --write .",
+        "test": "npm run check"
     },
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^6.1.1",
