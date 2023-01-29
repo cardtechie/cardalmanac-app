@@ -49,7 +49,9 @@ class SetController extends Controller
      */
     public function show(string $id, string $name = '')
     {
-        $set = tradingcardapi()->set()->get($id);
+        $set = tradingcardapi()->set()->get($id, [
+            'include' => 'genre,manufacturer,brand,year',
+        ]);
 
         if (empty($name)) {
             return redirect()
