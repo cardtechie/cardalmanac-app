@@ -48,7 +48,7 @@
 
 <script>
 export default {
-  name: "NavMenu",
+  name: "NavDrawer",
   props: {
     title: {
       type: String,
