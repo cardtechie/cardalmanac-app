@@ -6,41 +6,43 @@
       </div>
     </div>
 
-    <v-navigation-drawer
-      v-model="drawer"
-      absolute
-      temporary
-      right
-      height="inherit"
-    >
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="text-h6">
-            {{ title }}
-          </v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-divider></v-divider>
-      <v-list dense>
+    <div v-show="drawer">
+      <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
+        right
+        height="inherit"
+      >
         <v-list-item>
-          <v-list-item-icon>
-            <v-icon>mdi-home</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            <a :href="this.baseUrl">Home</a>
-          </v-list-item-title>
+          <v-list-item-content>
+            <v-list-item-title class="text-h6">
+              {{ title }}
+            </v-list-item-title>
+          </v-list-item-content>
         </v-list-item>
-        <v-list-item v-for="item in menuItems" v-bind:key="item.title">
-          <v-list-item-icon>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>
-            <a :href="item.link">{{ item.title }}</a>
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
+
+        <v-divider></v-divider>
+        <v-list dense>
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              <a :href="this.baseUrl">Home</a>
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item v-for="item in menuItems" v-bind:key="item.title">
+            <v-list-item-icon>
+              <v-icon>{{ item.icon }}</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>
+              <a :href="item.link">{{ item.title }}</a>
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+    </div>
   </div>
 </template>
 
