@@ -1,6 +1,6 @@
 <header>
     <div class="container flex">
-        <h1 class="flex-auto">
+        <h1 class="flex-auto pt-2">
             <a href="{{ config('app.url') }}">{{ config('app.name', 'Laravel') }}</a>
         </h1>
         <nav-menu title="{{ config('app.name', 'Laravel') }}"></nav-menu>
