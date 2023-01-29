@@ -1,6 +1,6 @@
 import Example from "./components/ExampleComponent";
 import MailingListForm from "./components/MailingListForm";
-import NavMenu from "./components/NavMenu";
+import NavDrawer from "./components/NavDrawer";
 import SetChecklist from "./components/SetChecklist";
 import vuetify from "./vuetify";
 
@@ -27,7 +27,7 @@ window.Vue = require("vue").default;
 
 Vue.component("example-component", Example);
 Vue.component("mailing-list-form", MailingListForm);
-Vue.component("nav-menu", NavMenu);
+Vue.component("nav-drawer", NavDrawer);
 Vue.component("set-checklist", SetChecklist);
 
 /**
