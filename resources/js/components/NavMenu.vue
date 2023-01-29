@@ -6,6 +6,7 @@
       </div>
     </div>
 
+      <div v-show="drawer">
     <v-navigation-drawer
       v-model="drawer"
       absolute
@@ -41,6 +42,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+      </div>
   </div>
 </template>
 
