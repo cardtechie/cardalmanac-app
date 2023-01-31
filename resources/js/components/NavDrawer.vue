@@ -16,7 +16,7 @@
       >
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title class="text-h6">
+            <v-list-item-title>
               {{ title }}
             </v-list-item-title>
           </v-list-item-content>
@@ -84,6 +84,8 @@ export default {
   color: #fff;
 }
 .v-list-item__title {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   color: #000036;
   padding-left: 8px;
   a {
