@@ -84,10 +84,10 @@ export default {
   color: #fff;
 }
 .v-list-item__title {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: bold;
   color: #000036;
-  padding-left: 8px;
   a {
     color: #000036;
   }
