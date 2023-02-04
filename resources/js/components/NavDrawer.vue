@@ -17,7 +17,7 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-                <div class="title flex-auto float-left">{{ title }}</div>
+                <div class="title flex-auto float-left pt-1">{{ title }}</div>
                 <div class="close flex-auto float-right text-2xl p-1" @click="drawer = false">X</div>
             </v-list-item-title>
           </v-list-item-content>
@@ -89,7 +89,7 @@ export default {
         color: #000036;
     }
     .title {
-        font-size: 1.125rem;
+        font-size: 1.625rem;
         line-height: 1.75rem;
         font-weight: bold;
         color: #000036;
