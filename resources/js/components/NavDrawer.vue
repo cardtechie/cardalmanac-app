@@ -18,7 +18,7 @@
           <v-list-item-content>
             <v-list-item-title>
                 <div class="title flex-auto float-left">{{ title }}</div>
-                <div class="close flex-auto float-right text-2xl p-3">X</div>
+                <div class="close flex-auto float-right text-2xl p-1" @click="drawer = false">X</div>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
