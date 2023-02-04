@@ -17,7 +17,8 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-              {{ title }}
+                <div class="title flex-auto float-left">{{ title }}</div>
+                <div class="close flex-auto float-right text-2xl p-3">X</div>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -28,7 +29,7 @@
             <v-list-item-icon>
               <v-icon>mdi-home</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>
+            <v-list-item-title class="pl-2">
               <a :href="this.baseUrl">Home</a>
             </v-list-item-title>
           </v-list-item>
@@ -36,7 +37,7 @@
             <v-list-item-icon>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
-            <v-list-item-title>
+            <v-list-item-title class="pl-2">
               <a :href="item.link">{{ item.title }}</a>
             </v-list-item-title>
           </v-list-item>
@@ -84,12 +85,17 @@ export default {
   color: #fff;
 }
 .v-list-item__title {
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: bold;
-  color: #000036;
-  a {
-    color: #000036;
-  }
+    a {
+        color: #000036;
+    }
+    .title {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+        font-weight: bold;
+        color: #000036;
+    }
+    .close {
+
+    }
 }
 </style>
