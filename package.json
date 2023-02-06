@@ -11,6 +11,7 @@
         "check": "node_modules/.bin/prettier --check .",
         "format": "node_modules/.bin/prettier --write .",
         "lint:php": "composer lint",
+        "pretest": "npm run check",
         "test": "npm run lint:php"
     },
     "devDependencies": {
