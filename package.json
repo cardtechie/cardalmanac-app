@@ -11,8 +11,7 @@
         "check": "node_modules/.bin/prettier --check .",
         "format": "node_modules/.bin/prettier --write .",
         "lint:php": "composer lint",
-        "pretest": "npm run lint:php",
-        "test": "npm run check"
+        "test": "npm run lint:php"
     },
     "devDependencies": {
         "@fortawesome/fontawesome-free": "^6.1.1",
