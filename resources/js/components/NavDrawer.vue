@@ -30,7 +30,7 @@
               <v-icon>mdi-home</v-icon>
             </v-list-item-icon>
             <v-list-item-title class="pl-2">
-              <a :href="this.baseUrl">Home</a>
+              <a :href="this.baseUrl" @click="drawer = false">Home</a>
             </v-list-item-title>
           </v-list-item>
           <v-list-item v-for="item in menuItems" v-bind:key="item.title">
@@ -38,7 +38,7 @@
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-title class="pl-2">
-              <a :href="item.link">{{ item.title }}</a>
+              <a :href="item.link" @click="drawer = false">{{ item.title }}</a>
             </v-list-item-title>
           </v-list-item>
         </v-list>
