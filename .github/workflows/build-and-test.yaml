@@ -20,13 +20,6 @@ jobs:
         uses: docker/setup-buildx-action@master
         with:
           install: true
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-admin-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-admin-buildx
       - name: Build docker image
         uses: docker/build-push-action@v4
         with:
@@ -38,11 +31,5 @@ jobs:
           tags: picklewagon/cardalmanac-app:test
           build-args: |
             COMPOSER_TOKEN=${{ secrets.COMPOSER_TOKEN }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
       - name: Run test suite
         run: DOCKER_TAG_CAAPP=test docker-compose -f .docker/tests.docker-compose.yaml run caapp npm test
