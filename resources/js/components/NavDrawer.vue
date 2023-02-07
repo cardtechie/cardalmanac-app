@@ -17,8 +17,13 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title>
-                <div class="title flex-auto float-left pt-1">{{ title }}</div>
-                <div class="close flex-auto float-right text-2xl p-1" @click="drawer = false">X</div>
+              <div class="title flex-auto float-left pt-1">{{ title }}</div>
+              <div
+                class="close flex-auto float-right text-2xl p-1"
+                @click="drawer = false"
+              >
+                X
+              </div>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -30,7 +35,7 @@
               <v-icon>mdi-home</v-icon>
             </v-list-item-icon>
             <v-list-item-title class="pl-2">
-              <a :href="this.baseUrl">Home</a>
+              <a :href="this.baseUrl" @click="drawer = false">Home</a>
             </v-list-item-title>
           </v-list-item>
           <v-list-item v-for="item in menuItems" v-bind:key="item.title">
@@ -38,7 +43,7 @@
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-item-icon>
             <v-list-item-title class="pl-2">
-              <a :href="item.link">{{ item.title }}</a>
+              <a :href="item.link" @click="drawer = false">{{ item.title }}</a>
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -85,17 +90,16 @@ export default {
   color: #fff;
 }
 .v-list-item__title {
-    a {
-        color: #000036;
-    }
-    .title {
-        font-size: 1.625rem;
-        line-height: 1.75rem;
-        font-weight: bold;
-        color: #000036;
-    }
-    .close {
-
-    }
+  a {
+    color: #000036;
+  }
+  .title {
+    font-size: 1.625rem;
+    line-height: 1.75rem;
+    font-weight: bold;
+    color: #000036;
+  }
+  .close {
+  }
 }
 </style>
