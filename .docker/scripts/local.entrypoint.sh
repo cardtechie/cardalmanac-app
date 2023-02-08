@@ -14,7 +14,7 @@ cd /var/www/app
 
 /var/www/app/.docker/scripts/wait-for-it.sh mysql:3306 -t 60 --strict -- echo mysql database is ready
 
-npm run dev
+#npm run dev
 
 php artisan blog:build
 
