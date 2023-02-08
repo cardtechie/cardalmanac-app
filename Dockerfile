@@ -3,7 +3,8 @@ FROM php:8.1-fpm AS build
 ARG COMPOSER_TOKEN
 
 ENV NGINX_VERSION=1.15.5-1~stretch \
-    NJS_VERSION=1.15.5.0.2.4-1~stretch
+    NJS_VERSION=1.15.5.0.2.4-1~stretch \
+    MIX_APP_URL="https://cardalmanac.com"
 
 # PHP / FPM config defaults that we set via environment variables
 ENV PHP_OPCACHE_ENABLE=0 \
@@ -254,14 +255,14 @@ COPY --chown=www-data:www-data . .
 RUN ln -s /var/www/vendor /var/www/app/vendor \
     && ln -s /var/www/node_modules /var/www/app/node_modules
 
+RUN composer dump-autoload -o
+RUN npm run production
+
 # Copy the .env.local as the base for environment variables within the image. Dev systems will bind-mount on top of
 # this and instead pass the environment values into the container environment through the compose env_file values.
 # But we still need this here for other environments so we have a reasonable set of default values specified for the
 # application layer through the container's environment vars.
 RUN cp .env.local .env
-
-RUN composer dump-autoload -o
-RUN npm run production
 
 # Run entrypoint
 RUN chmod 775 ./.docker/scripts/*.sh
