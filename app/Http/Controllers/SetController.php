@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
-
 /**
  * Class SetController
  */
@@ -66,7 +64,9 @@ class SetController extends Controller
 
     public function checklist(string $id)
     {
-        $set = tradingcardapi()->set()->get($id);
+        $set = tradingcardapi()->set()->get($id, [
+            'include' => 'checklist',
+        ]);
 
         return view('app.set.checklist', [
             'set' => $set,

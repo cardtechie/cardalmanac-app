@@ -17,7 +17,7 @@
            aria-selected="@if ($selected === 'checklist') true @else false @endif"
         >Checklist</a>
     </li>
-    <li class="nav-item" role="presentation">
+    <!--<li class="nav-item" role="presentation">
         <a href="{{ route('app.set.subsets', ['id' => $set->id, 'name' => str()->slug($set->name)]) }}"
            class="@if ($selected === 'subsets') active @endif nav-link block font-medium text-xs leading-tight uppercase border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2 hover:border-transparent hover:bg-gray-100 focus:border-transparent"
            id="tabs-subsets-tab"
@@ -25,5 +25,5 @@
            aria-controls="tabs-subsets"
            aria-selected="@if ($selected === 'subsets') true @else false @endif"
         >Subsets</a>
-    </li>
+    </li>-->
 </ul>
