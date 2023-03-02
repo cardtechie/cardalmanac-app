@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => $set->name,
+    'title' => $set->name . ' Checklist',
 ])
 
 @section('content')
