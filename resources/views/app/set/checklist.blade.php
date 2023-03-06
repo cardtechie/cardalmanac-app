@@ -7,8 +7,11 @@
 
     <div>
         <ul>
-        @foreach ($set->checklist() as $card)
-            <li>{{ $card->name }}</li>
+        @foreach ($checklist as $section => $cards)
+            <li class="font-bold">{{ $section }}</li>
+            @foreach ($cards as $card)
+                <li>{{ $card->name }}</li>
+            @endforeach
         @endforeach
         </ul>
     </div>

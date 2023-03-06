@@ -68,8 +68,14 @@ class SetController extends Controller
             'include' => 'checklist',
         ]);
 
+        $checklist = [];
+        foreach($set->checklist() as $card) {
+            $checklist[$card->section][] = $card;
+        }
+
         return view('app.set.checklist', [
             'set' => $set,
+            'checklist' => $checklist,
         ]);
     }
 
