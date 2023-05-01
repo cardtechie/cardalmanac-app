@@ -14,7 +14,7 @@
         "laravel/framework": "^10.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
-        "spekulatius/laravel-commonmark-blog": "dev-hotfix/3-update-package-to-laravel-10"
+        "spekulatius/laravel-commonmark-blog": "dev-hotfix/format-date"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
