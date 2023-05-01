@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0a697b656d533c03997ea6f66af35c5f",
+    "content-hash": "df014ab0014c44799404b503b9b750cd",
     "packages": [
         {
             "name": "brick/math",
@@ -3299,16 +3299,16 @@
         },
         {
             "name": "spekulatius/laravel-commonmark-blog",
-            "version": "dev-hotfix/3-update-package-to-laravel-10",
+            "version": "dev-hotfix/format-date",
             "source": {
                 "type": "git",
                 "url": "https://github.com/picklewagon/laravel-commonmark-blog.git",
-                "reference": "0116235b0ccb57b976a69cacc906a0939eb72e6d"
+                "reference": "e54dfac25cf0e16bfb51b9bc50593f434b6a45ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/picklewagon/laravel-commonmark-blog/zipball/0116235b0ccb57b976a69cacc906a0939eb72e6d",
-                "reference": "0116235b0ccb57b976a69cacc906a0939eb72e6d",
+                "url": "https://api.github.com/repos/picklewagon/laravel-commonmark-blog/zipball/e54dfac25cf0e16bfb51b9bc50593f434b6a45ee",
+                "reference": "e54dfac25cf0e16bfb51b9bc50593f434b6a45ee",
                 "shasum": ""
             },
             "require": {
@@ -3367,7 +3367,7 @@
             ],
             "description": "A simple filesystem-based, SEO-optimized blog for Laravel using Commonmark.",
             "support": {
-                "source": "https://github.com/picklewagon/laravel-commonmark-blog/tree/hotfix/3-update-package-to-laravel-10",
+                "source": "https://github.com/picklewagon/laravel-commonmark-blog/tree/hotfix/format-date",
                 "issues": "https://github.com/picklewagon/laravel-commonmark-blog/issues"
             },
             "funding": [
@@ -3380,7 +3380,7 @@
                     "url": "https://www.buymeacoffee.com/spekulatius"
                 }
             ],
-            "time": "2023-04-30T22:24:44+00:00"
+            "time": "2023-05-01T02:45:03+00:00"
         },
         {
             "name": "symfony/console",
