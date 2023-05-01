@@ -1,4 +1,4 @@
-FROM php:8.1-fpm AS build
+FROM php:8.2-fpm AS build
 
 ARG COMPOSER_TOKEN
 
