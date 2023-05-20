@@ -12,5 +12,5 @@
             </div>
         </div>
     </div>
-    @include('layouts.marketing.home.mailing-list-component')
+    {{--  @include('layouts.marketing.home.mailing-list-component') --}}
 @endsection
