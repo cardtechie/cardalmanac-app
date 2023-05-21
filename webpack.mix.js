@@ -12,8 +12,8 @@ const tailwindcss = require("tailwindcss");
  |
  */
 
-mix.setPublicPath('public')
-mix.setResourceRoot('../');
+mix.setPublicPath("public");
+mix.setResourceRoot("../");
 
 mix
   .js("resources/js/app.js", "public/js")
