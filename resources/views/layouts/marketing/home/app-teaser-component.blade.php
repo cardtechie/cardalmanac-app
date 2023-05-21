@@ -7,8 +7,8 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="text-center mt-8">
-            <span class="fa fa-light fa-list-check fa-6x"></span>
+        <div class="text-center mt-6">
+            <span class="fa fa-list-check fa-5x" style="color: #004e98"></span>
         </div>
     </div>
 </div>
