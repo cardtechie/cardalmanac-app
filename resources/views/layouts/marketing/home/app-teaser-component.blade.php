@@ -1,9 +1,9 @@
 <div class="row">
     <div class="col-md-6">
         <div class="text-center mb-12">
-            <h2>Revolutionizing Trading Card Checklists</h2>
-            <p>On a mission to change everything about checklists</p>
-            <p class="mt-4"><a href="{{ route('app.index') }}" class="font-bold hover:underline">View app</a></p>
+            <h2>Trading Card Checklists</h2>
+            <p>On a mission to provide comprehensive and up-to-date checklists for collectors</p>
+            <p class="mt-4"><a href="{{ route('app.index') }}" class="font-bold hover:underline uppercase">View app</a></p>
         </div>
     </div>
     <div class="col-md-6">
