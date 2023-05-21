@@ -12,9 +12,12 @@ const tailwindcss = require("tailwindcss");
  |
  */
 
+mix.setPublicPath("public");
+mix.setResourceRoot("../");
+
 mix
   .js("resources/js/app.js", "public/js")
-  .vue()
+  .vue({ version: 2 })
   .sass("resources/sass/app.scss", "public/css")
   .options({
     postCss: [tailwindcss("./tailwind.config.js")],
