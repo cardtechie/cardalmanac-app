@@ -12,6 +12,7 @@
 @import "~bootstrap/scss/bootstrap";
 
 // Font-Awesome
+$fa-font-path: "../webfonts";
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/regular";
 @import "~@fortawesome/fontawesome-free/scss/solid";
