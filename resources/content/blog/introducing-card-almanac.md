@@ -63,3 +63,7 @@ Currently, it is a humble website consisting of a mailing list and a handful of 
 Checklists are the main thing that will be worked on over the next coming months. As I release new features and functionality, I will announce them here seeking feedback. Whether something is useless or simply amazing, I’d love to know your thoughts on it.
 
 In reality, the primary reason Card Almanac was built is to test and validate some other projects that I have been working on (otherwise known as [dogfooding](https://www.centercode.com/blog/dogfooding-101)). I’m excited to reveal these projects because I feel the trading card industry will benefit as whole. More details to come as they get closer to release.
+
+## Check out the Trading Card Almanac
+
+The [Card Almanac application](https://cardalmanac.com/app) is changing often. Check out the app! We'd love your [feedback](https://twitter.com/cardalmanac) to know what you like and what we can do better.
