@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "df014ab0014c44799404b503b9b750cd",
+    "content-hash": "ee0c56ed422974600ea5fcc61719a125",
     "packages": [
         {
             "name": "brick/math",
@@ -3299,20 +3299,20 @@
         },
         {
             "name": "spekulatius/laravel-commonmark-blog",
-            "version": "dev-hotfix/format-date",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/picklewagon/laravel-commonmark-blog.git",
-                "reference": "e54dfac25cf0e16bfb51b9bc50593f434b6a45ee"
+                "reference": "4e719c1d4c37129b387a93593ee8f9c6639f0c60"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/picklewagon/laravel-commonmark-blog/zipball/e54dfac25cf0e16bfb51b9bc50593f434b6a45ee",
-                "reference": "e54dfac25cf0e16bfb51b9bc50593f434b6a45ee",
+                "url": "https://api.github.com/repos/picklewagon/laravel-commonmark-blog/zipball/4e719c1d4c37129b387a93593ee8f9c6639f0c60",
+                "reference": "4e719c1d4c37129b387a93593ee8f9c6639f0c60",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^10.0",
+                "laravel/framework": "^8.75|^9.0|^10.0",
                 "league/commonmark": "^2.0",
                 "nesbot/carbon": "^2.0",
                 "php": "^8.2",
@@ -3330,6 +3330,7 @@
                 "phpunit/phpunit": "^7.0|^8.0",
                 "symfony/thanks": "^1.2"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3367,7 +3368,7 @@
             ],
             "description": "A simple filesystem-based, SEO-optimized blog for Laravel using Commonmark.",
             "support": {
-                "source": "https://github.com/picklewagon/laravel-commonmark-blog/tree/hotfix/format-date",
+                "source": "https://github.com/picklewagon/laravel-commonmark-blog/tree/main",
                 "issues": "https://github.com/picklewagon/laravel-commonmark-blog/issues"
             },
             "funding": [
@@ -3380,7 +3381,7 @@
                     "url": "https://www.buymeacoffee.com/spekulatius"
                 }
             ],
-            "time": "2023-05-01T02:45:03+00:00"
+            "time": "2023-05-29T04:09:09+00:00"
         },
         {
             "name": "symfony/console",
