@@ -1,5 +1,5 @@
 <div class="row">
-    <div class="md:col-start-3 md:col-span-6">
+    <div class="md:col-start-3 md:col-span-6 mt-10 mb-28">
         <div class="row">
             <div class="col-span-8">
                 <div class="text-center mb-8">
