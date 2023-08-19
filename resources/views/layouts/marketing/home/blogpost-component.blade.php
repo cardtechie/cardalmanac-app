@@ -1,7 +1,7 @@
 <div class="grid grid-cols-6">
     <div class="lg:col-start-2 lg:col-span-4 col-span-6 text-center mt-10 mb-28">
         <h2>Introducing Card Almanac</h2>
-        <p class="mb-4">We're thrilled to introduce you to Card Almanac and give you a sneak peek into the exciting future we have in store for this site. Explore what we have to offer and brace yourself for the incredible possibilities ahead!</p>
+        <p class="mb-4">We're absolutely delighted to present Card Almanac to you. Discover the intriguing story behind the name, inspired by an unexpected source, and delve into our visionary plans for the site's future. Your excitement fuels our passion as we eagerly anticipate crafting an exceptional online destination together!</p>
         <a href="/blog/introducing-card-almanac/" class="text-uppercase">
             <button
                 type="button"
