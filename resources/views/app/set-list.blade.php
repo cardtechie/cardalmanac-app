@@ -3,7 +3,7 @@
 ])
 
 @section('content')
-    <x-set-view-toggle />
+    <x-set-view-toggle toggle-on="list" />
 
     <div>
         <h3>List</h3>
