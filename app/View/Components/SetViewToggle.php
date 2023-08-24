@@ -9,6 +9,20 @@ use Illuminate\View\Component;
 class SetViewToggle extends Component
 {
     /**
+     * The state of the list button
+     *
+     * @var string
+     */
+    public string $listState = '';
+
+    /**
+     * The state of the group by genre button
+     *
+     * @var string
+     */
+    public string $groupState = 'active';
+
+    /**
      * Create a new component instance.
      */
     public function __construct()
