@@ -1,6 +1,13 @@
 .component-set-view-toggle {
-    span {
-        --fa-border-color: black;
-        --fa-border-padding: 8px 4px;
+    a {
+        span {
+            --fa-border-color: black;
+            --fa-border-padding: 8px 4px 12px;
+        }
+    }
+    a.active {
+        span {
+            color: black;
+        }
     }
 }
