@@ -20,14 +20,22 @@ class SetViewToggle extends Component
      *
      * @var string
      */
-    public string $groupState = 'active';
+    public string $groupState = '';
 
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public function __construct(string $toggleOn)
     {
-        //
+        switch ($toggleOn) {
+            case 'list':
+                $this->listState = 'active';
+                break;
+            case 'group':
+            default:
+                $this->groupState = 'active';
+                break;
+        }
     }
 
     /**

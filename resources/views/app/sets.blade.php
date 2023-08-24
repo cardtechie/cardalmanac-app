@@ -3,7 +3,7 @@
 ])
 
 @section('content')
-    <x-set-view-toggle />
+    <x-set-view-toggle toggle-on="group" />
 
     <div>
     @forelse ($sets as $set)
