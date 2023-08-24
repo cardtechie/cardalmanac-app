@@ -9,6 +9,7 @@
     </div>
 
     <div>
+        <h3>List</h3>
     @forelse ($sets as $set)
         @if ($loop->first)
             <ul>

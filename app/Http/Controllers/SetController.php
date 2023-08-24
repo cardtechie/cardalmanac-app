@@ -18,7 +18,7 @@ class SetController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the set dashboard.
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      *
@@ -31,6 +31,24 @@ class SetController extends Controller
         ]);
 
         return view('app.sets', [
+            'sets' => $sets,
+        ]);
+    }
+
+    /**
+     * Show a list of sets
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function list()
+    {
+        $sets = tradingcardapi()->set()->list([
+            'include' => 'genre',
+        ]);
+
+        return view('app.set-list', [
             'sets' => $sets,
         ]);
     }
