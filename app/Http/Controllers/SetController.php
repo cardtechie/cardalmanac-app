@@ -33,7 +33,6 @@ class SetController extends Controller
 
         foreach ($genres as $genre) {
             $sets = tradingcardapi()->set()->list([
-                'include' => 'genre',
                 'genre' => $genre->id,
                 'limit' => 10,
                 'order_by' => 'created_at',
