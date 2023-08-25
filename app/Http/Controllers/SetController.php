@@ -45,7 +45,6 @@ class SetController extends Controller
                 $index++;
             }
         }
-        dump($list);
 
         return view('app.sets', [
             'list' => $list,
