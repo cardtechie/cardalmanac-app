@@ -26,12 +26,29 @@ class SetController extends Controller
      */
     public function index()
     {
-        $sets = tradingcardapi()->set()->list([
-            'include' => 'genre',
-        ]);
+        $list = [];
+        $index = 0;
+
+        $genres = tradingcardapi()->genre()->list();
+
+        foreach ($genres as $genre) {
+            $sets = tradingcardapi()->set()->list([
+                'include' => 'genre',
+                'genre' => $genre->id,
+                'limit' => 10,
+                'order_by' => 'created_at',
+            ]);
+
+            if ($sets->count()) {
+                $list[$index]['genre'] = $genre;
+                $list[$index]['sets'] = $sets;
+                $index++;
+            }
+        }
+        dump($list);
 
         return view('app.sets', [
-            'sets' => $sets,
+            'list' => $list,
         ]);
     }
 
