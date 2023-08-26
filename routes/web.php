@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SetController;
+use App\Http\Controllers\SetGenreController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,5 +30,6 @@ Route::prefix('app')->name('app.')->group(function () {
         Route::get('/sets/{id}/{name?}', 'show')->name('set');
         Route::get('/sets/{id}/{name?}/checklist', 'checklist')->name('set.checklist');
         Route::get('/sets/{id}/{name?}/subsets', 'subsets')->name('set.subsets');
+        Route::get('/sets/genres/{genre}', SetGenreController::class)->name('set.genre');
     });
 });
