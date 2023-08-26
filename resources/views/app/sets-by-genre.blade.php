@@ -20,7 +20,9 @@
         </ul>
 
         <div class="pt-2 text-sm">
-            <a href="{{ route('app.set.genre', ['genre' => $entry['genre']->id]) }}">Browse {{ $entry['genre']->name }} sets &raquo;</a>
+            <a href="{{ route('app.set.genre', ['genre' => $entry['genre']->id, 'name' => str()->slug($entry['genre']->name)]) }}">
+                Browse {{ $entry['genre']->name }} sets &raquo;
+            </a>
         </div>
     </div>
     @empty
