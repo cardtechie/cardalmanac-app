@@ -19,7 +19,9 @@
         @endforelse
         </ul>
 
-        <div class="pt-2 text-sm">Browse {{ $entry['genre']->name }} sets &raquo;</div>
+        <div class="pt-2 text-sm">
+            <a href="{{ route('app.set.genre', ['genre' => $entry['genre']->id]) }}">Browse {{ $entry['genre']->name }} sets &raquo;</a>
+        </div>
     </div>
     @empty
         <p>No sets</p>
