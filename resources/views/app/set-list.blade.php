@@ -3,7 +3,13 @@
 ])
 
 @section('content')
-    <x-set-view-toggle toggle-on="list" />
+    @if (isset($viewToggle) && $viewToggle)
+        <x-set-view-toggle toggle-on="list" />
+    @endif
+
+    @isset ($genre)
+        <h3>Genre: {{ $genre }}</h3>
+    @endisset
 
     <div class="mt-8">
     @forelse ($sets as $set)

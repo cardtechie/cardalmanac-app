@@ -11,6 +11,13 @@ class SetGenreController extends Controller
      */
     public function __invoke(Request $request, string $genreId)
     {
-        dump($genreId);
+        $sets = tradingcardapi()->set()->list([
+            'genre' => $genreId,
+        ]);
+
+        return view('app.set-list', [
+            'genre' => 'Baseball',
+            'sets' => $sets,
+        ]);
     }
 }
