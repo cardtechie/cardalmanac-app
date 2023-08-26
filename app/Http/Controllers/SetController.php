@@ -47,6 +47,7 @@ class SetController extends Controller
 
         return view('app.sets-by-genre', [
             'list' => $list,
+            'viewToggle' => true,
         ]);
     }
 
@@ -65,6 +66,7 @@ class SetController extends Controller
 
         return view('app.set-list', [
             'sets' => $sets,
+            'viewToggle' => true,
         ]);
     }
 
