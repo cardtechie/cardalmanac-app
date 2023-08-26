@@ -16,7 +16,7 @@ class SetGenreController extends Controller
         ]);
 
         return view('app.set-list', [
-            'genre' => 'Baseball',
+            'title' => 'Baseball Card Sets',
             'sets' => $sets,
         ]);
     }
