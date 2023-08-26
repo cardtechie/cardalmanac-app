@@ -5,8 +5,7 @@
 @section('content')
     <x-set-view-toggle toggle-on="list" />
 
-    <div>
-        <h3>List</h3>
+    <div class="mt-8">
     @forelse ($sets as $set)
         @if ($loop->first)
             <ul>
