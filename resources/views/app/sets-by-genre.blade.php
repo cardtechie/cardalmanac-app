@@ -18,6 +18,8 @@
             <li>No sets for this genre</li>
         @endforelse
         </ul>
+
+        <div class="pt-2 text-sm">Browse {{ $entry['genre']->name }} sets &raquo;</div>
     </div>
     @empty
         <p>No sets</p>
