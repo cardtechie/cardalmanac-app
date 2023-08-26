@@ -27,7 +27,7 @@ Route::prefix('app')->name('app.')->group(function () {
     Route::controller(SetController::class)->group(function () {
         Route::get('/sets', 'index')->name('sets');
         Route::get('/sets/list', 'list')->name('set.list');
-        Route::get('/sets/genres/{genre}', SetGenreController::class)->name('set.genre');
+        Route::get('/sets/genres/{genre}/{name?}', SetGenreController::class)->name('set.genre');
         Route::get('/sets/{id}/{name?}', 'show')->name('set');
         Route::get('/sets/{id}/{name?}/checklist', 'checklist')->name('set.checklist');
         Route::get('/sets/{id}/{name?}/subsets', 'subsets')->name('set.subsets');
