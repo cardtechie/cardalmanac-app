@@ -3,7 +3,9 @@
 ])
 
 @section('content')
-    <div>
+    <x-set-view-toggle toggle-on="list" />
+
+    <div class="mt-8">
     @forelse ($sets as $set)
         @if ($loop->first)
             <ul>
