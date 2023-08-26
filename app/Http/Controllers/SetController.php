@@ -45,7 +45,7 @@ class SetController extends Controller
             }
         }
 
-        return view('app.sets', [
+        return view('app.sets-by-genre', [
             'list' => $list,
         ]);
     }
