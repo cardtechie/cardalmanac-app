@@ -1,9 +1,11 @@
 @extends('layouts.app', [
-    'title' => 'Sets',
+    'title' => isset($title) ? $title : 'Sets',
 ])
 
 @section('content')
-    <x-set-view-toggle toggle-on="list" />
+    @if (isset($viewToggle) && $viewToggle)
+        <x-set-view-toggle toggle-on="list" />
+    @endif
 
     <div class="mt-8">
     @forelse ($sets as $set)
