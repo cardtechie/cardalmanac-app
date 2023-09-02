@@ -22,9 +22,10 @@
         ]) !!};
     </script>
     @include('partials.analytics')
-    @include(('partials.head-gtm'))
+    @include('partials.head-gtm')
 </head>
 <body>
+    @include('partials.body-gtm')
     <div id="app" class="flex flex-col min-h-screen">
         @include('partials.nav-menu')
         @include('layouts.app.page-title')
