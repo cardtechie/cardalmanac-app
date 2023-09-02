@@ -16,14 +16,16 @@
     <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet" />
 
     <!-- Scripts -->
-    @include('partials.analytics')
     <script>
         window.Laravel = {!! json_encode([
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
+    @include('partials.analytics')
+    @include('partials.head-gtm')
 </head>
 <body>
+    @include('partials.body-gtm')
     <div id="app" class="flex flex-col min-h-screen">
         @include('partials.nav-menu')
         @include('layouts.app.page-title')
