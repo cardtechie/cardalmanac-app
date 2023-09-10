@@ -28,6 +28,7 @@
     @include('partials.body-gtm')
     <div id="app" class="flex flex-col min-h-screen">
         @include('partials.nav-menu')
+        @include('layouts.app.breadcrumbs')
         @include('layouts.app.page-title')
 
         <div class="container max-w-6xl">
