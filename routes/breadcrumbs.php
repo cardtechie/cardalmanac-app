@@ -26,6 +26,12 @@ Breadcrumbs::for('app.sets', function (BreadcrumbTrail $trail) {
     $trail->push('Sets', route('app.sets'));
 });
 
+// Set List
+Breadcrumbs::for('app.set.list', function (BreadcrumbTrail $trail) {
+    $trail->parent('app.index');
+    $trail->push('Sets', route('app.set.list'));
+});
+
 // Set
 Breadcrumbs::for('app.set', function (BreadcrumbTrail $trail, Set $set) {
     $trail->parent('app.sets');
