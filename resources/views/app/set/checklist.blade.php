@@ -1,6 +1,11 @@
 @extends('layouts.app', [
     'title' => $set->name . ' Checklist',
+    'overrideBreadcrumbs' => true,
 ])
+
+@section('breadcrumbs')
+    {{ Breadcrumbs::render('app.set.checklist', $set) }}
+@endsection
 
 @section('content')
     @include('app.set.tabs', ['setId' => $set->id, 'selected' => 'checklist'])

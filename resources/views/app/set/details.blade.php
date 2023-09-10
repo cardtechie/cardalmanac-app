@@ -4,7 +4,7 @@
 ])
 
 @section('breadcrumbs')
-    Breadcrumbs
+    {{ Breadcrumbs::render('app.set', $set) }}
 @endsection
 
 @section('content')

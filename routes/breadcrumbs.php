@@ -1,11 +1,7 @@
 <?php
 
-// Note: Laravel will automatically resolve `Breadcrumbs::` without
-// this import. This is nice for IDE syntax and refactoring.
+use CardTechie\TradingCardApiSdk\Models\Set;
 use Diglactic\Breadcrumbs\Breadcrumbs;
-
-// This import is also not required, and you could replace `BreadcrumbTrail $trail`
-//  with `$trail`. This is nice for IDE type checking and completion.
 use Diglactic\Breadcrumbs\Generator as BreadcrumbTrail;
 
 // Home
@@ -31,14 +27,13 @@ Breadcrumbs::for('app.sets', function (BreadcrumbTrail $trail) {
 });
 
 // Set
-Breadcrumbs::for('app.set', function (BreadcrumbTrail $trail, string $setId) {
+Breadcrumbs::for('app.set', function (BreadcrumbTrail $trail, Set $set) {
     $trail->parent('app.sets');
-    $trail->push('Set', route('app.set', ['id' => $setId, 'name' => 'blah']));
-    //$trail->push('About', route('about'));
+    $trail->push($set->name, route('app.set', ['id' => $set->id, 'name' => str()->slug($set->name)]));
 });
 
 // Set Checklist
-Breadcrumbs::for('app.set.checklist', function (BreadcrumbTrail $trail, string $setId) {
-    $trail->parent('app.set', $setId);
-    $trail->push('Checklist', route('app.set.checklist', ['id' => $setId, 'name' => 'blah']));
+Breadcrumbs::for('app.set.checklist', function (BreadcrumbTrail $trail, Set $set) {
+    $trail->parent('app.set', $set);
+    $trail->push('Checklist', route('app.set.checklist', ['id' => $set->id, 'name' => str()->slug($set->name)]));
 });
