@@ -1,6 +1,11 @@
 @extends('layouts.app', [
     'title' => $set->name,
+    'overrideBreadcrumbs' => true,
 ])
+
+@section('breadcrumbs')
+    Breadcrumbs
+@endsection
 
 @section('content')
     @include('app.set.tabs', ['setId' => $set->id, 'selected' => 'details'])

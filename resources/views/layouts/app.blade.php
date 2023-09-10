@@ -28,7 +28,11 @@
     @include('partials.body-gtm')
     <div id="app" class="flex flex-col min-h-screen">
         @include('partials.nav-menu')
-        {{ Breadcrumbs::render() }}
+        @if (isset($overrideBreadcrumbs) && $overrideBreadcrumbs)
+            @yield('breadcrumbs')
+        @else
+            {{ Breadcrumbs::render() }}
+        @endif
         @include('layouts.app.page-title')
 
         <div class="container max-w-6xl">
