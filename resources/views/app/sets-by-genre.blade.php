@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => 'Sets',
+    'title' => isset($title) ? $title : 'Sets',
 ])
 
 @section('content')
