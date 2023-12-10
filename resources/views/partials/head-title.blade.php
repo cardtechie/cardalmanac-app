@@ -1,1 +1,1 @@
-<title>{{ getTitle($title) }}</title>
+<title>{{ renderTitle($title) }}</title>

@@ -35,8 +35,8 @@ if (!function_exists('getVersion')) {
     }
 }
 
-if (!function_exists('getTitle')) {
-    function getTitle(string $title = null) : string
+if (!function_exists('renderTitle')) {
+    function renderTitle(string $title = null) : string
     {
         $output = '';
         if (isset($title)) {
