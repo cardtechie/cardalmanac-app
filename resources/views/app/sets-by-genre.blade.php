@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => 'Sets',
+    'title' => isset($title) ? $title : 'Sets',
 ])
 
 @section('content')
@@ -8,7 +8,7 @@
 <div class="grid md:grid-cols-3">
     @forelse ($list as $entry)
     <div class="mb-6">
-        <h3 class="mb-2">{{ $entry['genre']->name }}</h3>
+        <h3 class="mb-2">{{ $entry['genre']->name }} Card Sets</h3>
         <ul>
         @forelse ($entry['sets']->toArray()['data'] as $set)
             <li>
@@ -21,7 +21,7 @@
 
         <div class="pt-2 text-sm">
             <a href="{{ route('app.set.genre', ['genre' => $entry['genre']->id, 'name' => str()->slug($entry['genre']->name)]) }}">
-                Browse {{ $entry['genre']->name }} sets &raquo;
+                Browse {{ $entry['genre']->name }} card sets &raquo;
             </a>
         </div>
     </div>
