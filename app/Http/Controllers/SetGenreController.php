@@ -16,7 +16,7 @@ class SetGenreController extends Controller
         ]);
 
         return view('app.set-list', [
-            'title' => ucwords($genreName) . ' Card Sets',
+            'title' => ucwords($genreName) . ' Card Checklists',
             'sets' => $sets,
         ]);
     }

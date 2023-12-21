@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => isset($title) ? $title : 'Sets',
+    'title' => isset($title) ? $title : 'Checklists',
 ])
 
 @section('content')
@@ -22,7 +22,7 @@
             </ul>
         @endif
     @empty
-        <p>No sets</p>
+        <p>No checklists have been published.</p>
     @endforelse
     </div>
 @endsection
