@@ -46,7 +46,7 @@ class SetController extends Controller
         }
 
         return view('app.sets-by-genre', [
-            'title' => 'Trading Card Sets',
+            'title' => 'Trading Card Checklists',
             'list' => $list,
             'viewToggle' => true,
         ]);
@@ -66,7 +66,7 @@ class SetController extends Controller
         ]);
 
         return view('app.set-list', [
-            'title' => 'Trading Card Sets',
+            'title' => 'Trading Card Checklists',
             'sets' => $sets,
             'viewToggle' => true,
         ]);

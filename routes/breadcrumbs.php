@@ -23,13 +23,13 @@ Breadcrumbs::for('app.index', function (BreadcrumbTrail $trail) {
 // Sets
 Breadcrumbs::for('app.sets', function (BreadcrumbTrail $trail) {
     $trail->parent('app.index');
-    $trail->push('Trading Card Sets', route('app.sets'));
+    $trail->push('Trading Card Checklists', route('app.sets'));
 });
 
 // Set List
 Breadcrumbs::for('app.set.list', function (BreadcrumbTrail $trail) {
     $trail->parent('app.index');
-    $trail->push('Trading Card Sets', route('app.set.list'));
+    $trail->push('Trading Card Checklists', route('app.set.list'));
 });
 
 // Set
