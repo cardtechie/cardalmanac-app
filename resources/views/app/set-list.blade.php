@@ -1,12 +1,9 @@
 @extends('layouts.app', [
     'title' => isset($title) ? $title : 'Checklists',
+    'setViewToggle' => (isset($viewToggle) && $viewToggle) ? view('components.set-view-toggle', ['toggleOn' => 'list'])->render() : null,
 ])
 
 @section('content')
-    @if (isset($viewToggle) && $viewToggle)
-        <x-set-view-toggle toggle-on="list" />
-    @endif
-
     <div class="mt-8">
     @forelse ($sets as $set)
         @if ($loop->first)
