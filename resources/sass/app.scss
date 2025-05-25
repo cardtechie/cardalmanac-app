@@ -5,12 +5,17 @@
 @import "variables";
 
 // Page specific files
+@import "header";
 @import "blog";
+
+// Component styles
+@import "component-set-view-toggle";
 
 // Bootstrap
 @import "~bootstrap/scss/bootstrap";
 
 // Font-Awesome
+$fa-font-path: "../webfonts";
 @import "~@fortawesome/fontawesome-free/scss/fontawesome";
 @import "~@fortawesome/fontawesome-free/scss/regular";
 @import "~@fortawesome/fontawesome-free/scss/solid";
@@ -29,6 +34,10 @@
     h2 {
         @apply text-3xl;
         margin-bottom: 20px;
+        font-weight: bold;
+    }
+    h3 {
+        @apply text-2xl;
         font-weight: bold;
     }
     a {

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SetController;
+use App\Http\Controllers\SetGenreController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,8 +22,14 @@ Route::get('/welcome', function () {
 Route::get('/', 'IndexController@index')->name('home');
 Route::get('/about', 'AboutController@index')->name('about');
 
-Route::get('/app', 'AppController@index');
-Route::get('/app/sets', 'SetController@index')->name('sets');
-Route::get('/app/sets/{id}', 'SetController@show');
-Route::get('/app/sets/{id}/checklist', 'SetController@checklist');
-Route::get('/app/sets/{id}/subsets', 'SetController@subsets');
+Route::prefix('app')->name('app.')->group(function () {
+    Route::get('/', 'AppController@index')->name('index');
+    Route::controller(SetController::class)->group(function () {
+        Route::get('/sets', 'index')->name('sets');
+        Route::get('/sets/list', 'list')->name('set.list');
+        Route::get('/sets/genres/{genre}/{name?}', SetGenreController::class)->name('set.genre');
+        Route::get('/sets/{id}/{name?}', 'show')->name('set');
+        Route::get('/sets/{id}/{name?}/checklist', 'checklist')->name('set.checklist');
+        Route::get('/sets/{id}/{name?}/subsets', 'subsets')->name('set.subsets');
+    });
+});

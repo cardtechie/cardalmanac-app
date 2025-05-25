@@ -17,6 +17,7 @@
         placeholder="Email Address"
         v-bind:class="[errors.length ? 'alert' : '']"
         @blur="errors = []"
+        style="background-color: #fff"
       />
       <button :disabled="isDisabled">Subscribe</button>
     </form>

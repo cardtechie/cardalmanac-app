@@ -1,7 +1,8 @@
-FROM php:8.1-fpm AS build
+FROM php:8.2-fpm AS build
 
-ENV NGINX_VERSION=1.15.5-1~stretch \
-    NJS_VERSION=1.15.5.0.2.4-1~stretch
+ARG COMPOSER_TOKEN
+
+ENV MIX_APP_URL="https://cardalmanac.com"
 
 # PHP / FPM config defaults that we set via environment variables
 ENV PHP_OPCACHE_ENABLE=0 \
@@ -79,9 +80,7 @@ RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
 #    readline \
-    zip \
-    # for wordpress
-    mysqli
+    zip
 
 #
 # XDEBUG INSTALL
@@ -106,91 +105,8 @@ RUN docker-php-source extract \
         echo "xdebug.max_nesting_level = 1000"; \
     } >> "${PHP_INI_DIR}/../mods-available/${XDEBUG_CONF_FILE}"
 
-# Install nginx (copied from official nginx Dockerfile 1.15.5)
-RUN set -x \
-    && apt-get update \
-    && apt-get install --no-install-recommends --no-install-suggests -y gnupg1 apt-transport-https ca-certificates \
-    && \
-    NGINX_GPGKEY=573BFD6B3D8FBC641079A6ABABF5BD827BD9BF62; \
-    found=''; \
-    for server in \
-        ha.pool.sks-keyservers.net \
-        hkp://keyserver.ubuntu.com:80 \
-        hkp://p80.pool.sks-keyservers.net:80 \
-        pgp.mit.edu \
-    ; do \
-        echo "Fetching GPG key $NGINX_GPGKEY from $server"; \
-        apt-key adv --keyserver "$server" --keyserver-options timeout=10 --recv-keys "$NGINX_GPGKEY" && found=yes && break; \
-    done; \
-    test -z "$found" && echo >&2 "error: failed to fetch GPG key $NGINX_GPGKEY" && exit 1; \
-    apt-get remove --purge --auto-remove -y gnupg1 && rm -rf /var/lib/apt/lists/* \
-    && dpkgArch="$(dpkg --print-architecture)" \
-    && nginxPackages=" \
-        nginx=${NGINX_VERSION} \
-        nginx-module-xslt=${NGINX_VERSION} \
-        nginx-module-geoip=${NGINX_VERSION} \
-        nginx-module-image-filter=${NGINX_VERSION} \
-        nginx-module-njs=${NJS_VERSION} \
-    " \
-    && case "$dpkgArch" in \
-        amd64|i386) \
-# arches officialy built by upstream
-            echo "deb https://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list.d/nginx.list \
-            && apt-get update \
-            ;; \
-        *) \
-# we're on an architecture upstream doesn't officially build for
-# let's build binaries from the published source packages
-            echo "deb-src https://nginx.org/packages/mainline/debian/ stretch nginx" >> /etc/apt/sources.list.d/nginx.list \
-            \
-# new directory for storing sources and .deb files
-            && tempDir="$(mktemp -d)" \
-            && chmod 777 "$tempDir" \
-# (777 to ensure APT's "_apt" user can access it too)
-            \
-# save list of currently-installed packages so build dependencies can be cleanly removed later
-            && savedAptMark="$(apt-mark showmanual)" \
-            \
-# build .deb files from upstream's source packages (which are verified by apt-get)
-            && apt-get update \
-            && apt-get build-dep -y $nginxPackages \
-            && ( \
-                cd "$tempDir" \
-                && DEB_BUILD_OPTIONS="nocheck parallel=$(nproc)" \
-                    apt-get source --compile $nginxPackages \
-            ) \
-# we don't remove APT lists here because they get re-downloaded and removed later
-            \
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-# (which is done after we install the built packages so we don't have to redownload any overlapping dependencies)
-            && apt-mark showmanual | xargs apt-mark auto > /dev/null \
-            && { [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; } \
-            \
-# create a temporary local APT repo to install from (so that dependency resolution can be handled by APT, as it should be)
-            && ls -lAFh "$tempDir" \
-            && ( cd "$tempDir" && dpkg-scanpackages . > Packages ) \
-            && grep '^Package: ' "$tempDir/Packages" \
-            && echo "deb [ trusted=yes ] file://$tempDir ./" > /etc/apt/sources.list.d/temp.list \
-# work around the following APT issue by using "Acquire::GzipIndexes=false" (overriding "/etc/apt/apt.conf.d/docker-gzip-indexes")
-#   Could not open file /var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages - open (13: Permission denied)
-#   ...
-#   E: Failed to fetch store:/var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages  Could not open file /var/lib/apt/lists/partial/_tmp_tmp.ODWljpQfkE_._Packages - open (13: Permission denied)
-            && apt-get -o Acquire::GzipIndexes=false update \
-            ;; \
-    esac \
-    \
-    && apt-get install --no-install-recommends --no-install-suggests -y \
-                        $nginxPackages \
-                        gettext-base \
-    && apt-get remove --purge --auto-remove -y apt-transport-https && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/nginx.list \
-    \
-# if we have leftovers from building, let's purge them (including extra, unnecessary build deps)
-    && if [ -n "$tempDir" ]; then \
-        apt-get purge -y --auto-remove \
-        && rm -rf "$tempDir" /etc/apt/sources.list.d/temp.list; \
-    fi
-
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
+    nginx \
     certbot \
     python3-certbot-nginx \
     && rm -rf /var/lib/apt/lists/*
@@ -223,7 +139,7 @@ ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules
 # Install composer packages
 WORKDIR /var/www/app
 COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
-#RUN composer config github-oauth.github.com 3126a3ccf2873a0af021d0d1776434eb21e71ed4
+RUN composer config github-oauth.github.com ${COMPOSER_TOKEN}
 RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
 
 WORKDIR /var/www
@@ -252,14 +168,14 @@ COPY --chown=www-data:www-data . .
 RUN ln -s /var/www/vendor /var/www/app/vendor \
     && ln -s /var/www/node_modules /var/www/app/node_modules
 
+RUN composer dump-autoload -o
+RUN npm run production
+
 # Copy the .env.local as the base for environment variables within the image. Dev systems will bind-mount on top of
 # this and instead pass the environment values into the container environment through the compose env_file values.
 # But we still need this here for other environments so we have a reasonable set of default values specified for the
 # application layer through the container's environment vars.
 RUN cp .env.local .env
-
-RUN composer dump-autoload -o
-RUN npm run prod
 
 # Run entrypoint
 RUN chmod 775 ./.docker/scripts/*.sh

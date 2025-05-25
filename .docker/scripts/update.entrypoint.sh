@@ -21,7 +21,7 @@ cd /var/www/app
 #php artisan queue:restart
 #php artisan view:cache
 
-npm run production
+#npm run production
 
 /var/www/app/.docker/scripts/install-cert.sh
 

@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Api\Facades\TradingCardApi;
-
 /**
  * Class SetController
  */
@@ -20,31 +18,81 @@ class SetController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Show the set dashboard.
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
     public function index()
     {
-        $sets = TradingCardApi::set()->list([
+        $list = [];
+        $index = 0;
+
+        $genres = tradingcardapi()->genre()->list();
+
+        foreach ($genres as $genre) {
+            $sets = tradingcardapi()->set()->list([
+                'genre' => $genre->id,
+                'limit' => 10,
+                'order_by' => 'created_at',
+            ]);
+
+            if ($sets->count()) {
+                $list[$index]['genre'] = $genre;
+                $list[$index]['sets'] = $sets;
+                $index++;
+            }
+        }
+
+        return view('app.sets-by-genre', [
+            'title' => 'Trading Card Checklists',
+            'list' => $list,
+            'viewToggle' => true,
+        ]);
+    }
+
+    /**
+     * Show a list of sets
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    public function list()
+    {
+        $sets = tradingcardapi()->set()->list([
             'include' => 'genre',
         ]);
 
-        return view('app.sets', [
+        return view('app.set-list', [
+            'title' => 'Trading Card Checklists',
             'sets' => $sets,
+            'viewToggle' => true,
         ]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  string  $id
+     * @param string $id
+     * @param string $name
      *
-     * @return \Illuminate\Contracts\View\View|\Illuminate\View\View
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     *
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function show(string $id)
+    public function show(string $id, string $name = '')
     {
-        $set = TradingCardApi::set()->get($id);
+        $set = tradingcardapi()->set()->get($id, [
+            'include' => 'genre,manufacturer,brand,year',
+        ]);
+
+        if (empty($name)) {
+            return redirect()
+                ->route('app.set', ['id' => $set->id, 'name' => str()->slug($set->name)])
+                ->setStatusCode(301);
+        }
 
         return view('app.set.details', [
             'set' => $set,
@@ -53,16 +101,24 @@ class SetController extends Controller
 
     public function checklist(string $id)
     {
-        $set = TradingCardApi::set()->get($id);
+        $set = tradingcardapi()->set()->get($id, [
+            'include' => 'checklist',
+        ]);
+
+        $checklist = [];
+        foreach($set->checklist() as $card) {
+            $checklist[$card->section][] = $card;
+        }
 
         return view('app.set.checklist', [
             'set' => $set,
+            'checklist' => $checklist,
         ]);
     }
 
     public function subsets(string $id)
     {
-        $set = TradingCardApi::set()->get($id);
+        $set = tradingcardapi()->set()->get($id);
 
         return view('app.set.subsets', [
             'set' => $set,
