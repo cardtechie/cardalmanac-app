@@ -8,10 +8,10 @@
 </p>
 
 ## Local Development
-  
-  1. Add a [GitHub Personal Access Token](https://github.com/settings/tokens) to the .env as COMPOSER_TOKEN.
-  1. Run `make up` from the command line.
-  1. Go to https://cardalmanac.dev:8543/ in your browser. If you get a cert issue, you can type `thiisunsafe` to get past it.
+
+1. Add a [GitHub Personal Access Token](https://github.com/settings/tokens) to the .env as COMPOSER_TOKEN.
+1. Run `make up` from the command line.
+1. Go to https://cardalmanac.dev:8543/ in your browser. If you get a cert issue, you can type `thisisunsafe` to get past it.
 
 ## About Laravel
 
