@@ -30,11 +30,11 @@
         "sass-loader": "^11.1.1",
         "tailwindcss": "^3.0.23",
         "tw-elements": "^1.0.0-alpha12",
-        "vue": "^2.6.12",
+        "vue": "^3.5.14",
         "vue-loader": "^15.9.8",
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "vuetify": "^2.6.10"
+        "vuetify": "^3.8.6"
     }
 }
