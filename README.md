@@ -7,6 +7,12 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Local Development
+
+1. Add a [GitHub Personal Access Token](https://github.com/settings/tokens) to the .env as COMPOSER_TOKEN.
+1. Run `make up` from the command line.
+1. Go to https://cardalmanac.dev:8543/ in your browser. If you get a cert issue, you can type `thisisunsafe` to get past it.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
