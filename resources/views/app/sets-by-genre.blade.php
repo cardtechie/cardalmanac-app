@@ -1,10 +1,9 @@
 @extends('layouts.app', [
     'title' => isset($title) ? $title : 'Checklists',
+    'setViewToggle' => view('components.set-view-toggle', ['toggleOn' => 'group'])->render(),
 ])
 
 @section('content')
-<x-set-view-toggle toggle-on="group" />
-
 <div class="grid md:grid-cols-3">
     @forelse ($list as $entry)
     <div class="mb-6">
