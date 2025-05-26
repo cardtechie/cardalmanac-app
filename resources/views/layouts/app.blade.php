@@ -23,7 +23,7 @@
 </head>
 <body>
     @include('partials.body-gtm')
-    <div id="app" class="flex flex-col min-h-screen">
+    <div id="app" class="flex flex-col">
         @include('partials.nav-menu')
         @include('layouts.app.breadcrumbs')
         @include('layouts.app.page-title')
