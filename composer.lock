@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33639636787e243d1f9f6446de4af184",
+    "content-hash": "0b813c1137ae0b13f5057bd72baeb3ba",
     "packages": [
         {
             "name": "brick/math",
@@ -137,16 +137,16 @@
         },
         {
             "name": "cardtechie/tradingcardapi-sdk-php",
-            "version": "dev-hotfix/upgrade-to-laravel-11",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:cardtechie/tradingcardapi-sdk-php.git",
-                "reference": "2526b5baa26b5a86ad7e8b3ac33c2fc518e69ba1"
+                "reference": "7c8ffc38007d201a9f4f3d9f3bad020b7b92d4c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/2526b5baa26b5a86ad7e8b3ac33c2fc518e69ba1",
-                "reference": "2526b5baa26b5a86ad7e8b3ac33c2fc518e69ba1",
+                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/7c8ffc38007d201a9f4f3d9f3bad020b7b92d4c6",
+                "reference": "7c8ffc38007d201a9f4f3d9f3bad020b7b92d4c6",
                 "shasum": ""
             },
             "require": {
@@ -159,7 +159,7 @@
                 "laravel/pint": "^1.0",
                 "nunomaduro/collision": "^7.0|^8.0",
                 "nunomaduro/larastan": "^2.0.1",
-                "orchestra/testbench": "^8.0",
+                "orchestra/testbench": "^9.0",
                 "pestphp/pest": "^2.5",
                 "pestphp/pest-plugin-laravel": "^2.0",
                 "phpstan/extension-installer": "^1.1",
@@ -168,6 +168,7 @@
                 "phpunit/phpunit": "^10.0",
                 "spatie/laravel-ray": "^1.26"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -229,10 +230,10 @@
                 "tradingcardapi-sdk-php"
             ],
             "support": {
-                "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/hotfix/upgrade-to-laravel-11",
+                "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/main",
                 "issues": "https://github.com/cardtechie/tradingcardapi-sdk-php/issues"
             },
-            "time": "2025-05-27T03:33:29+00:00"
+            "time": "2025-05-27T03:54:39+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
