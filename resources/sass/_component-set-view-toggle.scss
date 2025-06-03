@@ -1,4 +1,6 @@
 .component-set-view-toggle {
+    padding-top: 8px;
+
     a {
         span {
             color: #ccc;
@@ -6,6 +8,7 @@
             --fa-border-padding: 8px 4px 12px;
         }
     }
+
     a.active {
         span {
             color: #427aa1;
