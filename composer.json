@@ -9,13 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "cardtechie/tradingcardapi-sdk-php": "dev-hotfix/upgrade-to-laravel-12",
+        "cardtechie/tradingcardapi-sdk-php": "dev-main",
         "diglactic/laravel-breadcrumbs": "^10.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^4.0",
-        "spekulatius/laravel-commonmark-blog": "dev-hotfix/15-upgrade-for-laravel-12"
+        "spekulatius/laravel-commonmark-blog": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

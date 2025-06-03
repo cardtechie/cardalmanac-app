@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8680e600919f0b553ebfc45f63e2d560",
+    "content-hash": "3e6493420cc235013230f8c5092f4309",
     "packages": [
         {
             "name": "brick/math",
@@ -137,16 +137,16 @@
         },
         {
             "name": "cardtechie/tradingcardapi-sdk-php",
-            "version": "dev-hotfix/upgrade-to-laravel-12",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:cardtechie/tradingcardapi-sdk-php.git",
-                "reference": "4734a04ab3b4107cee3ab097af35bbff1cf75021"
+                "reference": "118e62cd7a5acf24135b56e53e1d7dcd9e6058fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/4734a04ab3b4107cee3ab097af35bbff1cf75021",
-                "reference": "4734a04ab3b4107cee3ab097af35bbff1cf75021",
+                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/118e62cd7a5acf24135b56e53e1d7dcd9e6058fa",
+                "reference": "118e62cd7a5acf24135b56e53e1d7dcd9e6058fa",
                 "shasum": ""
             },
             "require": {
@@ -168,6 +168,7 @@
                 "phpunit/phpunit": "^10.0",
                 "spatie/laravel-ray": "^1.26"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -229,10 +230,10 @@
                 "tradingcardapi-sdk-php"
             ],
             "support": {
-                "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/hotfix/upgrade-to-laravel-12",
+                "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/main",
                 "issues": "https://github.com/cardtechie/tradingcardapi-sdk-php/issues"
             },
-            "time": "2025-06-03T02:39:58+00:00"
+            "time": "2025-06-03T02:45:47+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -3827,16 +3828,16 @@
         },
         {
             "name": "spekulatius/laravel-commonmark-blog",
-            "version": "dev-hotfix/15-upgrade-for-laravel-12",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/picklewagon/laravel-commonmark-blog.git",
-                "reference": "04dc48486f3a3d7bef96aad789f0ae7ab8683eee"
+                "reference": "a0db7cdb237d9e9a682e05e33487a026782f489f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/picklewagon/laravel-commonmark-blog/zipball/04dc48486f3a3d7bef96aad789f0ae7ab8683eee",
-                "reference": "04dc48486f3a3d7bef96aad789f0ae7ab8683eee",
+                "url": "https://api.github.com/repos/picklewagon/laravel-commonmark-blog/zipball/a0db7cdb237d9e9a682e05e33487a026782f489f",
+                "reference": "a0db7cdb237d9e9a682e05e33487a026782f489f",
                 "shasum": ""
             },
             "require": {
@@ -3857,6 +3858,7 @@
                 "phpunit/phpunit": "^7.0|^8.0",
                 "symfony/thanks": "^1.2"
             },
+            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -3894,7 +3896,7 @@
             ],
             "description": "A simple filesystem-based, SEO-optimized blog for Laravel using Commonmark.",
             "support": {
-                "source": "https://github.com/picklewagon/laravel-commonmark-blog/tree/hotfix/15-upgrade-for-laravel-12",
+                "source": "https://github.com/picklewagon/laravel-commonmark-blog/tree/main",
                 "issues": "https://github.com/picklewagon/laravel-commonmark-blog/issues"
             },
             "funding": [
@@ -3907,7 +3909,7 @@
                     "url": "https://www.buymeacoffee.com/spekulatius"
                 }
             ],
-            "time": "2025-06-03T02:32:45+00:00"
+            "time": "2025-06-03T02:45:08+00:00"
         },
         {
             "name": "symfony/clock",
