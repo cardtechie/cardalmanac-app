@@ -49,7 +49,8 @@ jobs:
       - name: Upload deploy files
         uses: appleboy/scp-action@master
         with:
-          host: ${{ steps.deploy_server.outputs.ip_address }}
+          #host: //${{ steps.deploy_server.outputs.ip_address }}
+          host: cardalmanac.com
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           rm: true
@@ -62,7 +63,8 @@ jobs:
           TRADINGCARDAPI_CLIENT_ID: ${{ secrets.TRADINGCARDAPI_CLIENT_ID }}
           TRADINGCARDAPI_CLIENT_SECRET: ${{ secrets.TRADINGCARDAPI_CLIENT_SECRET }}
         with:
-          host: ${{ steps.deploy_server.outputs.ip_address }}
+          #host: ${{ steps.deploy_server.outputs.ip_address }}
+          host: cardalmanac.com
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
