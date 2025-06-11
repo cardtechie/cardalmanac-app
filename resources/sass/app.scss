@@ -1,5 +1,4 @@
 // Variables
-<<<<<<< HEAD
 @use "variables";
 
 // Page specific files
@@ -21,26 +20,6 @@ $fa-font-path: "../webfonts";
 
 // Fonts
 @import url("https://fonts.googleapis.com/css?family=Nunito");
-=======
-@use "variables" as *;
-
-// Page specific files
-@use "header" as *;
-@use "blog" as *;
-
-// Component styles
-@use "component-set-view-toggle" as *;
-
-// Bootstrap
-@use "~bootstrap/scss/bootstrap" as *;
-
-// Font-Awesome
-$fa-font-path: "../webfonts";
-@use "~@fortawesome/fontawesome-free/scss/fontawesome" as *;
-@use "~@fortawesome/fontawesome-free/scss/regular" as *;
-@use "~@fortawesome/fontawesome-free/scss/solid" as *;
-@use "~@fortawesome/fontawesome-free/scss/brands" as *;
->>>>>>> 75a95ad7cdfb4d64d11ee511a1ff2109c03ba911
 
 // Tailwind
 @tailwind base;
