@@ -2,24 +2,24 @@
 @import url("https://fonts.googleapis.com/css?family=Nunito");
 
 // Variables
-@import "variables";
+@use "variables" as *;
 
 // Page specific files
-@import "header";
-@import "blog";
+@use "header" as *;
+@use "blog" as *;
 
 // Component styles
-@import "component-set-view-toggle";
+@use "component-set-view-toggle" as *;
 
 // Bootstrap
-@import "~bootstrap/scss/bootstrap";
+@use "~bootstrap/scss/bootstrap" as *;
 
 // Font-Awesome
 $fa-font-path: "../webfonts";
-@import "~@fortawesome/fontawesome-free/scss/fontawesome";
-@import "~@fortawesome/fontawesome-free/scss/regular";
-@import "~@fortawesome/fontawesome-free/scss/solid";
-@import "~@fortawesome/fontawesome-free/scss/brands";
+@use "~@fortawesome/fontawesome-free/scss/fontawesome" as *;
+@use "~@fortawesome/fontawesome-free/scss/regular" as *;
+@use "~@fortawesome/fontawesome-free/scss/solid" as *;
+@use "~@fortawesome/fontawesome-free/scss/brands" as *;
 
 // Tailwind
 @tailwind base;
