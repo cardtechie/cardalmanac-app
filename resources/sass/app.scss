@@ -1,6 +1,3 @@
-// Fonts
-@import url("https://fonts.googleapis.com/css?family=Nunito");
-
 // Variables
 @use "variables";
 
@@ -20,6 +17,9 @@ $fa-font-path: "../webfonts";
 @use "~@fortawesome/fontawesome-free/scss/regular";
 @use "~@fortawesome/fontawesome-free/scss/solid";
 @use "~@fortawesome/fontawesome-free/scss/brands";
+
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Nunito");
 
 // Tailwind
 @tailwind base;
