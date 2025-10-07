@@ -9,9 +9,24 @@
 
 ## Local Development
 
-1. Add a [GitHub Personal Access Token](https://github.com/settings/tokens) to the .env as COMPOSER_TOKEN.
-1. Run `make up` from the command line.
-1. Go to https://cardalmanac.dev:8543/ in your browser. If you get a cert issue, you can type `thisisunsafe` to get past it.
+The Card Almanac supports flexible development environments to match different development needs. For comprehensive setup instructions and environment options, see the **[Local Development Environments Guide](docs/LOCAL-ENVIRONMENTS.md)**.
+
+### Quick Start
+
+**Minimal Almanac (recommended for UI development):**
+```bash
+# 1. Add GitHub Personal Access Token to .env as COMPOSER_TOKEN
+# 2. Start minimal environment
+make upd
+# 3. Go to https://cardalmanac.dev:8543/
+```
+
+**Full Development Stack (for API integration work):**
+```bash
+make upd-full
+```
+
+For detailed setup, troubleshooting, and choosing the right environment for your task, see **[docs/LOCAL-ENVIRONMENTS.md](docs/LOCAL-ENVIRONMENTS.md)**.
 
 ## About Laravel
 
