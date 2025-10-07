@@ -18,13 +18,13 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Fetch full history for version calculation
-      - name: Calculate Version
+      - name: Calculate Next Version
         run: |
-          # Make version script executable and calculate version
+          # Make version script executable and calculate next version
           chmod +x build/version.sh
-          VERSION=$(./build/version.sh current)
+          VERSION=$(./build/version.sh next)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Calculated version: $VERSION"
+          echo "Next release version: $VERSION"
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
