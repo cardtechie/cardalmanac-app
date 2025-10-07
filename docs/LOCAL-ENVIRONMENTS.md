@@ -19,8 +19,8 @@ MIX_SENDINBLUE_API_KEY=<your sendinblue api key>
 
 The Card Almanac project supports multiple local development configurations to match different development needs:
 
-- **⚡ Minimal Almanac**: Lightweight almanac development (almanac + database only)
-- **🔧 Full Development**: Complete local stack with all services
+-   **⚡ Minimal Almanac**: Lightweight almanac development (almanac + database only)
+-   **🔧 Full Development**: Complete local stack with all services
 
 ## Environment Configurations
 
@@ -40,21 +40,21 @@ make upd
 
 **What runs locally:**
 
-- ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
-- ✅ MySQL database (13305)
+-   ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
+-   ✅ MySQL database (13305)
 
 **External dependencies:**
 
-- 🌐 Trading Card API (`host.docker.internal:8243`)
+-   🌐 Trading Card API (`host.docker.internal:8243`)
 
 **Best for:**
 
-- Almanac UI/UX development
-- Database schema changes
-- Fast iteration on almanac features
-- Minimal resource usage
-- Quick development cycles
-- Testing almanac changes independently
+-   Almanac UI/UX development
+-   Database schema changes
+-   Fast iteration on almanac features
+-   Minimal resource usage
+-   Quick development cycles
+-   Testing almanac changes independently
 
 ---
 
@@ -68,37 +68,37 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 
 **What runs locally:**
 
-- ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
-- ✅ Trading Card API (8243) <https://api.tradingcardapi.dev:8243/>
-- ✅ Admin interface (8480) <https://admin.tradingcardapi.dev:8480/>
-- ✅ MySQL database (13305)
+-   ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
+-   ✅ Trading Card API (8243) <https://api.tradingcardapi.dev:8243/>
+-   ✅ Admin interface (8480) <https://admin.tradingcardapi.dev:8480/>
+-   ✅ MySQL database (13305)
 
 **External dependencies:** None
 
 **Best for:**
 
-- Full-stack feature development
-- Almanac + API integration work
-- Testing complete workflows
-- Debugging cross-service issues
-- Admin interface development
-- Testing API hotfixes and custom branches
-- End-to-end testing
+-   Full-stack feature development
+-   Almanac + API integration work
+-   Testing complete workflows
+-   Debugging cross-service issues
+-   Admin interface development
+-   Testing API hotfixes and custom branches
+-   End-to-end testing
 
 ## Configuration Files
 
-| File | Purpose | Environment |
-|------|---------|-------------|
-| `docker-compose.yml` | Base almanac services (minimal) | Minimal Almanac |
-| `.docker/docker-compose.full.yml` | Adds API + Admin | Full Development |
-| `.env.local` | Default configuration | Development |
+| File                              | Purpose                         | Environment      |
+| --------------------------------- | ------------------------------- | ---------------- |
+| `docker-compose.yml`              | Base almanac services (minimal) | Minimal Almanac  |
+| `.docker/docker-compose.full.yml` | Adds API + Admin                | Full Development |
+| `.env.local`                      | Default configuration           | Development      |
 
 ## Port Reference
 
-| Environment | Almanac | API | Admin | MySQL |
-|-------------|---------|-----|-------|-------|
-| **Minimal Almanac** | 8543 | External | - | 13305 |
-| **Full Development** | 8543 | 8243 | 8480 | 13305 |
+| Environment          | Almanac | API      | Admin | MySQL |
+| -------------------- | ------- | -------- | ----- | ----- |
+| **Minimal Almanac**  | 8543    | External | -     | 13305 |
+| **Full Development** | 8543    | 8243     | 8480  | 13305 |
 
 ## Common Workflows
 
@@ -177,27 +177,27 @@ DB_DATABASE=tradingcards
 
 ## Choosing the Right Environment
 
-| Scenario | Recommended Environment | Command |
-|----------|------------------------|---------|
-| Almanac UI changes | Minimal Almanac | `make upd` |
-| API integration work | Full Development | `make upd-full` |
-| Admin interface work | Full Development | `make upd-full` |
-| Testing API changes | Full Development | `make upd-full` |
-| Hotfix validation | Full Development | `DOCKER_TAG_TCAPI=hotfix-branch make upd-full` |
-| Database migrations | Minimal or Full | `make upd` or `make upd-full` |
-| Performance testing | Full Development | `make upd-full` |
-| Set browsing development | Minimal Almanac | `make upd` |
-| Checklist functionality | Minimal or Full | `make upd` or `make upd-full` |
+| Scenario                 | Recommended Environment | Command                                        |
+| ------------------------ | ----------------------- | ---------------------------------------------- |
+| Almanac UI changes       | Minimal Almanac         | `make upd`                                     |
+| API integration work     | Full Development        | `make upd-full`                                |
+| Admin interface work     | Full Development        | `make upd-full`                                |
+| Testing API changes      | Full Development        | `make upd-full`                                |
+| Hotfix validation        | Full Development        | `DOCKER_TAG_TCAPI=hotfix-branch make upd-full` |
+| Database migrations      | Minimal or Full         | `make upd` or `make upd-full`                  |
+| Performance testing      | Full Development        | `make upd-full`                                |
+| Set browsing development | Minimal Almanac         | `make upd`                                     |
+| Checklist functionality  | Minimal or Full         | `make upd` or `make upd-full`                  |
 
 ## Benefits
 
-- ✅ **Flexible development** - Choose the right environment for your task
-- ✅ **Resource efficient** - Run only what you need for almanac development
-- ✅ **Simple setup** - Just two environments to understand
-- ✅ **Easy testing** - Switch environments as needed
-- ✅ **Backward compatible** - Existing workflows unchanged
-- ✅ **Independent development** - Work on almanac without running full stack
-- ✅ **Cross-project consistency** - Matches admin and API project patterns
+-   ✅ **Flexible development** - Choose the right environment for your task
+-   ✅ **Resource efficient** - Run only what you need for almanac development
+-   ✅ **Simple setup** - Just two environments to understand
+-   ✅ **Easy testing** - Switch environments as needed
+-   ✅ **Backward compatible** - Existing workflows unchanged
+-   ✅ **Independent development** - Work on almanac without running full stack
+-   ✅ **Cross-project consistency** - Matches admin and API project patterns
 
 ## Troubleshooting
 
