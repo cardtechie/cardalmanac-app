@@ -25,6 +25,7 @@ Usage: $0 [options] [action]
 
 Actions:
     current         Show current version (default)
+    next            Calculate next appropriate version for current branch
     next-major      Calculate next major version
     next-minor      Calculate next minor version  
     next-patch      Calculate next patch version
@@ -39,6 +40,7 @@ Options:
 Examples:
     $0                  # Show current version
     $0 current          # Show current version
+    $0 next             # Show next appropriate version for branch
     $0 next-patch       # Show next patch version
     $0 set-env          # Set environment variables for CI
     $0 --format tag     # Show as git tag (v1.2.3)
@@ -170,6 +172,52 @@ increment_version() {
     esac
 }
 
+# Determine next version type based on branch
+determine_version_increment() {
+    local branch="$1"
+    
+    case "$branch" in
+        master|main)
+            # On main: should be a tagged release, no increment needed
+            echo "none"
+            ;;
+        develop)
+            # Develop branch: next minor version for beta releases
+            echo "minor"
+            ;;
+        release/*)
+            # Release branch: extract version from branch name
+            echo "release"
+            ;;
+        hotfix/*)
+            # Hotfix: increment patch version
+            echo "patch"
+            ;;
+        feature/*)
+            # Feature: typically minor increment for preview
+            echo "minor"
+            ;;
+        *)
+            # Other branches: patch increment
+            echo "patch"
+            ;;
+    esac
+}
+
+# Get the appropriate base version for calculations
+get_base_version_for_branch() {
+    local branch="$1"
+    local latest_tag=$(get_latest_version_tag)
+    
+    if [[ -n "$latest_tag" ]]; then
+        # Remove 'v' prefix from tag
+        echo "${latest_tag#v}"
+    else
+        # No tags yet, use default
+        echo "$DEFAULT_VERSION"
+    fi
+}
+
 # Branch-specific version calculation
 calculate_version_for_branch() {
     local branch="$1"
@@ -177,12 +225,7 @@ calculate_version_for_branch() {
     
     case "$branch" in
         master|main)
-            # Final releases: use exact version from tags
-            echo "$base_version"
-            ;;
-            
-        develop)
-            # Beta releases: 1.2.3-beta.N
+            # Main branch: use latest tag or increment if ahead
             local latest_tag=$(get_latest_version_tag)
             local commit_count=0
             
@@ -190,10 +233,33 @@ calculate_version_for_branch() {
                 commit_count=$(get_commit_count_since_tag "$latest_tag")
                 if [[ $commit_count -eq 0 ]]; then
                     # On exact tag
-                    echo "$base_version"
+                    echo "${latest_tag#v}"
                 else
-                    # Ahead of tag
-                    local next_minor=$(increment_version "$base_version" "minor")
+                    # Ahead of tag on main - this shouldn't happen in normal workflow
+                    # but if it does, increment patch
+                    local next_patch=$(increment_version "${latest_tag#v}" "patch")
+                    echo "$next_patch"
+                fi
+            else
+                # No tags yet, start with default
+                echo "$DEFAULT_VERSION"
+            fi
+            ;;
+            
+        develop)
+            # Develop branch: next minor version as beta
+            local latest_tag=$(get_latest_version_tag)
+            local commit_count=0
+            
+            if [[ -n "$latest_tag" ]]; then
+                commit_count=$(get_commit_count_since_tag "$latest_tag")
+                if [[ $commit_count -eq 0 ]]; then
+                    # On exact tag, increment minor for next beta
+                    local next_minor=$(increment_version "${latest_tag#v}" "minor")
+                    echo "${next_minor}-beta.1"
+                else
+                    # Ahead of tag, use incremented minor with commit count
+                    local next_minor=$(increment_version "${latest_tag#v}" "minor")
                     echo "${next_minor}-beta.${commit_count}"
                 fi
             else
@@ -203,40 +269,75 @@ calculate_version_for_branch() {
             ;;
             
         release/*)
-            # Release candidates: 1.2.3-rc.N
+            # Release branch: extract version from branch name or increment
             local version_from_branch="${branch#release/}"
-            local commit_count=$(get_commit_count_since_tag "$(get_latest_tag)")
-            if [[ $commit_count -eq 0 ]]; then
-                echo "$version_from_branch"
+            local commit_count=$(get_commit_count_since_tag "$(get_latest_version_tag)")
+            
+            # Check if branch name contains a version
+            if [[ $version_from_branch =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+                # Branch has explicit version
+                if [[ $commit_count -eq 0 ]]; then
+                    echo "$version_from_branch"
+                else
+                    echo "${version_from_branch}-rc.${commit_count}"
+                fi
             else
-                echo "${version_from_branch}-rc.${commit_count}"
+                # Branch doesn't have version, calculate next minor
+                local next_minor=$(increment_version "$base_version" "minor")
+                if [[ $commit_count -eq 0 ]]; then
+                    echo "${next_minor}-rc.1"
+                else
+                    echo "${next_minor}-rc.${commit_count}"
+                fi
             fi
             ;;
             
         hotfix/*)
-            # Hotfix releases: increment patch version
-            local next_patch=$(increment_version "$base_version" "patch")
-            local commit_count=$(get_commit_count_since_tag "$(get_latest_version_tag)")
-            if [[ $commit_count -eq 0 ]]; then
-                echo "$next_patch"
+            # Hotfix: increment patch version
+            local latest_tag=$(get_latest_version_tag)
+            local commit_count=0
+            
+            if [[ -n "$latest_tag" ]]; then
+                commit_count=$(get_commit_count_since_tag "$latest_tag")
+                local next_patch=$(increment_version "${latest_tag#v}" "patch")
+                
+                if [[ $commit_count -eq 0 ]]; then
+                    echo "$next_patch"
+                else
+                    echo "${next_patch}-hotfix.${commit_count}"
+                fi
             else
-                echo "${next_patch}-hotfix.${commit_count}"
+                # No tags yet, use default with patch increment
+                local next_patch=$(increment_version "$DEFAULT_VERSION" "patch")
+                echo "$next_patch"
             fi
             ;;
             
         feature/*)
-            # Feature versions: 1.2.3-feature.branch-name
+            # Feature: next minor version with feature identifier
             local feature_name="${branch#feature/}"
             # Sanitize branch name for version
             feature_name=$(echo "$feature_name" | sed 's/[^a-zA-Z0-9.-]/-/g' | sed 's/--*/-/g')
-            local commit_count=$(get_commit_count_since_tag "$(get_latest_version_tag)")
-            echo "${base_version}-feature.${feature_name}.${commit_count}"
+            
+            local latest_tag=$(get_latest_version_tag)
+            local commit_count=0
+            
+            if [[ -n "$latest_tag" ]]; then
+                commit_count=$(get_commit_count_since_tag "$latest_tag")
+                local next_minor=$(increment_version "${latest_tag#v}" "minor")
+                echo "${next_minor}-feature.${feature_name}.${commit_count}"
+            else
+                # No tags yet
+                local next_minor=$(increment_version "$DEFAULT_VERSION" "minor")
+                echo "${next_minor}-feature.${feature_name}.1"
+            fi
             ;;
             
         *)
-            # Development versions: 1.2.3-dev.sha
+            # Other branches: patch increment with dev identifier
             local sha=$(get_short_sha)
-            echo "${base_version}-dev.${sha}"
+            local next_patch=$(increment_version "$base_version" "patch")
+            echo "${next_patch}-dev.${sha}"
             ;;
     esac
 }
@@ -308,6 +409,32 @@ action_next() {
     format_output "$next_version"
 }
 
+action_next_for_branch() {
+    local branch=$(get_current_branch)
+    local increment_type=$(determine_version_increment "$branch")
+    local base_version=$(get_base_version_for_branch "$branch")
+    
+    log_info "Branch: $branch"
+    log_info "Increment type: $increment_type"
+    log_info "Base version: $base_version"
+    
+    case "$increment_type" in
+        "none")
+            # On main branch, show current version
+            format_output "$(get_current_version)"
+            ;;
+        "release")
+            # Release branch logic handled in calculate_version_for_branch
+            format_output "$(calculate_version_for_branch "$branch" "$base_version")"
+            ;;
+        *)
+            # Calculate next version based on increment type
+            local next_version=$(increment_version "$base_version" "$increment_type")
+            format_output "$next_version"
+            ;;
+    esac
+}
+
 action_set_env() {
     local version=$(get_current_version)
     
@@ -357,7 +484,7 @@ main() {
                 OUTPUT_FORMAT="$2"
                 shift 2
                 ;;
-            current|next-major|next-minor|next-patch|set-env)
+            current|next|next-major|next-minor|next-patch|set-env)
                 action="$1"
                 shift
                 ;;
@@ -379,6 +506,9 @@ main() {
     case "$action" in
         current)
             action_current
+            ;;
+        next)
+            action_next_for_branch
             ;;
         next-major)
             action_next "major"

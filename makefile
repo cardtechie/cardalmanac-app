@@ -76,9 +76,13 @@ version:
 
 version-preview:
 	@echo "Current version: $$(./build/version.sh current)"
+	@echo "Next version (for branch): $$(./build/version.sh next)"
 	@echo "Next major: $$(./build/version.sh next-major)"
 	@echo "Next minor: $$(./build/version.sh next-minor)"  
 	@echo "Next patch: $$(./build/version.sh next-patch)"
+
+version-next:
+	@./build/version.sh next
 
 version-major:
 	@./build/version.sh next-major
@@ -152,6 +156,7 @@ release-help:
 	@echo ""
 	@echo "Version Management:"
 	@echo "  make version              Show current version"
+	@echo "  make version-next         Show next appropriate version for branch"
 	@echo "  make version-preview      Show all version options"
 	@echo "  make version-major        Show next major version"
 	@echo "  make version-minor        Show next minor version"
