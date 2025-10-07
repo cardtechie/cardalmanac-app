@@ -1,0 +1,45 @@
+# Dependencies (largest files - npm/composer will rebuild these)
+node_modules/
+vendor/
+
+# Storage and cache (can be huge - not needed in image)
+storage/app/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+storage/logs/
+bootstrap/cache/
+
+# Docker storage (database, logs, etc - HUGE 5GB directory)
+.docker/storage/
+
+# Development files
+.env
+.env.local
+.env.*.local
+
+# Version control
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Documentation (not needed in image)
+README.md
+docs/
+
+# CI/CD
+.github/
