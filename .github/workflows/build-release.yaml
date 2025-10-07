@@ -17,7 +17,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch full history for version calculation
+          fetch-depth: 0 # Fetch full history for version calculation
       - name: Calculate Next Version
         run: |
           # Make version script executable and calculate next version
