@@ -8,7 +8,6 @@ on:
 env:
   SERVICE_NAME: cardalmanac-app
   DOCKER_BUILDKIT: 1
-  VERSION: 0.1.${{ github.run_number }}
 
 jobs:
   create-release:
@@ -17,6 +16,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch full history for version calculation
+      - name: Calculate Version
+        run: |
+          # Make version script executable and calculate version
+          chmod +x build/version.sh
+          VERSION=$(./build/version.sh current)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Calculated version: $VERSION"
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@master
@@ -36,12 +44,30 @@ jobs:
           build-args: |
             VERSION=${{ env.VERSION }}
             COMPOSER_TOKEN=${{ secrets.COMPOSER_TOKEN }}
+      - name: Set Release Version
+        run: |
+          echo "RELEASE_VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=v${{ env.VERSION }}" >> $GITHUB_ENV
+      - name: Generate Release Notes
+        run: |
+          # Make release scripts executable
+          chmod +x build/*.sh
+          # Generate release notes using our automation system
+          ./build/generate-release-notes.sh --format github ${{ env.VERSION }} > release_notes.md
+          # Also update changelog
+          ./build/update-changelog.sh update ${{ env.VERSION }}
+        env:
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
       - name: Create Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.CARDALMANAC_APP_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
+          tag_name: ${{ env.RELEASE_TAG }}
+          release_name: "Release ${{ env.VERSION }}"
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
 
   trigger-deploy:
     name: Deploy
