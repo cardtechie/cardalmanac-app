@@ -13,9 +13,9 @@ storage/logs/
 # Docker storage (database, logs, etc - HUGE 5GB directory)
 .docker/storage/
 
-# Development files
+# Development files (exclude local development env files)
 .env
-.env.local
+# Note: .env.local is needed by Dockerfile for production builds
 .env.*.local
 
 # Version control
