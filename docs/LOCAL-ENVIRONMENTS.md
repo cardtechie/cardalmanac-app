@@ -40,7 +40,7 @@ make upd
 
 **What runs locally:**
 
--   ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
+-   ✅ Card Almanac app (8541) <https://cardalmanac.dev:8541/>
 -   ✅ MySQL database (13307)
 
 **External dependencies:**
@@ -68,7 +68,7 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 
 **What runs locally:**
 
--   ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
+-   ✅ Card Almanac app (8541) <https://cardalmanac.dev:8541/>
 -   ✅ Trading Card API (8243) <https://api.tradingcardapi.dev:8243/>
 -   ✅ Admin interface (8480) <https://admin.tradingcardapi.dev:8480/>
 -   ✅ MySQL database (13307)
@@ -97,8 +97,8 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 
 | Environment          | Almanac | API      | Admin | MySQL |
 | -------------------- | ------- | -------- | ----- | ----- |
-| **Minimal Almanac**  | 8543    | External | -     | 13307 |
-| **Full Development** | 8543    | 8243     | 8480  | 13307 |
+| **Minimal Almanac**  | 8541    | External | -     | 13307 |
+| **Full Development** | 8541    | 8243     | 8480  | 13307 |
 
 ## Common Workflows
 
@@ -108,7 +108,7 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 # Start minimal stack (almanac + database only)
 docker compose up -d
 
-# Access almanac at https://localhost:8543
+# Access almanac at https://localhost:8541
 # Uses external API automatically
 ```
 
@@ -118,7 +118,7 @@ docker compose up -d
 # Start complete local stack
 make upd-full
 
-# Almanac: https://localhost:8543
+# Almanac: https://localhost:8541
 # API: https://localhost:8243
 # Admin: https://localhost:8480
 ```
@@ -132,7 +132,7 @@ make upd-full
 # Test specific API branch/tag
 DOCKER_TAG_TCAPI=my-hotfix-branch make upd-full
 
-# Test at https://localhost:8543
+# Test at https://localhost:8541
 ```
 
 ### 🐛 Debugging API Integration
@@ -144,7 +144,7 @@ make upd-full
 # Make API changes and restart API container
 docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml restart tcapi
 
-# Test integration at https://localhost:8543
+# Test integration at https://localhost:8541
 ```
 
 ### 🎨 Almanac UI Development

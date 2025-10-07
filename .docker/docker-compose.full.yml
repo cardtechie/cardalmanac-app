@@ -3,7 +3,7 @@ services:
     environment:
       TRADINGCARDAPI_URL: "https://tcapi:443"
     ports:
-      - "${ADMIN_PORT_DEBUG:-9001}:9001"
+      - "${CAAPP_PORT_DEBUG:-9001}:9001"
     depends_on:
       - mysql
       - tcapi

@@ -19,7 +19,7 @@ The Card Almanac supports flexible development environments to match different d
 # 1. Add GitHub Personal Access Token to .env as COMPOSER_TOKEN
 # 2. Start minimal environment
 make upd
-# 3. Go to https://cardalmanac.dev:8543/
+# 3. Go to https://cardalmanac.dev:8541/
 ```
 
 **Full Development Stack (for API integration work):**

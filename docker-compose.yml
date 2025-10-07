@@ -28,8 +28,8 @@ services:
                 "/etc/supervisor/conf.d/supervisord.conf",
             ]
         ports:
-            - "${ADMIN_PORT_HTTP:-8580}:80"
-            - "${ADMIN_PORT_HTTPS:-8543}:443"
+            - "${CAAPP_PORT_HTTP:-8540}:80"
+            - "${CAAPP_PORT_HTTPS:-8541}:443"
         depends_on:
             - mysql
         networks:
