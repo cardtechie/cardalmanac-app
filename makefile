@@ -148,7 +148,18 @@ release-preview:
 	@./build/update-changelog.sh preview
 	@echo ""
 	@echo "=== RELEASE NOTES PREVIEW ==="
-	@./build/generate-release-notes.sh --dry-run
+	@echo "Version: $$(./build/version.sh current)"
+	@echo ""
+	@echo "# Release $$(./build/version.sh current)"
+	@echo ""
+	@echo "*Preview mode - would generate full release notes here*"
+	@echo ""
+	@echo "## What's Changed"
+	@echo "- See changelog above for recent changes"
+	@echo ""
+	@echo "## Docker Images"
+	@echo "- picklewagon/cardalmanac-app:$$(./build/version.sh current)"
+	@echo "- picklewagon/cardalmanac-app:latest"
 
 # Help for release commands
 release-help:

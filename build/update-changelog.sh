@@ -114,12 +114,14 @@ get_github_compare_url() {
 get_commits_since_tag() {
     local since_tag="$1"
     local format="${2:-oneline}"
+    local max_commits=15  # Limit commits for readability
     
     if [[ -z "$since_tag" ]]; then
-        # Get all commits if no tag
-        git log --pretty="format:$format"
+        # Get recent commits if no tag
+        git log --pretty="format:$format" -n $max_commits
     else
-        git log --pretty="format:$format" "${since_tag}..HEAD"
+        # Get commits since tag, but limit to reasonable number
+        git log --pretty="format:$format" -n $max_commits "${since_tag}..HEAD"
     fi
 }
 
@@ -251,6 +253,15 @@ generate_version_entry() {
     # Process commits
     while IFS= read -r commit; do
         if [[ -n "$commit" ]]; then
+            # Skip merge commits, formatting fixes, and dependency bumps
+            if [[ $commit =~ ^Merge\ (pull\ request|branch) ]] || \
+               [[ $commit =~ ^Merge\ remote-tracking\ branch ]] || \
+               [[ $commit =~ ^\#[0-9]+:\ (Fix|Update)\ (final\ )?[Pp]rettier\ formatting ]] || \
+               [[ $commit =~ ^Bump\ .*\ from\ .*\ to\ .* ]] || \
+               [[ ${#commit} -gt 100 ]]; then
+                continue
+            fi
+            
             local category=$(categorize_commit "$commit")
             case "$category" in
                 "Added")
@@ -289,7 +300,12 @@ generate_version_entry() {
         
         if [[ -s "$category_file" ]]; then
             echo "### $category"
-            cat "$category_file"
+            # Limit to first 10 entries per category for readability
+            head -n 10 "$category_file"
+            local total_lines=$(wc -l < "$category_file")
+            if [[ $total_lines -gt 10 ]]; then
+                echo "- ... and $((total_lines - 10)) more"
+            fi
             echo ""
         fi
     done

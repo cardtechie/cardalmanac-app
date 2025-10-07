@@ -98,11 +98,14 @@ detect_github_repo() {
 get_commits_since_tag() {
     local since_tag="$1"
     local format="${2:-%H|%s|%an|%ad}"
+    local max_commits=12  # Limit to recent commits
     
     if [[ -z "$since_tag" ]]; then
-        git log --pretty="format:$format" --date=short -n 50
+        # No tag provided, get recent commits only
+        git log --pretty="format:$format" --date=short -n $max_commits
     else
-        git log --pretty="format:$format" --date=short "${since_tag}..HEAD"
+        # Get commits since tag, but limit to reasonable number
+        git log --pretty="format:$format" --date=short -n $max_commits "${since_tag}..HEAD"
     fi
 }
 
@@ -251,7 +254,15 @@ categorize_changes() {
     
     while IFS='|' read -r hash subject author date; do
         if [[ -n "$hash" ]]; then
-            local category="Other"
+            # Skip merge commits and other noise
+            if [[ $subject =~ ^Merge\ (pull\ request|branch) ]] || \
+               [[ $subject =~ ^Merge\ remote-tracking\ branch ]] || \
+               [[ $subject =~ ^\#[0-9]+:\ (Fix|Update)\ (final\ )?[Pp]rettier\ formatting ]] || \
+               [[ $subject =~ ^Bump\ .*\ from\ .*\ to\ .* ]] || \
+               [[ ${#subject} -gt 100 ]]; then
+                continue
+            fi
+            
             local subject_lower=$(echo "$subject" | tr '[:upper:]' '[:lower:]')
             
             if [[ $subject_lower =~ (feat|feature|add|new|implement) ]]; then
@@ -270,37 +281,51 @@ categorize_changes() {
         fi
     done < <(get_commits_since_tag "$since_tag")
     
-    # Output non-empty categories
-    if [[ -s "$features_file" ]]; then
-        echo "### Features"
-        cat "$features_file"
-        echo ""
-    fi
-    if [[ -s "$improvements_file" ]]; then
-        echo "### Improvements"
-        cat "$improvements_file"
-        echo ""
-    fi
-    if [[ -s "$bugfixes_file" ]]; then
-        echo "### Bug Fixes"
-        cat "$bugfixes_file"
-        echo ""
-    fi
-    if [[ -s "$security_file" ]]; then
-        echo "### Security"
-        cat "$security_file"
-        echo ""
-    fi
-    if [[ -s "$dependencies_file" ]]; then
-        echo "### Dependencies"
-        cat "$dependencies_file"
-        echo ""
-    fi
-    if [[ -s "$other_file" ]]; then
-        echo "### Other"
-        cat "$other_file"
-        echo ""
-    fi
+    # Output non-empty categories (limited for readability)
+    local categories="Features Improvements Bug_Fixes Security Dependencies Other"
+    
+    for category_name in $categories; do
+        local category_file=""
+        local display_name=""
+        
+        case "$category_name" in
+            "Features") 
+                category_file="$features_file"
+                display_name="Features"
+                ;;
+            "Improvements")
+                category_file="$improvements_file" 
+                display_name="Improvements"
+                ;;
+            "Bug_Fixes")
+                category_file="$bugfixes_file"
+                display_name="Bug Fixes"
+                ;;
+            "Security")
+                category_file="$security_file"
+                display_name="Security"
+                ;;
+            "Dependencies")
+                category_file="$dependencies_file"
+                display_name="Dependencies"
+                ;;
+            "Other")
+                category_file="$other_file"
+                display_name="Other"
+                ;;
+        esac
+        
+        if [[ -s "$category_file" ]]; then
+            echo "### $display_name"
+            # Limit to first 8 entries per category for readability
+            head -n 8 "$category_file"
+            local total_lines=$(wc -l < "$category_file")
+            if [[ $total_lines -gt 8 ]]; then
+                echo "- ... and $((total_lines - 8)) more changes"
+            fi
+            echo ""
+        fi
+    done
     
     # Cleanup
     rm -rf "$temp_dir"
