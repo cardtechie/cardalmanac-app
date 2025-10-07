@@ -1,0 +1,84 @@
+services:
+  caapp:
+    environment:
+      TRADINGCARDAPI_URL: "https://tcapi:443"
+    ports:
+      - "${CAAPP_PORT_DEBUG:-9001}:9001"
+    depends_on:
+      - mysql
+      - tcapi
+
+  tcapi:
+    image: picklewagon/tradingcardapi:${DOCKER_TAG_TCAPI:-latest}
+    volumes:
+      - ./.docker/storage/api/storage:/var/www/app/storage
+      - ./.docker/scripts/laravel.sh:/var/www/app/.docker/init.d/01-init.sh
+      - ./.docker/api/local.provision-api.sh:/var/www/app/.docker/init.d/02-init.sh
+      - ./.docker/api/api.tradingcardapi.dev.crt:/etc/nginx/ssl/cert.crt
+      - ./.docker/api/api.tradingcardapi.dev.key:/etc/nginx/ssl/key.pem
+      - ./.docker/api/nginx-site-dev.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "${TCAPI_PORT_HTTP:-8243}:443"
+    depends_on:
+      - mysql
+    networks:
+      - overlay
+    environment:
+      APP_ENV: local
+      APP_KEY: "***REMOVED***"
+      APP_DEBUG: "true"
+      APP_URL: "https://api.tradingcardapi.dev:${TCAPI_PORT_HTTP:-8243}"
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: tradingcards
+      DB_USERNAME: root
+      DB_PASSWORD: password
+    healthcheck:
+      test: curl -fk https://localhost/ping
+      interval: 1m
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+
+  admin:
+    image: picklewagon/tradingcardapi-admin:${DOCKER_TAG_ADMIN:-latest}
+    volumes:
+      - ./.docker/storage/admin/storage:/var/www/app/storage
+      - ./.docker/admin/local.provision-admin.sh:/var/www/app/.docker/init.d/01-init.sh
+      - ./.docker/admin/admin.tradingcardapi.dev.crt:/etc/nginx/ssl/cert.crt
+      - ./.docker/admin/admin.tradingcardapi.dev.key:/etc/nginx/ssl/key.pem
+      - ./.docker/admin/nginx-site-dev.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "${ADMIN_PORT_HTTPS:-8480}:443"
+    depends_on:
+      - mysql
+      - tcapi
+    networks:
+      - overlay
+    environment:
+      APP_ENV: local
+      APP_KEY: "***REMOVED***"
+      APP_DEBUG: "true"
+      APP_LOG_LEVEL: debug
+      APP_URL: "http://localhost"
+      LOG_CHANNEL: errorlog
+      DB_HOST: mysql
+      DB_DATABASE: tradingcards
+      DB_USERNAME: tcms
+      DB_PASSWORD: password
+      BROADCAST_DRIVER: log
+      CACHE_DRIVER: file
+      SESSION_DRIVER: file
+      QUEUE_DRIVER: database
+      APP_ENABLE_REGISTRATION: "true"
+      MAIL_DRIVER: mailgun
+      MAILGUN_DOMAIN: mg.tradingcardapi.com
+      MAILGUN_SECRET: ***REMOVED***
+      TRADINGCARDAPI_CLIENT_ID: ${TRADINGCARDAPI_CLIENT_ID}
+      TRADINGCARDAPI_CLIENT_SECRET: ${TRADINGCARDAPI_CLIENT_SECRET}
+    healthcheck:
+      test: curl -fk https://localhost/ping
+      interval: 1m
+      timeout: 3s
+      retries: 30
+      start_period: 30s
