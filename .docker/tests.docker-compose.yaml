@@ -1,5 +1,3 @@
-version: "3.7"
-
 services:
   caapp:
     image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
