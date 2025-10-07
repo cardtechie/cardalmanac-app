@@ -41,7 +41,7 @@ make upd
 **What runs locally:**
 
 -   ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
--   ✅ MySQL database (13305)
+-   ✅ MySQL database (13307)
 
 **External dependencies:**
 
@@ -71,7 +71,7 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 -   ✅ Card Almanac app (8543) <https://cardalmanac.dev:8543/>
 -   ✅ Trading Card API (8243) <https://api.tradingcardapi.dev:8243/>
 -   ✅ Admin interface (8480) <https://admin.tradingcardapi.dev:8480/>
--   ✅ MySQL database (13305)
+-   ✅ MySQL database (13307)
 
 **External dependencies:** None
 
@@ -97,8 +97,8 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 
 | Environment          | Almanac | API      | Admin | MySQL |
 | -------------------- | ------- | -------- | ----- | ----- |
-| **Minimal Almanac**  | 8543    | External | -     | 13305 |
-| **Full Development** | 8543    | 8243     | 8480  | 13305 |
+| **Minimal Almanac**  | 8543    | External | -     | 13307 |
+| **Full Development** | 8543    | 8243     | 8480  | 13307 |
 
 ## Common Workflows
 

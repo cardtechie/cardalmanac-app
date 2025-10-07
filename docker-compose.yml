@@ -49,7 +49,7 @@ services:
             - "${DOCKER_VOLUME_MYSQL_STORAGE:-./.docker/storage/db/}:/var/lib/mysql"
             - ./.docker/mysql:/docker-entrypoint-initdb.d
         ports:
-            - "${DOCKER_PORT_MYSQL:-13305}:3306"
+            - "${DOCKER_PORT_MYSQL:-13307}:3306"
         networks:
             - overlay
         environment:
