@@ -2,13 +2,13 @@
 node_modules/
 vendor/
 
-# Storage and cache (can be huge - not needed in image)
+# Storage directories (can be huge - not needed in image)
 storage/app/
 storage/framework/cache/
 storage/framework/sessions/
 storage/framework/views/
 storage/logs/
-bootstrap/cache/
+# Note: bootstrap/cache is needed by Laravel and will be regenerated during build
 
 # Docker storage (database, logs, etc - HUGE 5GB directory)
 .docker/storage/
