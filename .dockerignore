@@ -1,0 +1,45 @@
+# Dependencies (largest files - npm/composer will rebuild these)
+node_modules/
+vendor/
+
+# Storage directories (can be huge - not needed in image)
+storage/app/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+storage/logs/
+# Note: bootstrap/cache is needed by Laravel and will be regenerated during build
+
+# Docker storage (database, logs, etc - HUGE 5GB directory)
+.docker/storage/
+
+# Development files (exclude local development env files)
+.env
+# Note: .env.local is needed by Dockerfile for production builds
+.env.*.local
+
+# Version control
+.git/
+.gitignore
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Documentation (not needed in image)
+README.md
+docs/
+
+# CI/CD
+.github/
