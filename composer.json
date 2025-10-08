@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "cardtechie/tradingcardapi-sdk-php": "dev-main",
+        "cardtechie/tradingcardapi-sdk-php": "^0.1.9",
         "diglactic/laravel-breadcrumbs": "^10.0",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^12.0",
