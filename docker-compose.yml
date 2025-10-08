@@ -35,7 +35,7 @@ services:
         networks:
             - overlay
         healthcheck:
-            test: curl -fk https://localhost/ping
+            test: curl -fk -4 https://localhost/ping
             interval: 1m
             timeout: 3s
             retries: 30
