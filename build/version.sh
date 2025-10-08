@@ -118,8 +118,8 @@ get_latest_tag() {
 }
 
 get_latest_version_tag() {
-    # Get the latest semantic version tag (v*.*.*)
-    git tag -l "v*.*.*" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1 || echo ""
+    # Get the latest semantic version tag (*.*.*)
+    git tag -l "*.*.*" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1 || echo ""
 }
 
 get_commit_count_since_tag() {
@@ -139,8 +139,7 @@ get_short_sha() {
 # Version parsing and manipulation
 parse_version() {
     local version="$1"
-    # Remove 'v' prefix if present
-    version="${version#v}"
+    # No v prefix in this project, use version as-is
     
     # Extract major.minor.patch
     if [[ $version =~ ^([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
@@ -210,8 +209,8 @@ get_base_version_for_branch() {
     local latest_tag=$(get_latest_version_tag)
     
     if [[ -n "$latest_tag" ]]; then
-        # Remove 'v' prefix from tag
-        echo "${latest_tag#v}"
+        # Use tag as-is (no v prefix in this project)
+        echo "$latest_tag"
     else
         # No tags yet, use default
         echo "$DEFAULT_VERSION"
@@ -233,11 +232,11 @@ calculate_version_for_branch() {
                 commit_count=$(get_commit_count_since_tag "$latest_tag")
                 if [[ $commit_count -eq 0 ]]; then
                     # On exact tag
-                    echo "${latest_tag#v}"
+                    echo "$latest_tag"
                 else
                     # Ahead of tag on main - this shouldn't happen in normal workflow
                     # but if it does, increment patch
-                    local next_patch=$(increment_version "${latest_tag#v}" "patch")
+                    local next_patch=$(increment_version "$latest_tag" "patch")
                     echo "$next_patch"
                 fi
             else
@@ -255,11 +254,11 @@ calculate_version_for_branch() {
                 commit_count=$(get_commit_count_since_tag "$latest_tag")
                 if [[ $commit_count -eq 0 ]]; then
                     # On exact tag, increment minor for next beta
-                    local next_minor=$(increment_version "${latest_tag#v}" "minor")
+                    local next_minor=$(increment_version "$latest_tag" "minor")
                     echo "${next_minor}-beta.1"
                 else
                     # Ahead of tag, use incremented minor with commit count
-                    local next_minor=$(increment_version "${latest_tag#v}" "minor")
+                    local next_minor=$(increment_version "$latest_tag" "minor")
                     echo "${next_minor}-beta.${commit_count}"
                 fi
             else
@@ -299,11 +298,13 @@ calculate_version_for_branch() {
             
             if [[ -n "$latest_tag" ]]; then
                 commit_count=$(get_commit_count_since_tag "$latest_tag")
-                local next_patch=$(increment_version "${latest_tag#v}" "patch")
                 
                 if [[ $commit_count -eq 0 ]]; then
-                    echo "$next_patch"
+                    # On exact tag, show current version
+                    echo "$latest_tag"
                 else
+                    # Ahead of tag, show incremented version with hotfix suffix
+                    local next_patch=$(increment_version "$latest_tag" "patch")
                     echo "${next_patch}-hotfix.${commit_count}"
                 fi
             else
@@ -324,7 +325,7 @@ calculate_version_for_branch() {
             
             if [[ -n "$latest_tag" ]]; then
                 commit_count=$(get_commit_count_since_tag "$latest_tag")
-                local next_minor=$(increment_version "${latest_tag#v}" "minor")
+                local next_minor=$(increment_version "$latest_tag" "minor")
                 echo "${next_minor}-feature.${feature_name}.${commit_count}"
             else
                 # No tags yet
@@ -354,7 +355,7 @@ get_current_version() {
     local base_version=""
     
     if [[ -n "$latest_tag" ]]; then
-        base_version="${latest_tag#v}"
+        base_version="$latest_tag"
         log_info "Latest version tag: $latest_tag"
     else
         base_version="$DEFAULT_VERSION"
@@ -378,11 +379,11 @@ format_output() {
             echo "$version"
             ;;
         tag)
-            echo "v$version"
+            echo "$version"
             ;;
         env)
             echo "VERSION=$version"
-            echo "VERSION_TAG=v$version"
+            echo "VERSION_TAG=$version"
             echo "VERSION_MAJOR=$(parse_version "$version" | cut -d' ' -f1)"
             echo "VERSION_MINOR=$(parse_version "$version" | cut -d' ' -f2)"
             echo "VERSION_PATCH=$(parse_version "$version" | cut -d' ' -f3)"
@@ -440,7 +441,7 @@ action_set_env() {
     
     # Set environment variables for CI
     echo "VERSION=$version"
-    echo "VERSION_TAG=v$version"
+    echo "VERSION_TAG=$version"
     
     # Parse version components
     read -r major minor patch <<< "$(parse_version "$version")"
@@ -452,7 +453,7 @@ action_set_env() {
     if [[ -n "${GITHUB_ENV:-}" ]]; then
         {
             echo "VERSION=$version"
-            echo "VERSION_TAG=v$version"
+            echo "VERSION_TAG=$version"
             echo "VERSION_MAJOR=$major"
             echo "VERSION_MINOR=$minor"
             echo "VERSION_PATCH=$patch"
