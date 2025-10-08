@@ -22,7 +22,6 @@ updates:
       - "picklewagon"
     labels:
       - "dependencies"
-      - "composer"
     allow:
       # Allow version updates for all dependencies
       - dependency-type: "all"
@@ -50,7 +49,6 @@ updates:
       - "picklewagon"
     labels:
       - "dependencies"
-      - "npm"
     allow:
       # Allow version updates for all dependencies
       - dependency-type: "all"
@@ -95,7 +93,6 @@ updates:
       - "picklewagon"
     labels:
       - "dependencies"
-      - "github-actions"
     allow:
       # Allow version updates for all GitHub Actions
       - dependency-type: "all"
