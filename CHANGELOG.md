@@ -27,3 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated axios from ^1.8 to ^1.12.0 (security fix)
 - Updated postcss from 8.4.31 to 8.4.47 (security fix)
 - Resolved 12 npm security vulnerabilities including 3 critical and 1 high severity
+
+[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/cardtechie/cardalmanac-app/releases/tag/v0.2.0
