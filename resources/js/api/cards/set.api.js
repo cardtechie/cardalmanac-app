@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const setUrl = "/api/sets";
+const setUrl = "/api/v1/sets";
 
 const setApi = {
   searchSets: async (filters) => {
