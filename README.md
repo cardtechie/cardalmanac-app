@@ -60,7 +60,7 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
     - Navigate to https://cardalmanac.dev:8541/
     - Type `thisisunsafe` if prompted about certificate warnings
 
-For detailed setup options and troubleshooting, see **[docs/LOCAL-ENVIRONMENTS.md](docs/LOCAL-ENVIRONMENTS.md)**.
+For detailed setup options and troubleshooting, see **[docs/LOCAL-ENVIRONMENTS.md](docs/LOCAL-ENVIRONMENTS.md)**. For release and deployment information, see **[docs/RELEASE-AUTOMATION.md](docs/RELEASE-AUTOMATION.md)**.
 
 ## Development Commands
 
