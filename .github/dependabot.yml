@@ -1,0 +1,101 @@
+# Dependabot configuration for automated dependency updates
+# Documentation: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # PHP Composer dependencies
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Denver"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "composer"
+      prefix-development: "composer-dev"
+      include: "scope"
+    reviewers:
+      - "picklewagon"
+    assignees:
+      - "picklewagon"
+    labels:
+      - "dependencies"
+      - "composer"
+    allow:
+      # Allow version updates for all dependencies
+      - dependency-type: "all"
+    ignore:
+      # Ignore dev-main dependencies that should be manually managed
+      - dependency-name: "cardtechie/tradingcardapi-sdk-php"
+      - dependency-name: "spekulatius/laravel-commonmark-blog"
+
+  # JavaScript npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Denver"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "npm"
+      prefix-development: "npm-dev"
+      include: "scope"
+    reviewers:
+      - "picklewagon"
+    assignees:
+      - "picklewagon"
+    labels:
+      - "dependencies"
+      - "npm"
+    allow:
+      # Allow version updates for all dependencies
+      - dependency-type: "all"
+    groups:
+      # Group Vue.js related dependencies together
+      vue-ecosystem:
+        patterns:
+          - "vue*"
+          - "@vue/*"
+          - "vuetify"
+      # Group build tools together
+      build-tools:
+        patterns:
+          - "webpack*"
+          - "laravel-mix"
+          - "*-loader"
+          - "autoprefixer"
+          - "postcss*"
+          - "sass*"
+      # Group CSS frameworks together
+      css-frameworks:
+        patterns:
+          - "bootstrap"
+          - "tailwindcss"
+          - "tw-elements"
+
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Denver"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "actions"
+      include: "scope"
+    reviewers:
+      - "picklewagon"
+    assignees:
+      - "picklewagon"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    allow:
+      # Allow version updates for all GitHub Actions
+      - dependency-type: "all"

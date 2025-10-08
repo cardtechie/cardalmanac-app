@@ -154,6 +154,18 @@ We welcome contributions to Card Almanac! Here's how you can help:
 -   Write tests for new features
 -   Update documentation as needed
 
+### Automated Dependency Updates
+
+This project uses [Dependabot](https://docs.github.com/en/code-security/dependabot) for automated dependency updates:
+
+-   **Weekly Updates**: Dependencies are checked every Monday at 9:00 AM (Denver time)
+-   **Supported Ecosystems**: PHP Composer, npm, and GitHub Actions
+-   **Automated PRs**: Dependabot creates pull requests for dependency updates
+-   **Grouped Updates**: Related dependencies (Vue.js ecosystem, build tools, etc.) are grouped together
+-   **Manual Review**: All dependency updates require manual review and approval
+
+Dependabot will automatically ignore `dev-main` dependencies that should be manually managed (like the Trading Card API SDK).
+
 ## Security
 
 If you discover a security vulnerability, please send an email to the maintainers. All security vulnerabilities will be promptly addressed.
