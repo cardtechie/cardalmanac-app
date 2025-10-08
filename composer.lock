@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3e6493420cc235013230f8c5092f4309",
+    "content-hash": "199bc020e60bf7bd38269c0e32898c94",
     "packages": [
         {
             "name": "brick/math",
@@ -137,38 +137,37 @@
         },
         {
             "name": "cardtechie/tradingcardapi-sdk-php",
-            "version": "dev-main",
+            "version": "0.1.9",
             "source": {
                 "type": "git",
                 "url": "git@github.com:cardtechie/tradingcardapi-sdk-php.git",
-                "reference": "118e62cd7a5acf24135b56e53e1d7dcd9e6058fa"
+                "reference": "a576ea4f63291fafca7dbdacb96fe4b0dcc68a1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/118e62cd7a5acf24135b56e53e1d7dcd9e6058fa",
-                "reference": "118e62cd7a5acf24135b56e53e1d7dcd9e6058fa",
+                "url": "https://api.github.com/repos/cardtechie/tradingcardapi-sdk-php/zipball/a576ea4f63291fafca7dbdacb96fe4b0dcc68a1f",
+                "reference": "a576ea4f63291fafca7dbdacb96fe4b0dcc68a1f",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.5.0",
                 "illuminate/contracts": "^10.0|^11.0|^12.0",
-                "php": "^8.2",
+                "php": "^8.1",
                 "spatie/laravel-package-tools": "^1.13.0"
             },
             "require-dev": {
+                "larastan/larastan": "^2.0|^3.0",
                 "laravel/pint": "^1.0",
-                "nunomaduro/collision": "^7.0|^8.0",
-                "nunomaduro/larastan": "^2.0.1",
-                "orchestra/testbench": "^9.0",
-                "pestphp/pest": "^2.5",
-                "pestphp/pest-plugin-laravel": "^2.0",
+                "nunomaduro/collision": "^6.0|^7.0|^8.0",
+                "orchestra/testbench": "^7.0|^8.0|^9.0|^10.0",
+                "pestphp/pest": "^1.0|^2.0|^3.0|^4.0",
+                "pestphp/pest-plugin-laravel": "^1.0|^2.0|^3.0|^4.0",
                 "phpstan/extension-installer": "^1.1",
-                "phpstan/phpstan-deprecation-rules": "^1.0",
-                "phpstan/phpstan-phpunit": "^1.0",
-                "phpunit/phpunit": "^10.0",
+                "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
+                "phpstan/phpstan-phpunit": "^1.0|^2.0",
+                "phpunit/phpunit": "^9.0|^10.0|^11.0",
                 "spatie/laravel-ray": "^1.26"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -221,7 +220,7 @@
                     "role": "Developer"
                 }
             ],
-            "description": "This is my package trading-card-api-sdk-php",
+            "description": "Official PHP SDK for Trading Card API - comprehensive tools for accessing trading card data, players, sets, and market information with enhanced error handling and Laravel integration",
             "homepage": "https://github.com/cardtechie/tradingcardapi-sdk-php",
             "keywords": [
                 "cardtechie",
@@ -229,11 +228,7 @@
                 "tradingcardapi",
                 "tradingcardapi-sdk-php"
             ],
-            "support": {
-                "source": "https://github.com/cardtechie/tradingcardapi-sdk-php/tree/main",
-                "issues": "https://github.com/cardtechie/tradingcardapi-sdk-php/issues"
-            },
-            "time": "2025-06-03T02:45:47+00:00"
+            "time": "2025-09-28T16:44:00+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -9019,7 +9014,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "cardtechie/tradingcardapi-sdk-php": 20,
         "spekulatius/laravel-commonmark-blog": 20
     },
     "prefer-stable": true,
