@@ -47,7 +47,7 @@ jobs:
       - name: Set Release Version
         run: |
           echo "RELEASE_VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
-          echo "RELEASE_TAG=v${{ env.VERSION }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Generate Release Notes
         run: |
           # Make release scripts executable
