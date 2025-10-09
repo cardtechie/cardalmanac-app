@@ -13,17 +13,21 @@ jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0 # Fetch full history for version calculation
       - name: Calculate Next Version
+        id: version
         run: |
           # Make version script executable and calculate next version
           chmod +x build/version.sh
           VERSION=$(./build/version.sh next)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Next release version: $VERSION"
       - name: Set up Docker Buildx
         id: buildx
@@ -73,7 +77,7 @@ jobs:
       - uses: avakar/create-deployment@v1
         id: deployment
         with:
-          ref: ${{ env.VERSION }}
+          ref: ${{ needs.create-release.outputs.version }}
           auto_merge: false
           environment: production
           transient_environment: true
