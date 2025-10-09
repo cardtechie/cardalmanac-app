@@ -52,10 +52,8 @@ jobs:
         run: |
           # Make release scripts executable
           chmod +x build/*.sh
-          # Generate release notes using our automation system
-          ./build/generate-release-notes.sh --format github ${{ env.VERSION }} > release_notes.md
-        env:
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          # Generate release notes using our automation system (without AI to avoid API key dependency)
+          ./build/generate-release-notes.sh --format github --no-ai ${{ env.VERSION }} > release_notes.md
       - name: Create Release
         uses: actions/create-release@v1
         env:
