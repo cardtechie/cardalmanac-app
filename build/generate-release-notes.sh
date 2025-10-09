@@ -339,7 +339,7 @@ generate_release_notes() {
     
     local since_tag=""
     if [[ -n "$previous_version" ]]; then
-        since_tag="v$previous_version"
+        since_tag="$previous_version"
     fi
     
     # Get commit information
@@ -389,7 +389,7 @@ generate_markdown_notes() {
         echo "## 🔗 Links"
         echo ""
         if [[ -n "$previous_version" ]]; then
-            echo "- [View Changes]($(get_github_compare_url "v$previous_version" "v$version"))"
+            echo "- [View Changes]($(get_github_compare_url "$previous_version" "$version"))"
         fi
         echo "- [Docker Hub](https://hub.docker.com/r/picklewagon/cardalmanac-app)"
         echo "- [Documentation](https://github.com/$GITHUB_OWNER/$GITHUB_REPO/blob/main/README.md)"
@@ -441,7 +441,7 @@ generate_github_notes() {
     echo ""
     
     if [[ -n "$previous_version" && -n "$GITHUB_OWNER" && -n "$GITHUB_REPO" ]]; then
-        echo "**Full Changelog**: $(get_github_compare_url "v$previous_version" "v$version")"
+        echo "**Full Changelog**: $(get_github_compare_url "$previous_version" "$version")"
     fi
 }
 
@@ -544,7 +544,7 @@ main() {
     
     # Get previous version if not provided
     if [[ -z "$since_version" ]]; then
-        since_version=$(git tag -l "v*.*.*" | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1 | sed 's/^v//')
+        since_version=$(git tag -l "*.*.*" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1)
     fi
     
     # Detect GitHub repository
