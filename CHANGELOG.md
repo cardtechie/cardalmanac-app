@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 2025-10-09
+
 ### Changed
 
 - Configure Dependabot to only create PRs for security updates (#336, #348)
@@ -82,7 +84,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated postcss from 8.4.31 to 8.4.47 (security fix)
 - Resolved 12 npm security vulnerabilities including 3 critical and 1 high severity
 
-[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.5...HEAD
+[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.6...HEAD
+[0.2.6]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.5...0.2.6
 [0.2.5]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.4...0.2.5
 [0.2.4]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.3...0.2.4
 [0.2.3]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.2...0.2.3
