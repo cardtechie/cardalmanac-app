@@ -5,6 +5,7 @@ This file tracks GitHub Actions build status and troubleshooting information.
 ## Recent Issues
 
 ### Build Failure - Commit Not Found
+
 - **Date**: 2025-10-07
 - **Commit**: f630a768e8f7daea61be572317f99c33f888c400
 - **Error**: fatal: Not a valid object name f630a768e8f7daea61be572317f99c33f888c400^{commit}
@@ -12,7 +13,7 @@ This file tracks GitHub Actions build status and troubleshooting information.
 - **Resolution**: Create new commit to trigger fresh workflow run
 
 ## Workflow Configuration
+
 - **File**: .github/workflows/build-release.yaml
 - **Trigger**: Push to main branch
 - **Fetch**: fetch-depth: 0 (full history)
-

@@ -10,10 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Updated all dependencies to latest versions (#335, #343)
-  - GitHub Actions: checkout v5, login-action v3, build-push-action v6
-  - NPM: prettier 3.6.2, bootstrap 5.3.8, sass 1.93.2, vue 3.5.22, and more
-  - Composer: guzzlehttp 7.10.0, laravel 12.33.0, phpunit 11.5.42, symfony 7.3.4
-  - 54 transitive composer dependency updates
+    - GitHub Actions: checkout v5, login-action v3, build-push-action v6
+    - NPM: prettier 3.6.2, bootstrap 5.3.8, sass 1.93.2, vue 3.5.22, and more
+    - Composer: guzzlehttp 7.10.0, laravel 12.33.0, phpunit 11.5.42, symfony 7.3.4
+    - 54 transitive composer dependency updates
 
 ### Fixed
 
