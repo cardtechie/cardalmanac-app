@@ -8,20 +8,20 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
 
 ## Features
 
--   **Comprehensive Set Database**: Complete information on trading card sets across multiple genres
--   **Interactive Checklists**: Digital checklists with enhanced functionality
--   **Multi-Genre Support**: Coverage of sports, gaming, entertainment, and other trading card categories
--   **Real-time Data**: Integration with Trading Card API for up-to-date information
--   **Responsive Design**: Optimized for desktop and mobile browsing
--   **Blog Platform**: Educational content and industry insights
--   **Search & Browse**: Powerful search and filtering capabilities
+- **Comprehensive Set Database**: Complete information on trading card sets across multiple genres
+- **Interactive Checklists**: Digital checklists with enhanced functionality
+- **Multi-Genre Support**: Coverage of sports, gaming, entertainment, and other trading card categories
+- **Real-time Data**: Integration with Trading Card API for up-to-date information
+- **Responsive Design**: Optimized for desktop and mobile browsing
+- **Blog Platform**: Educational content and industry insights
+- **Search & Browse**: Powerful search and filtering capabilities
 
 ## Quick Start
 
 ### Prerequisites
 
--   Docker and Docker Compose
--   GitHub Personal Access Token (for Composer dependencies)
+- Docker and Docker Compose
+- GitHub Personal Access Token (for Composer dependencies)
 
 ### Installation
 
@@ -100,14 +100,14 @@ npm test           # Run all linting
 
 ## Technology Stack
 
--   **Backend**: Laravel 12.0 (PHP 8.2+)
--   **Frontend**: Vue.js 3.5.16 with Vuetify 3.8.7
--   **CSS**: Bootstrap 5.1.3 + Tailwind CSS 3.0.23
--   **Build**: Laravel Mix with Webpack
--   **Database**: MySQL 8.0+
--   **API Integration**: Custom Trading Card API SDK
--   **Blog**: Laravel CommonMark for content management
--   **Deployment**: Docker with docker-compose
+- **Backend**: Laravel 12.0 (PHP 8.2+)
+- **Frontend**: Vue.js 3.5.16 with Vuetify 3.8.7
+- **CSS**: Bootstrap 5.1.3 + Tailwind CSS 3.0.23
+- **Build**: Laravel Mix with Webpack
+- **Database**: MySQL 8.0+
+- **API Integration**: Custom Trading Card API SDK
+- **Blog**: Laravel CommonMark for content management
+- **Deployment**: Docker with docker-compose
 
 ## Project Structure
 
@@ -130,10 +130,10 @@ npm test           # Run all linting
 
 Card Almanac integrates with the Trading Card API to provide real-time data:
 
--   **Sets**: Browse trading card sets by genre, year, and manufacturer
--   **Cards**: View individual card details and checklists
--   **Search**: Find specific sets and cards across the database
--   **Caching**: API responses are cached for improved performance
+- **Sets**: Browse trading card sets by genre, year, and manufacturer
+- **Cards**: View individual card details and checklists
+- **Search**: Find specific sets and cards across the database
+- **Caching**: API responses are cached for improved performance
 
 ## Contributing
 
@@ -149,20 +149,20 @@ We welcome contributions to Card Almanac! Here's how you can help:
 
 ### Development Guidelines
 
--   Follow PSR coding standards for PHP
--   Use Prettier for JavaScript/CSS formatting
--   Write tests for new features
--   Update documentation as needed
+- Follow PSR coding standards for PHP
+- Use Prettier for JavaScript/CSS formatting
+- Write tests for new features
+- Update documentation as needed
 
 ### Automated Dependency Updates
 
 This project uses [Dependabot](https://docs.github.com/en/code-security/dependabot) for automated dependency updates:
 
--   **Weekly Updates**: Dependencies are checked every Monday at 9:00 AM (Denver time)
--   **Supported Ecosystems**: PHP Composer, npm, and GitHub Actions
--   **Automated PRs**: Dependabot creates pull requests for dependency updates
--   **Grouped Updates**: Related dependencies (Vue.js ecosystem, build tools, etc.) are grouped together
--   **Manual Review**: All dependency updates require manual review and approval
+- **Weekly Updates**: Dependencies are checked every Monday at 9:00 AM (Denver time)
+- **Supported Ecosystems**: PHP Composer, npm, and GitHub Actions
+- **Automated PRs**: Dependabot creates pull requests for dependency updates
+- **Grouped Updates**: Related dependencies (Vue.js ecosystem, build tools, etc.) are grouped together
+- **Manual Review**: All dependency updates require manual review and approval
 
 Dependabot will automatically ignore `dev-main` dependencies that should be manually managed (like the Trading Card API SDK).
 
@@ -176,6 +176,6 @@ This project is open-sourced software licensed under the [MIT license](https://o
 
 ## Links
 
--   **Website**: [Card Almanac](https://cardalmanac.dev)
--   **Twitter**: [@cardalmanac](https://twitter.com/cardalmanac)
--   **API Documentation**: [Trading Card API](https://tradingcardapi.dev)
+- **Website**: [Card Almanac](https://cardalmanac.dev)
+- **Twitter**: [@cardalmanac](https://twitter.com/cardalmanac)
+- **API Documentation**: [Trading Card API](https://tradingcardapi.dev)
