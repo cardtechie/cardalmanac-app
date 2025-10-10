@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.7] - 2025-10-10
+
+### Changed
+
+- Improve release notes to use CHANGELOG.md content (#349, #350)
+    - Release notes now automatically extract from CHANGELOG.md
+    - Falls back to git commit analysis if version not in CHANGELOG
+    - Maintains single source of truth for release information
+
 ## [0.2.6] - 2025-10-09
 
 ### Changed
@@ -84,7 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated postcss from 8.4.31 to 8.4.47 (security fix)
 - Resolved 12 npm security vulnerabilities including 3 critical and 1 high severity
 
-[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.6...HEAD
+[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.7...HEAD
+[0.2.7]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.6...0.2.7
 [0.2.6]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.5...0.2.6
 [0.2.5]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.4...0.2.5
 [0.2.4]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.3...0.2.4
