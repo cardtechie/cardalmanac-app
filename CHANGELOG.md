@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Configure Dependabot to only create PRs for security updates (#336, #348)
+
+## [0.2.5] - 2025-10-09
+
+### Changed
+
 - Updated all dependencies to latest versions (#335, #343)
     - GitHub Actions: checkout v5, login-action v3, build-push-action v6
     - NPM: prettier 3.6.2, bootstrap 5.3.8, sass 1.93.2, vue 3.5.22, and more
@@ -76,7 +82,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated postcss from 8.4.31 to 8.4.47 (security fix)
 - Resolved 12 npm security vulnerabilities including 3 critical and 1 high severity
 
-[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.4...HEAD
+[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.5...HEAD
+[0.2.5]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.4...0.2.5
 [0.2.4]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.3...0.2.4
 [0.2.3]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.2...0.2.3
 [0.2.2]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.1...0.2.2
