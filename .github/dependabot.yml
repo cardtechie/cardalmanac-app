@@ -11,20 +11,18 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/Denver"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 0
     commit-message:
       prefix: "composer"
       prefix-development: "composer-dev"
-      include: "scope"
+      include: "security"
     reviewers:
       - "picklewagon"
     assignees:
       - "picklewagon"
     labels:
       - "dependencies"
-    allow:
-      # Allow version updates for all dependencies
-      - dependency-type: "all"
+      - "security"
     ignore:
       # Ignore dev-main dependencies that should be manually managed
       - dependency-name: "cardtechie/tradingcardapi-sdk-php"
@@ -38,20 +36,18 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/Denver"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 0
     commit-message:
       prefix: "npm"
       prefix-development: "npm-dev"
-      include: "scope"
+      include: "security"
     reviewers:
       - "picklewagon"
     assignees:
       - "picklewagon"
     labels:
       - "dependencies"
-    allow:
-      # Allow version updates for all dependencies
-      - dependency-type: "all"
+      - "security"
     groups:
       # Group Vue.js related dependencies together
       vue-ecosystem:
@@ -83,16 +79,14 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/Denver"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     commit-message:
       prefix: "actions"
-      include: "scope"
+      include: "security"
     reviewers:
       - "picklewagon"
     assignees:
       - "picklewagon"
     labels:
       - "dependencies"
-    allow:
-      # Allow version updates for all GitHub Actions
-      - dependency-type: "all"
+      - "security"
