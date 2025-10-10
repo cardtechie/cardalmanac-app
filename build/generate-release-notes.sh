@@ -213,6 +213,52 @@ EOF
     call_claude_api "$prompt"
 }
 
+# CHANGELOG.md parsing
+extract_changelog_section() {
+    local version="$1"
+    local changelog_file="$PROJECT_ROOT/CHANGELOG.md"
+
+    if [[ ! -f "$changelog_file" ]]; then
+        log_warn "CHANGELOG.md not found at $changelog_file"
+        return 1
+    fi
+
+    # Extract the section for this version
+    # Look for ## [version] and capture until next ## [
+    local in_section=false
+    local content=""
+
+    while IFS= read -r line; do
+        # Check if this is the start of our version section
+        if [[ $line =~ ^##\ \[${version}\] ]]; then
+            in_section=true
+            continue
+        fi
+
+        # Check if we've hit the next version section (stop extracting)
+        if [[ $in_section == true ]] && [[ $line =~ ^##\ \[(.*)\] ]]; then
+            break
+        fi
+
+        # Collect lines in our section, skip the date line and empty leading lines
+        if [[ $in_section == true ]]; then
+            # Skip empty lines at the start
+            if [[ -z "$content" ]] && [[ -z "$line" ]]; then
+                continue
+            fi
+            content+="$line"$'\n'
+        fi
+    done < "$changelog_file"
+
+    if [[ -n "$content" ]]; then
+        echo "$content"
+        return 0
+    else
+        log_warn "Version $version not found in CHANGELOG.md"
+        return 1
+    fi
+}
+
 # Release notes generation
 generate_commit_list() {
     local since_tag="$1"
@@ -420,26 +466,49 @@ generate_github_notes() {
     local previous_version="$2"
     local since_tag="$3"
     local use_ai="$4"
-    
-    # AI-generated summary for GitHub
-    if [[ "$use_ai" == "true" ]]; then
-        local commits=$(get_commits_since_tag "$since_tag" "%s")
-        local ai_summary=$(generate_ai_summary "$version" "$commits" "$previous_version")
-        if [[ -n "$ai_summary" ]]; then
-            echo "$ai_summary"
-            echo ""
+
+    # Try to extract from CHANGELOG.md first
+    local changelog_content=""
+    if changelog_content=$(extract_changelog_section "$version"); then
+        log_info "Using CHANGELOG.md content for version $version"
+
+        # AI-generated summary for GitHub (if enabled and CHANGELOG doesn't have one)
+        if [[ "$use_ai" == "true" ]]; then
+            local commits=$(get_commits_since_tag "$since_tag" "%s")
+            local ai_summary=$(generate_ai_summary "$version" "$commits" "$previous_version")
+            if [[ -n "$ai_summary" ]]; then
+                echo "$ai_summary"
+                echo ""
+            fi
         fi
+
+        # Output CHANGELOG content
+        echo "## What's Changed"
+        echo ""
+        echo "$changelog_content"
+    else
+        log_info "CHANGELOG.md section not found, falling back to commit analysis"
+
+        # AI-generated summary for GitHub
+        if [[ "$use_ai" == "true" ]]; then
+            local commits=$(get_commits_since_tag "$since_tag" "%s")
+            local ai_summary=$(generate_ai_summary "$version" "$commits" "$previous_version")
+            if [[ -n "$ai_summary" ]]; then
+                echo "$ai_summary"
+                echo ""
+            fi
+        fi
+
+        echo "## What's Changed"
+        categorize_changes "$since_tag"
+        echo ""
     fi
-    
-    echo "## What's Changed"
-    categorize_changes "$since_tag"
-    echo ""
-    
+
     echo "## 🐳 Docker Images"
     echo "- \`picklewagon/cardalmanac-app:$version\`"
     echo "- \`picklewagon/cardalmanac-app:latest\`"
     echo ""
-    
+
     if [[ -n "$previous_version" && -n "$GITHUB_OWNER" && -n "$GITHUB_REPO" ]]; then
         echo "**Full Changelog**: $(get_github_compare_url "$previous_version" "$version")"
     fi
