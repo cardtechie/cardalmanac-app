@@ -69,6 +69,13 @@ class ProductCtaTest extends TestCase
         $this->assertSame('', trim($this->renderPartial()));
     }
 
+    public function test_an_entry_without_a_url_renders_nothing_rather_than_a_dead_link(): void
+    {
+        Config::set('services.products.ctas', ['api' => $this->cta(['url' => ''])]);
+
+        $this->assertSame('', trim($this->renderPartial()));
+    }
+
     public function test_an_empty_cta_list_renders_nothing_and_does_not_error(): void
     {
         Config::set('services.products.ctas', []);
