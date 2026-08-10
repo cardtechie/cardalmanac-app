@@ -31,4 +31,29 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Product Calls To Action
+    |--------------------------------------------------------------------------
+    |
+    | Contextual CTAs rendered by resources/views/partials/product-cta.blade.php
+    | on high-intent pages (set details, set checklist). The partial iterates
+    | this list, so adding another product CTA is a config change and touches
+    | no markup. Copy lives here rather than in Blade so it is editable without
+    | a view change; only the toggle and destination URL are env-backed.
+    |
+    */
+
+    'products' => [
+        'ctas' => [
+            'api' => [
+                'enabled' => (bool) env('PRODUCT_CTA_API_ENABLED', true),
+                'heading' => 'Want this data in your app?',
+                'body' => 'The Trading Card API serves the same set and checklist data behind Card Almanac, ready to drop into your own project.',
+                'url' => env('PRODUCT_CTA_API_URL', 'https://tradingcardapi.com/pricing'),
+                'link_text' => 'Check out the Trading Card API',
+            ],
+        ],
+    ],
+
 ];

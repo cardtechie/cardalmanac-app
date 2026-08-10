@@ -38,6 +38,7 @@
                 </div>
             @endif
             </dl>
+            @include('partials.product-cta')
         </div>
         <div class="tab-pane fade" id="tabs-checklist" role="tabpanel" aria-labelledby="tabs-checklist-tab">
             Checklist
