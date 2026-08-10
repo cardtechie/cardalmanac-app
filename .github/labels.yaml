@@ -7,3 +7,8 @@
 - name: content
   description: Content update
   color: C2E0C6
+
+# Release tooling labels
+- name: skip-changelog
+  description: Skip the changelog-fragment check
+  color: ededed

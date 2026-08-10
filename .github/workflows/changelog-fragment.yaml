@@ -1,0 +1,59 @@
+name: Changelog Fragment
+
+# Fail any non-trivial PR that does not add a changelog.d/ fragment.
+# Parent design: picklewagon/picklewagon-mcp#672 (per-PR changelog fragments).
+# Escape hatch: add the `skip-changelog` label to opt a PR out of this gate.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  changelog-fragment:
+    name: PR adds a changelog fragment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skip when 'skip-changelog' label is present
+        if: contains(github.event.pull_request.labels.*.name, 'skip-changelog')
+        run: |
+          echo "::notice::'skip-changelog' label present — skipping the changelog-fragment gate."
+
+      - name: Checkout
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changelog') }}
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
+
+      - name: Assert PR adds a changelog.d/ fragment
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changelog') }}
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          # Enumerate files ADDED by this PR relative to its base.
+          added=$(git diff --name-only --diff-filter=A "${BASE_SHA}...${HEAD_SHA}")
+          # A valid fragment is changelog.d/<something>.md, excluding the
+          # README and the .gitkeep placeholder. Filename-shape validation is
+          # left to build/collate-changelog.sh at release; this gate only
+          # asserts presence.
+          fragment=$(printf '%s\n' "${added}" \
+            | grep -E '^changelog\.d/.+\.md$' \
+            | grep -v -E '^changelog\.d/README\.md$' \
+            || true)
+          if [ -z "${fragment}" ]; then
+            echo "::error::This PR adds no changelog.d/<issue>-<type>.md fragment."
+            echo ""
+            echo "Non-trivial PRs must add a per-PR changelog fragment so the"
+            echo "CHANGELOG is assembled cleanly at release without merge conflicts."
+            echo "See changelog.d/README.md for the convention."
+            echo ""
+            echo "If this PR is trivial / has no user-facing change, add the"
+            echo "'skip-changelog' label to opt out of this gate."
+            exit 1
+          fi
+          echo "::notice::Found changelog fragment(s):"
+          printf '%s\n' "${fragment}"

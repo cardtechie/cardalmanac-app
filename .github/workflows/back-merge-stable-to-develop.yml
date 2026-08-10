@@ -135,11 +135,29 @@ jobs:
             exit 0
           fi
 
-          # Open the conflict PR. This repo has no blocking changelog-fragment
-          # gate (no gate workflow, or an advisory-only check that never fails),
-          # so no skip-changelog label is needed on the sync PR.
-          gh pr create \
+          # Label skip-changelog: the sync PR carries no changelog.d/ fragment,
+          # and this repo's changelog-fragment check is bypassed by that label.
+          # Ensure the label exists first (create-if-missing) — otherwise
+          # gh pr create errors out on an unknown label and no conflict PR opens.
+          gh label create skip-changelog \
+            --description "Skip the changelog-fragment check" \
+            --color ededed 2>/dev/null || true
+
+          # Open the conflict PR. The label create/apply is best-effort: if the PAT
+          # lacks label permissions the label stays absent and the labeled create
+          # fails, so fall back to creating the PR without --label. Getting the PR
+          # opened (so the human can resolve the conflicts) matters more than the
+          # changelog-fragment bypass, which a maintainer can re-add by hand.
+          if ! gh pr create \
             --base develop \
             --head "$SYNC_BRANCH" \
             --title "Sync main into develop" \
-            --body "Automated back-merge of \`main\` into \`develop\` could not be applied cleanly; resolve the conflicts here."
+            --label skip-changelog \
+            --body "Automated back-merge of \`main\` into \`develop\` could not be applied cleanly; resolve the conflicts here."; then
+            echo "Labeled PR create failed (skip-changelog label likely absent); retrying without --label."
+            gh pr create \
+              --base develop \
+              --head "$SYNC_BRANCH" \
+              --title "Sync main into develop" \
+              --body "Automated back-merge of \`main\` into \`develop\` could not be applied cleanly; resolve the conflicts here."
+          fi
