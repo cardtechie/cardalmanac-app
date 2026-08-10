@@ -106,8 +106,23 @@ class ProductCtaTest extends TestCase
 
         $this->assertIsArray($ctas);
         $this->assertSame(['api'], array_keys($ctas));
-        $this->assertSame('https://tradingcardapi.com/pricing', $ctas['api']['url']);
-        $this->assertTrue($ctas['api']['enabled']);
+
+        $api = $ctas['api'];
+
+        foreach (['enabled', 'heading', 'body', 'url', 'link_text'] as $key) {
+            $this->assertArrayHasKey($key, $api);
+        }
+
+        $this->assertIsBool($api['enabled']);
+        $this->assertIsString($api['url']);
+        $this->assertNotSame('', $api['url']);
+
+        // Assert the env wiring rather than the env-resolved value: an
+        // environment that overrides PRODUCT_CTA_API_* must not fail the suite,
+        // but the shipped defaults (enabled, pointing at the pricing page) are
+        // still pinned for the un-overridden case.
+        $this->assertSame((bool) env('PRODUCT_CTA_API_ENABLED', true), $api['enabled']);
+        $this->assertSame(env('PRODUCT_CTA_API_URL', 'https://tradingcardapi.com/pricing'), $api['url']);
     }
 
     #[DataProvider('viewsThatIncludeTheCta')]
