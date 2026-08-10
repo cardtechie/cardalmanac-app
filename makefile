@@ -94,12 +94,18 @@ version-patch:
 	@./build/version.sh next-patch
 
 # Changelog management
+# collate-changelog.sh folds changelog.d/ fragments into "## [Unreleased]"
+# before update-changelog.sh runs; it is a clean no-op with no fragments.
 changelog-preview:
+	@./build/collate-changelog.sh --preview
 	@./build/update-changelog.sh preview
 
 changelog-update:
+	@./build/collate-changelog.sh
 	@./build/update-changelog.sh update
 
+# Legacy manual path: for entries not tied to a PR. Routine per-PR entries go to
+# changelog.d/<issue>-<type>.md instead (see changelog.d/README.md).
 changelog-add:
 	@read -p "Enter changelog entry: " entry; \
 	read -p "Enter type (Added/Changed/Fixed/Security/etc): " type; \
@@ -136,6 +142,7 @@ release-notes-text:
 # Combined release workflow
 release-prepare:
 	@echo "Preparing release..."
+	@./build/collate-changelog.sh
 	@./build/update-changelog.sh finalize
 	@./build/generate-release-notes.sh > RELEASE_NOTES.md
 	@echo "Release prepared! Review CHANGELOG.md and RELEASE_NOTES.md"
