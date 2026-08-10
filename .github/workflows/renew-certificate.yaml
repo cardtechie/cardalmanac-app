@@ -1,0 +1,129 @@
+name: Renew TLS certificate
+
+# The certificate has been renewed by hand up to now. The container entrypoint
+# also runs `certbot renew`, but only on restart, and it sleeps up to 8 minutes
+# before nginx starts (see #399) -- so it is not a renewal mechanism, it is an
+# outage. This renews in place against the running nginx instead: the cert lives
+# on a mounted volume and `renew_hook = service nginx reload` picks it up, so
+# there is no restart and no downtime.
+
+on:
+  schedule:
+    # Twice daily at an off-the-hour minute, per certbot's guidance. A run is a
+    # no-op unless the cert is inside its 30-day renewal window.
+    - cron: "17 3,15 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: renew-certificate
+  cancel-in-progress: false
+
+jobs:
+  renew:
+    name: Renew certificate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run certbot in the app container
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: cardalmanac.com
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          timeout: 60s
+          command_timeout: 10m
+          script_stop: true
+          script: |
+            set -eu
+
+            container=$(docker ps \
+              --filter "label=com.docker.compose.project=cardalmanaccom" \
+              --format '{{.Names}}' | head -n 1)
+
+            if [ -z "$container" ]; then
+              echo "::error::No running cardalmanac container found"
+              exit 1
+            fi
+            echo "Using container: $container"
+
+            # The renewal profile already carries `authenticator = nginx` and
+            # `renew_hook = service nginx reload`, so this renews against the
+            # live server and reloads it. --no-random-sleep-on-renew drops the
+            # 0-8 minute jitter, which only exists to spread load across large
+            # cron fleets and just burns the job's clock here.
+            docker exec "$container" certbot renew --no-random-sleep-on-renew
+
+            docker exec "$container" certbot certificates
+
+      # Independent of what certbot reported: check the certificate nginx is
+      # actually serving. This catches a renewal that succeeded on disk but was
+      # never picked up by the running server.
+      - name: Verify the served certificate
+        run: |
+          set -euo pipefail
+
+          expiry=$(echo \
+            | openssl s_client -servername cardalmanac.com -connect cardalmanac.com:443 2>/dev/null \
+            | openssl x509 -noout -enddate \
+            | cut -d= -f2)
+
+          if [ -z "$expiry" ]; then
+            echo "::error::Could not read the certificate being served"
+            exit 1
+          fi
+
+          days=$(( ( $(date -d "$expiry" +%s) - $(date +%s) ) / 86400 ))
+
+          {
+            echo "### TLS certificate"
+            echo
+            echo "- Served expiry: \`$expiry\`"
+            echo "- Days remaining: **$days**"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # certbot renews at 30 days. Still under 15 means renewal is not working.
+          if [ "$days" -lt 15 ]; then
+            echo "::error::Certificate expires in $days days - renewal is not working"
+            exit 1
+          fi
+
+          echo "Certificate valid for $days more days."
+
+      # A silent scheduled job that quietly stops working is how the site ended
+      # up down for five weeks (#400). Make failure land somewhere visible.
+      - name: Report failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: "TLS certificate renewal is failing"
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+
+          existing=$(gh issue list -R "$GITHUB_REPOSITORY" --state open \
+            --search "\"$TITLE\" in:title" --json number -q '.[0].number // empty')
+
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" -R "$GITHUB_REPOSITORY" \
+              --body "Renewal failed again — $RUN_URL"
+            exit 0
+          fi
+
+          cat > /tmp/body.md <<EOF
+          The scheduled certificate renewal failed: $RUN_URL
+
+          If this is not fixed before the certificate expires, every page on
+          cardalmanac.com starts failing TLS for every visitor.
+
+          Renew by hand in the meantime:
+
+          \`\`\`
+          docker exec cardalmanaccom_caapp_1 certbot renew --no-random-sleep-on-renew
+          \`\`\`
+          EOF
+
+          gh issue create -R "$GITHUB_REPOSITORY" --label bug \
+            --title "$TITLE" --body-file /tmp/body.md
