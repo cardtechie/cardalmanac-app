@@ -7,6 +7,7 @@ use CardTechie\TradingCardApiSdk\Exceptions\ResourceNotFoundException;
 use CardTechie\TradingCardApiSdk\Resources\Genre as GenreResource;
 use CardTechie\TradingCardApiSdk\Resources\Set as SetResource;
 use CardTechie\TradingCardApiSdk\TradingCardApi;
+use Illuminate\Support\Facades\Log;
 use Mockery;
 use Tests\TestCase;
 
@@ -73,6 +74,40 @@ class ApiFailureHandlingTest extends TestCase
 
         $this->get('/app/sets/00000000-0000-0000-0000-000000000000/bogus')
             ->assertStatus(404);
+    }
+
+    public function test_a_missing_set_is_logged_at_info_not_error(): void
+    {
+        $this->fakeApiThrowing(
+            'set',
+            SetResource::class,
+            new ResourceNotFoundException('Set not found')
+        );
+
+        Log::spy();
+
+        $this->get('/app/sets/00000000-0000-0000-0000-000000000000/bogus')
+            ->assertStatus(404);
+
+        // Crawlers hitting bogus ids must not drown out failures worth alerting on.
+        Log::shouldNotHaveReceived('error');
+        Log::shouldHaveReceived('info')
+            ->withArgs(fn (string $message) => $message === 'Trading Card API resource not found');
+    }
+
+    public function test_a_real_api_failure_is_still_reported_as_an_error(): void
+    {
+        $this->fakeApiThrowing(
+            'genre',
+            GenreResource::class,
+            new AuthenticationException('Client authentication failed')
+        );
+
+        Log::spy();
+
+        $this->get('/app/sets')->assertStatus(503);
+
+        Log::shouldHaveReceived('error');
     }
 
     public function test_json_clients_get_a_json_error_not_html(): void
