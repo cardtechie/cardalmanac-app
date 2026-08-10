@@ -5,9 +5,16 @@
 # CHANGELOG.md, grouped under the matching "### <Type>" heading, then delete the
 # consumed fragments. Runs ahead of update-changelog.sh in the release path so
 # the Unreleased section reflects every fragment before the release step runs.
-# Note: update-changelog.sh generates the new versioned section from git commit
-# messages and does not yet relocate the collated Unreleased bullets into it;
-# moving Unreleased content into the versioned section is tracked separately.
+# Note: the version cut is update-changelog.sh, which inserts the new
+# "## [<version>] - <date>" heading directly below "## [Unreleased]" — so the
+# bullets collated here become the body of the new version section and
+# [Unreleased] is left empty for the next cycle. The `update` action (used by
+# `make changelog-update`) additionally generates bullets from git commit
+# messages and inserts them above the collated content, so that path
+# concatenates both sources under the version heading; de-duplicating
+# commit-derived bullets against fragment-derived ones is tracked separately.
+# The `finalize` action (used by `make release-prepare`) relocates the collated
+# content only, with no commit-derived bullets.
 #
 # Per-PR fragments live at changelog.d/<issue>-<type>.md where <type> is one of
 # added | changed | deprecated | removed | fixed | security (canonical

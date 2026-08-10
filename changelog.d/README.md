@@ -78,8 +78,16 @@ script runs ahead of `build/update-changelog.sh` in the `changelog-update` and
 collation in non-destructive `--preview` mode so you can see the assembled
 `[Unreleased]` section without mutating any file.
 
-> **Note:** `build/update-changelog.sh` does not yet relocate the assembled
-> `## [Unreleased]` content into the new versioned section — it still assumes an
-> empty `[Unreleased]` template and generates the version entry from commit
-> messages. Wiring the release cut to move the collated Unreleased content into
-> the versioned section is tracked centrally in the Release workflow milestone.
+> **Note:** the version cut is `build/update-changelog.sh`. Both of its actions
+> insert the new `## [<version>] - <date>` heading immediately below
+> `## [Unreleased]`, so the content collated here becomes the body of the new
+> version section and `[Unreleased]` is left empty for the next cycle.
+>
+> -   `finalize` (used by `release-prepare`) relocates the collated content
+>     only.
+> -   `update` (used by `changelog-update`) additionally generates bullets from
+>     commit messages and inserts them above the collated content, so that path
+>     concatenates both sources under the version heading.
+>
+> De-duplicating commit-derived bullets against fragment-derived ones is tracked
+> centrally in the Release workflow milestone.
