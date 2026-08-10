@@ -1,0 +1,1 @@
+-   **[Issue #372]** Add an Issue Creation section to `.claude/CLAUDE.md` directing Claude to create GitHub issues with the `create_cross_repo_issues` MCP tool instead of `gh issue create`.
