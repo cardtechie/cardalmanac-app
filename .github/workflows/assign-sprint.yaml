@@ -47,7 +47,13 @@ jobs:
               }
             `, { org, projectNumber });
 
-            const project = projectQuery.organization.projectV2;
+            const project = projectQuery?.organization?.projectV2;
+
+            if (!project) {
+              core.warning(`Project #${projectNumber} not found on org ${org} (renamed, deleted, or token lacks access)`);
+              return;
+            }
+
             const projectId = project.id;
 
             // Find the Sprint iteration field
