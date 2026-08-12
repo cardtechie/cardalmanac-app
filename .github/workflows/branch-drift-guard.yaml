@@ -42,6 +42,18 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Validate the dispatch input up front. It cannot inject (it reaches the
+          # script through env, never through expression interpolation), but an
+          # unvalidated non-integer makes the [ -le ] test below error and fall
+          # through to the failure path, reporting drift when the real problem is
+          # the input. Fail with an honest message instead.
+          case "${DRIFT_THRESHOLD}" in
+            "" | *[!0-9]*)
+              echo "DRIFT_THRESHOLD must be a non-negative integer; got '${DRIFT_THRESHOLD}'." >&2
+              exit 1
+              ;;
+          esac
+
           git fetch --quiet origin main develop
 
           BEHIND=$(git rev-list --count origin/develop..origin/main)
