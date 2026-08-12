@@ -6,11 +6,11 @@ This document describes the comprehensive release automation system implemented 
 
 The Card Almanac release automation system provides:
 
-- **Semantic Versioning**: Automatic version calculation based on git branches and tags
-- **Automated Changelog**: Keep a Changelog format with intelligent commit categorization
-- **AI-Powered Release Notes**: Claude API integration for intelligent release summaries
-- **Branch-Aware Workflows**: Different version strategies for different branch types
-- **GitHub Integration**: Enhanced labels, issue automation, and release workflows
+-   **Semantic Versioning**: Automatic version calculation based on git branches and tags
+-   **Automated Changelog**: Keep a Changelog format with intelligent commit categorization
+-   **AI-Powered Release Notes**: Claude API integration for intelligent release summaries
+-   **Branch-Aware Workflows**: Different version strategies for different branch types
+-   **GitHub Integration**: Enhanced labels, issue automation, and release workflows
 
 ## Quick Start
 
@@ -48,18 +48,43 @@ git tag "v$(make version)"
 git push origin main --tags
 ```
 
+## Branching Model
+
+This repository uses two long-lived branches. The split is deliberate and asymmetric; issue #405 records what happens when it is allowed to drift.
+
+| Branch    | Role                                                                                                                    |
+| --------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `main`    | Default branch. The stable branch — this is what deploys, and every push to it cuts a release via `build-release.yaml`. |
+| `develop` | Integration branch. Feature and bugfix work lands here first and is promoted to `main` as a deliberate release step.    |
+
+### Sync direction
+
+-   **`main` → `develop` is automated.** `.github/workflows/back-merge-stable-to-develop.yml` runs on every push to `main`. It pushes `develop` directly when the merge is clean, and opens an `auto/sync-main-to-develop` PR when it conflicts. Resolve that PR promptly — until it merges, `develop` is missing released work.
+-   **`develop` → `main` is not automated.** Promotion is a deliberate release step (see [Release Process](#release-process) below). Nothing auto-promotes, because every push to `main` releases.
+-   **`.github/workflows/branch-drift-guard.yaml`** is the backstop. It runs weekly and fails when `develop` falls more than five commits behind `main`, which catches the case where the back-merge workflow itself is stuck or stopped firing. It deliberately ignores the other direction: `develop` being ahead of `main` is the normal state of an integration branch.
+
+### Trigger-bound workflows must live on `main`
+
+**Any workflow whose trigger only fires from the default branch must be merged to `main` to take effect.** That includes:
+
+-   `on: schedule`
+-   `on: push: branches: [main]`
+-   `workflow_dispatch` (only offered on the default branch)
+
+A workflow like this merged to `develop` looks shipped and never runs once. This is not hypothetical — it is how the back-merge workflow, which exists specifically to prevent branch drift, spent weeks stranded on `develop` unable to fire (#393/#395, landed on `main` by #405), and why #402's scheduled certificate-renewal workflow had to be re-landed as #404. When a change adds or edits a workflow with a default-branch-only trigger, target `main` regardless of what the issue's milestone or branch-type convention would otherwise suggest.
+
 ## Components
 
 ### 1. Version Management (`build/version.sh`)
 
 Provides semantic versioning with branch-aware version calculation:
 
-- **master/main**: Final releases (1.2.3)
-- **develop**: Beta releases (1.2.3-beta.N)
-- **release/\***: Release candidates (1.2.3-rc.N)
-- **hotfix/\***: Hotfix releases (1.2.4)
-- **feature/\***: Feature versions (1.2.3-feature.branch-name)
-- **other**: Development versions (1.2.3-dev.sha)
+-   **master/main**: Final releases (1.2.3)
+-   **develop**: Beta releases (1.2.3-beta.N)
+-   **release/\***: Release candidates (1.2.3-rc.N)
+-   **hotfix/\***: Hotfix releases (1.2.4)
+-   **feature/\***: Feature versions (1.2.3-feature.branch-name)
+-   **other**: Development versions (1.2.3-dev.sha)
 
 **Usage:**
 
@@ -73,9 +98,9 @@ Provides semantic versioning with branch-aware version calculation:
 
 **Options:**
 
-- `--branch BRANCH`: Override branch detection
-- `--format FORMAT`: Output format (version|tag|env)
-- `--verbose`: Enable verbose output
+-   `--branch BRANCH`: Override branch detection
+-   `--format FORMAT`: Output format (version|tag|env)
+-   `--verbose`: Enable verbose output
 
 ### 2. Changelog Management (`build/update-changelog.sh`)
 
@@ -94,10 +119,10 @@ Automated changelog management following [Keep a Changelog](https://keepachangel
 
 **Features:**
 
-- Automatic commit categorization (Added/Changed/Fixed/Security/etc.)
-- GitHub compare URL generation
-- Conventional commit detection
-- Unreleased section management
+-   Automatic commit categorization (Added/Changed/Fixed/Security/etc.)
+-   GitHub compare URL generation
+-   Conventional commit detection
+-   Unreleased section management
 
 ### 3. Release Notes Generation (`build/generate-release-notes.sh`)
 
@@ -114,16 +139,16 @@ AI-powered release notes with Claude API integration:
 
 **Features:**
 
-- Claude API integration for intelligent summaries
-- Multiple output formats (markdown/github/text)
-- Docker image information
-- GitHub integration with compare URLs
-- Fallback mode when AI is unavailable
+-   Claude API integration for intelligent summaries
+-   Multiple output formats (markdown/github/text)
+-   Docker image information
+-   GitHub integration with compare URLs
+-   Fallback mode when AI is unavailable
 
 **Environment Variables:**
 
-- `CLAUDE_API_KEY`: Claude API key for AI-powered summaries
-- `GITHUB_TOKEN`: GitHub API token for enhanced metadata
+-   `CLAUDE_API_KEY`: Claude API key for AI-powered summaries
+-   `GITHUB_TOKEN`: GitHub API token for enhanced metadata
 
 ## Makefile Commands
 
@@ -169,21 +194,21 @@ make release-help         # Show all release commands
 
 Comprehensive label system with categories:
 
-- **Priority**: `priority: critical`, `priority: high`, `priority: medium`, `priority: low`
-- **Type**: `type: bug`, `type: feature`, `type: enhancement`, `type: security`
-- **Status**: `status: in-progress`, `status: needs-review`, `status: blocked`
-- **Component**: `component: frontend`, `component: backend`, `component: docker`
-- **Area**: `area: cards`, `area: sets`, `area: search`, `area: authentication`
-- **Scope**: `scope: breaking`, `scope: major`, `scope: minor`, `scope: patch`
+-   **Priority**: `priority: critical`, `priority: high`, `priority: medium`, `priority: low`
+-   **Type**: `type: bug`, `type: feature`, `type: enhancement`, `type: security`
+-   **Status**: `status: in-progress`, `status: needs-review`, `status: blocked`
+-   **Component**: `component: frontend`, `component: backend`, `component: docker`
+-   **Area**: `area: cards`, `area: sets`, `area: search`, `area: authentication`
+-   **Scope**: `scope: breaking`, `scope: major`, `scope: minor`, `scope: patch`
 
 ### Issue Branch Automation (`/.github/issue-branch.yml`)
 
 Automatic branch creation based on issue labels:
 
-- `type: bug` → `hotfix/123-issue-title`
-- `type: feature` → `feature/123-issue-title`
-- `type: maintenance` → `chore/123-issue-title`
-- `type: documentation` → `docs/123-issue-title`
+-   `type: bug` → `hotfix/123-issue-title`
+-   `type: feature` → `feature/123-issue-title`
+-   `type: maintenance` → `chore/123-issue-title`
+-   `type: documentation` → `docs/123-issue-title`
 
 ## Configuration Files
 
@@ -200,14 +225,14 @@ Automatic branch creation based on issue labels:
 
 ### Required
 
-- `TRADINGCARDAPI_CLIENT_ID`: API client ID
-- `TRADINGCARDAPI_CLIENT_SECRET`: API client secret
+-   `TRADINGCARDAPI_CLIENT_ID`: API client ID
+-   `TRADINGCARDAPI_CLIENT_SECRET`: API client secret
 
 ### Optional
 
-- `CLAUDE_API_KEY`: Enable AI-powered release summaries
-- `GITHUB_TOKEN`: Enhanced GitHub integration
-- `DOCKER_TAG_*`: Override Docker image tags
+-   `CLAUDE_API_KEY`: Enable AI-powered release summaries
+-   `GITHUB_TOKEN`: Enhanced GitHub integration
+-   `DOCKER_TAG_*`: Override Docker image tags
 
 ## Branch Strategies
 
@@ -279,18 +304,18 @@ git push origin main --tags
 
 ### Features
 
-- Intelligent commit summarization
-- User-focused release descriptions
-- Automatic categorization
-- Professional formatting
+-   Intelligent commit summarization
+-   User-focused release descriptions
+-   Automatic categorization
+-   Professional formatting
 
 ### Fallback
 
 If Claude API is unavailable:
 
-- System falls back to template-based generation
-- All functionality remains available
-- No interruption to release process
+-   System falls back to template-based generation
+-   All functionality remains available
+-   No interruption to release process
 
 ## Troubleshooting
 
@@ -363,22 +388,22 @@ chore: update dependencies
 
 ### 2. Branch Management
 
-- Use descriptive branch names
-- Follow the branch type conventions
-- Keep feature branches focused and small
+-   Use descriptive branch names
+-   Follow the branch type conventions
+-   Keep feature branches focused and small
 
 ### 3. Release Preparation
 
-- Always run `make release-preview` first
-- Review generated changelog and release notes
-- Test the release in staging environment
-- Use semantic version increments appropriately
+-   Always run `make release-preview` first
+-   Review generated changelog and release notes
+-   Test the release in staging environment
+-   Use semantic version increments appropriately
 
 ### 4. Issue Management
 
-- Apply appropriate labels to issues
-- Use issue templates for consistency
-- Link PRs to issues for automatic tracking
+-   Apply appropriate labels to issues
+-   Use issue templates for consistency
+-   Link PRs to issues for automatic tracking
 
 ## Integration with CI/CD
 
