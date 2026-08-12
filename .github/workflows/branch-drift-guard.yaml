@@ -1,0 +1,76 @@
+name: Branch drift guard
+
+# Backstop for the back-merge workflow (back-merge-stable-to-develop.yml).
+#
+# That workflow keeps develop current with main on every push to main, but it
+# can stall silently: a conflict opens the auto/sync-main-to-develop PR and then
+# nothing happens until a human resolves it. This job makes that stall visible
+# on a schedule instead of during the next incident.
+#
+# Only the "behind" direction is checked. develop being AHEAD of main is the
+# normal state of an integration branch and must not alarm.
+
+on:
+  schedule:
+    # Mondays at 13:00 UTC.
+    - cron: "0 13 * * 1"
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: "Fail when develop is more than this many commits behind main"
+        required: false
+        default: "5"
+
+# Read-only: this job inspects branch ancestry and never writes.
+permissions:
+  contents: read
+
+env:
+  # workflow_dispatch can override the threshold; scheduled runs get the default.
+  DRIFT_THRESHOLD: ${{ inputs.threshold || '5' }}
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          # Full history so the rev-list counts below are accurate.
+          fetch-depth: 0
+
+      - name: Check how far develop trails main
+        run: |
+          set -euo pipefail
+
+          git fetch --quiet origin main develop
+
+          BEHIND=$(git rev-list --count origin/develop..origin/main)
+          AHEAD=$(git rev-list --count origin/main..origin/develop)
+
+          echo "develop is ${BEHIND} commit(s) behind main and ${AHEAD} commit(s) ahead."
+          echo "Threshold: fail above ${DRIFT_THRESHOLD} commit(s) behind."
+
+          if [ "${BEHIND}" -le "${DRIFT_THRESHOLD}" ]; then
+            echo "Within threshold; nothing to do."
+            exit 0
+          fi
+
+          cat >&2 <<EOF
+          develop is ${BEHIND} commit(s) behind main, over the threshold of ${DRIFT_THRESHOLD}.
+
+          main is the branch that deploys, so work merged to develop is not in
+          production until develop is promoted -- and a develop this far behind is
+          not a safe promotion candidate.
+
+          To fix:
+            1. Look for an open "Sync main into develop" PR from the
+               auto/sync-main-to-develop branch. If one exists, resolve its
+               conflicts and merge it.
+            2. If no such PR exists, the back-merge workflow
+               (.github/workflows/back-merge-stable-to-develop.yml) is not firing.
+               Check its recent runs under the Actions tab -- it only runs from
+               main, so confirm the file is present there.
+
+          See docs/RELEASE-AUTOMATION.md, "Branching Model", for the full model.
+          EOF
+          exit 1
