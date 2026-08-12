@@ -26,9 +26,9 @@ Continuing to read in that same article on Wikipedia you will find:
 
 ## Examples of Almanacs
 
-- The **_[Old Farmer's Almanac](https://en.wikipedia.org/wiki/Old_Farmer%27s_Almanac)_** is a reference book containing weather forecasts, planting chart astronomical data, recipes, and articles. Topics include gardening, sports, astronomy, folklore, and predictions on trends in fashion, food, home, technology, and living for the coming year. Published every September, _The Old Farmer's Almanac_ has been published continuously since 1792, making it the oldest continuously published periodical in North America.
-- **[_Barbanera_](https://en.wikipedia.org/wiki/Barbanera)** is a famous Italian almanac, printed for the first time in 1762 and still published yearly today. It traditionally proposes weather forecasts, information about lunar phases and the stars, curious facts, proverbs, gardening tips and advice for a healthy lifestyle.
-- **_[Poor Richard's Almanack](https://en.wikipedia.org/wiki/Poor_Richard%27s_Almanack)_** was a yearly almanac published by Benjamin Franklin offered a mixture of seasonal weather forecasts, practical household hints, puzzles, and other amusements. The publication appeared continually from 1732 to 1758.
+-   The **_[Old Farmer's Almanac](https://en.wikipedia.org/wiki/Old_Farmer%27s_Almanac)_** is a reference book containing weather forecasts, planting chart astronomical data, recipes, and articles. Topics include gardening, sports, astronomy, folklore, and predictions on trends in fashion, food, home, technology, and living for the coming year. Published every September, _The Old Farmer's Almanac_ has been published continuously since 1792, making it the oldest continuously published periodical in North America.
+-   **[_Barbanera_](https://en.wikipedia.org/wiki/Barbanera)** is a famous Italian almanac, printed for the first time in 1762 and still published yearly today. It traditionally proposes weather forecasts, information about lunar phases and the stars, curious facts, proverbs, gardening tips and advice for a healthy lifestyle.
+-   **_[Poor Richard's Almanack](https://en.wikipedia.org/wiki/Poor_Richard%27s_Almanack)_** was a yearly almanac published by Benjamin Franklin offered a mixture of seasonal weather forecasts, practical household hints, puzzles, and other amusements. The publication appeared continually from 1732 to 1758.
 
 Doesn’t everybody want to know the correlation between card prices and astronomical data? Or be able to predict when a specific rookie card will rise because of weather trends?
 
@@ -38,15 +38,15 @@ In all seriousness, how great would it be to have an almanac with trading cards 
 
 Based on previous experience with almanacs, and given our kind-of deep dive into what an almanac is, what content belongs in a trading card almanac?
 
-- Information on every card and set ever released
-- Checklists
-- Release dates for sets
-- Print runs
-- Pack odds
-- Sales information
-- Cards by player and team
-- Player information
-- Team information
+-   Information on every card and set ever released
+-   Checklists
+-   Release dates for sets
+-   Print runs
+-   Pack odds
+-   Sales information
+-   Cards by player and team
+-   Player information
+-   Team information
 
 I know there is lots more data that could contribute to your collecting experience. The chance of getting this data and compiling into one data set is going to be very difficult, if not impossible. The thought of it though is very exciting.
 
