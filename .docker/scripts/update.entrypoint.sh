@@ -31,12 +31,16 @@ cd /var/www/app
 #
 # Calling install-cert.sh here was pure liability: `certbot renew` sleeps up to
 # ~8 minutes of jitter before this script reaches `exec "$@"` (the line that
-# starts nginx), and under `set -e` any certbot failure -- Let's Encrypt outage,
-# rate limit, network blip -- aborted the entrypoint outright, so the container
-# never came up at all.
+# starts supervisord, and therefore nginx), and under `set -e` any certbot
+# failure -- Let's Encrypt outage, rate limit, network blip -- aborted the
+# entrypoint outright, so the container never came up at all.
 #
-# install-cert.sh is unchanged and still run by hand for first issuance on a new
-# host. See docs/TLS-CERTIFICATES.md.
+# install-cert.sh is unchanged and can still be run by hand; when a certificate
+# already exists it performs a renewal. Its first-issuance branch is unproven
+# (`certbot --nginx` needs a running nginx, which cannot start without a
+# certificate), so bootstrapping a brand-new host means getting a certificate
+# onto the mounted volume by some working method -- reworking install-cert.sh
+# for that is tracked in #420. See docs/TLS-CERTIFICATES.md.
 
 php artisan blog:build
 
