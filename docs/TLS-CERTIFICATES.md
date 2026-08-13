@@ -142,5 +142,5 @@ volume, so this branch has never actually been exercised in its current form.
 Treat step 2 above as needing a working method rather than an established one. A standalone
 issuance (for example `certbot certonly --standalone`, with nginx stopped and port 80 free)
 writing into the mounted volume is the likely shape, but it has not been validated here.
-Reworking `install-cert.sh` for first issuance is tracked separately and is out of scope
+Reworking `install-cert.sh` for first issuance is tracked in #420 and is out of scope
 for #407.
