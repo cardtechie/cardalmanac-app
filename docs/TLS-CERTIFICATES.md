@@ -53,6 +53,12 @@ profile carries `renew_hook = service nginx reload`, so a new certificate is pic
 without a restart and without downtime. On failure the workflow files or comments on a
 GitHub issue.
 
+> **This workflow is now the only automated renewal path.** Since #407 the container no
+> longer runs certbot at startup, so if the scheduled workflow stops firing, nothing else
+> will renew the certificate. Note that GitHub disables `schedule` triggers on repositories
+> with no activity for 60 days. If the repository ever goes quiet for an extended period,
+> confirm the workflow is still enabled — or renew by hand using the commands below.
+
 ## Manual renewal
 
 To renew by hand on the host:
