@@ -23,7 +23,20 @@ cd /var/www/app
 
 #npm run production
 
-/var/www/app/.docker/scripts/install-cert.sh
+# The container deliberately does not touch certbot at startup (#407).
+# Certificates persist on the /etc/letsencrypt volume mount, so one is already
+# on disk at every restart, and renewal is handled out-of-band by the twice-daily
+# .github/workflows/renew-certificate.yaml (#404), which renews against the
+# running nginx with no downtime.
+#
+# Calling install-cert.sh here was pure liability: `certbot renew` sleeps up to
+# ~8 minutes of jitter before this script reaches `exec "$@"` (the line that
+# starts nginx), and under `set -e` any certbot failure -- Let's Encrypt outage,
+# rate limit, network blip -- aborted the entrypoint outright, so the container
+# never came up at all.
+#
+# install-cert.sh is unchanged and still run by hand for first issuance on a new
+# host. See docs/TLS-CERTIFICATES.md.
 
 php artisan blog:build
 
