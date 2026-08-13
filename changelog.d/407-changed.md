@@ -1,0 +1,2 @@
+-   **[Issue #407]** Remove the certbot call from the container entrypoint so startup no longer waits on certificate renewal.
+    -   Provisioning a brand-new host now requires running `.docker/scripts/install-cert.sh` once before the container can serve HTTPS; see `docs/TLS-CERTIFICATES.md`.
