@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 -   `main` is the default branch and the one that deploys; every push to it cuts a release.
 -   `develop` is the integration branch. Feature and bugfix work targets `develop`.
 -   `main` → `develop` is synced automatically by `.github/workflows/back-merge-stable-to-develop.yml`. `develop` → `main` promotion is a deliberate release step and is never automated.
--   **Exception — trigger-bound workflows must target `main`.** A workflow using `on: schedule`, `on: push: branches: [main]`, or `workflow_dispatch` only fires from the default branch, so merging it to `develop` means it looks shipped and never runs. Base that work on `main` regardless of the issue's milestone or branch-type convention.
+-   **Exception — trigger-bound workflows must target `main`.** A workflow only runs if its definition is already on the branch the event resolves to: `on: push: branches: [main]` is read from the pushed commit on `main` (push triggers are not default-branch-only in general — a workflow on another branch fires for pushes to that branch), while `on: schedule` and `workflow_dispatch` are sourced from the default branch, i.e. `main`. Either way, merging such a workflow only to `develop` means it looks shipped and never runs. Base that work on `main` regardless of the issue's milestone or branch-type convention.
 
 See [docs/RELEASE-AUTOMATION.md](../docs/RELEASE-AUTOMATION.md) for the full model and the incident history behind it (#405).
 

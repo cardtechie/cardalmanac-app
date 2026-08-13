@@ -65,13 +65,12 @@ This repository uses two long-lived branches. The split is deliberate and asymme
 
 ### Trigger-bound workflows must live on `main`
 
-**Any workflow whose trigger only fires from the default branch must be merged to `main` to take effect.** That includes:
+**A workflow only runs if its definition is already present on the branch the triggering event resolves to — which, for this repository's automation, always means `main`.** Two distinct mechanisms produce that same conclusion:
 
--   `on: schedule`
--   `on: push: branches: [main]`
--   `workflow_dispatch` (only offered on the default branch)
+-   `on: push: branches: [main]` — GitHub reads workflow definitions from the pushed commit, so a workflow that should run on pushes to `main` must already exist on `main` at that commit. Push triggers are not default-branch-only in general: a workflow living on some other branch will fire for pushes to _that_ branch.
+-   `on: schedule` and `workflow_dispatch` — these are sourced from the **default branch** only, so here they must live on `main` regardless of which branch they operate against.
 
-A workflow like this merged to `develop` looks shipped and never runs once. This is not hypothetical — it is how the back-merge workflow, which exists specifically to prevent branch drift, spent weeks stranded on `develop` unable to fire (#393/#395, landed on `main` by #405), and why #402's scheduled certificate-renewal workflow had to be re-landed as #404. When a change adds or edits a workflow with a default-branch-only trigger, target `main` regardless of what the issue's milestone or branch-type convention would otherwise suggest.
+Either way, such a workflow merged only to `develop` looks shipped and never runs once. This is not hypothetical — it is how the back-merge workflow, which exists specifically to prevent branch drift, spent weeks stranded on `develop` unable to fire (#393/#395, landed on `main` by #405), and why #402's scheduled certificate-renewal workflow had to be re-landed as #404. When a change adds or edits a workflow that must run on `main` (whether by push, schedule, or manual dispatch), target `main` regardless of what the issue's milestone or branch-type convention would otherwise suggest.
 
 ## Components
 
