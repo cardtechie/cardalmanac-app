@@ -19,11 +19,11 @@ time, and then deleted.
 changelog.d/<issue>-<type>.md
 ```
 
--   `<issue>` — the GitHub issue number the change closes (e.g. `391`).
--   `<type>` — one of: `added`, `changed`, `deprecated`, `removed`, `fixed`,
-    `security` (lower-case, canonical Keep a Changelog order — the same order
-    `build/collate-changelog.sh` uses). This selects which `### <Type>`
-    subsection the fragment is collated under.
+- `<issue>` — the GitHub issue number the change closes (e.g. `391`).
+- `<type>` — one of: `added`, `changed`, `deprecated`, `removed`, `fixed`,
+  `security` (lower-case, canonical Keep a Changelog order — the same order
+  `build/collate-changelog.sh` uses). This selects which `### <Type>`
+  subsection the fragment is collated under.
 
 Each PR writes a unique new path, so this is genuinely zero-conflict.
 
@@ -35,8 +35,8 @@ otherwise have gone under the matching `### <Type>` heading, optionally followed
 by at most one indented caveat sub-bullet:
 
 ```markdown
--   **[Issue #391]** Adopt `changelog.d/` fragments and collate them into `CHANGELOG.md` at release time so concurrent PRs stop conflicting on the shared `## [Unreleased]` section.
-    -   Non-trivial PRs must now add a `changelog.d/<issue>-<type>.md` fragment or carry the `skip-changelog` label.
+- **[Issue #391]** Adopt `changelog.d/` fragments and collate them into `CHANGELOG.md` at release time so concurrent PRs stop conflicting on the shared `## [Unreleased]` section.
+    - Non-trivial PRs must now add a `changelog.d/<issue>-<type>.md` fragment or carry the `skip-changelog` label.
 ```
 
 Do **not** put a top-level heading in a fragment — the `### <Type>` heading is
@@ -83,11 +83,11 @@ collation in non-destructive `--preview` mode so you can see the assembled
 > `## [Unreleased]`, so the content collated here becomes the body of the new
 > version section and `[Unreleased]` is left empty for the next cycle.
 >
-> -   `finalize` (used by `release-prepare`) relocates the collated content
->     only.
-> -   `update` (used by `changelog-update`) additionally generates bullets from
->     commit messages and inserts them above the collated content, so that path
->     concatenates both sources under the version heading.
+> - `finalize` (used by `release-prepare`) relocates the collated content
+>   only.
+> - `update` (used by `changelog-update`) additionally generates bullets from
+>   commit messages and inserts them above the collated content, so that path
+>   concatenates both sources under the version heading.
 >
 > De-duplicating commit-derived bullets against fragment-derived ones is tracked
 > centrally in the Release workflow milestone.
