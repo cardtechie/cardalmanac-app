@@ -88,7 +88,7 @@ return [
 
     'mix' => [
         // Should the mix manifest be used to identify the assets?
-        'active' => true,
+        'active' => false,
 
         // Custom path to the Mix manifest (absolute). Ignore, if default is used.
         'manifest_path' => null,
