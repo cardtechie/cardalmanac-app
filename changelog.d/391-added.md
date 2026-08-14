@@ -1,2 +1,2 @@
--   **[Issue #391]** Adopt per-PR changelog fragments in `changelog.d/`, with a CI gate and release-time collation, so concurrent PRs no longer conflict on `CHANGELOG.md`.
-    -   Non-trivial PRs must now add a `changelog.d/<issue>-<type>.md` fragment or carry the `skip-changelog` label.
+- **[Issue #391]** Adopt per-PR changelog fragments in `changelog.d/`, with a CI gate and release-time collation, so concurrent PRs no longer conflict on `CHANGELOG.md`.
+    - Non-trivial PRs must now add a `changelog.d/<issue>-<type>.md` fragment or carry the `skip-changelog` label.
