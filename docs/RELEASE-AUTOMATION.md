@@ -6,12 +6,12 @@ This document describes the comprehensive release automation system implemented 
 
 The Card Almanac release automation system provides:
 
--   **Semantic Versioning**: Automatic version calculation based on git branches and tags
--   **Automated Changelog**: Keep a Changelog format with intelligent commit categorization
--   **Conflict-Free Changelogs**: Per-PR `changelog.d/` fragments collated once at release
--   **AI-Powered Release Notes**: Claude API integration for intelligent release summaries
--   **Branch-Aware Workflows**: Different version strategies for different branch types
--   **GitHub Integration**: Enhanced labels, issue automation, and release workflows
+- **Semantic Versioning**: Automatic version calculation based on git branches and tags
+- **Automated Changelog**: Keep a Changelog format with intelligent commit categorization
+- **Conflict-Free Changelogs**: Per-PR `changelog.d/` fragments collated once at release
+- **AI-Powered Release Notes**: Claude API integration for intelligent release summaries
+- **Branch-Aware Workflows**: Different version strategies for different branch types
+- **GitHub Integration**: Enhanced labels, issue automation, and release workflows
 
 ## Quick Start
 
@@ -55,12 +55,12 @@ git push origin main --tags
 
 Provides semantic versioning with branch-aware version calculation:
 
--   **master/main**: Final releases (1.2.3)
--   **develop**: Beta releases (1.2.3-beta.N)
--   **release/\***: Release candidates (1.2.3-rc.N)
--   **hotfix/\***: Hotfix releases (1.2.4)
--   **feature/\***: Feature versions (1.2.3-feature.branch-name)
--   **other**: Development versions (1.2.3-dev.sha)
+- **master/main**: Final releases (1.2.3)
+- **develop**: Beta releases (1.2.3-beta.N)
+- **release/\***: Release candidates (1.2.3-rc.N)
+- **hotfix/\***: Hotfix releases (1.2.4)
+- **feature/\***: Feature versions (1.2.3-feature.branch-name)
+- **other**: Development versions (1.2.3-dev.sha)
 
 **Usage:**
 
@@ -74,9 +74,9 @@ Provides semantic versioning with branch-aware version calculation:
 
 **Options:**
 
--   `--branch BRANCH`: Override branch detection
--   `--format FORMAT`: Output format (version|tag|env)
--   `--verbose`: Enable verbose output
+- `--branch BRANCH`: Override branch detection
+- `--format FORMAT`: Output format (version|tag|env)
+- `--verbose`: Enable verbose output
 
 ### 2. Changelog Management (`build/update-changelog.sh`)
 
@@ -95,10 +95,10 @@ Automated changelog management following [Keep a Changelog](https://keepachangel
 
 **Features:**
 
--   Automatic commit categorization (Added/Changed/Fixed/Security/etc.)
--   GitHub compare URL generation
--   Conventional commit detection
--   Unreleased section management
+- Automatic commit categorization (Added/Changed/Fixed/Security/etc.)
+- GitHub compare URL generation
+- Conventional commit detection
+- Unreleased section management
 
 > **Note:** `add-unreleased` (and `make changelog-add`) is the **legacy manual
 > path**, kept for entries that are not tied to a pull request. Routine per-PR
@@ -153,16 +153,16 @@ AI-powered release notes with Claude API integration:
 
 **Features:**
 
--   Claude API integration for intelligent summaries
--   Multiple output formats (markdown/github/text)
--   Docker image information
--   GitHub integration with compare URLs
--   Fallback mode when AI is unavailable
+- Claude API integration for intelligent summaries
+- Multiple output formats (markdown/github/text)
+- Docker image information
+- GitHub integration with compare URLs
+- Fallback mode when AI is unavailable
 
 **Environment Variables:**
 
--   `CLAUDE_API_KEY`: Claude API key for AI-powered summaries
--   `GITHUB_TOKEN`: GitHub API token for enhanced metadata
+- `CLAUDE_API_KEY`: Claude API key for AI-powered summaries
+- `GITHUB_TOKEN`: GitHub API token for enhanced metadata
 
 ## Makefile Commands
 
@@ -212,21 +212,21 @@ make release-help         # Show all release commands
 
 Comprehensive label system with categories:
 
--   **Priority**: `priority: critical`, `priority: high`, `priority: medium`, `priority: low`
--   **Type**: `type: bug`, `type: feature`, `type: enhancement`, `type: security`
--   **Status**: `status: in-progress`, `status: needs-review`, `status: blocked`
--   **Component**: `component: frontend`, `component: backend`, `component: docker`
--   **Area**: `area: cards`, `area: sets`, `area: search`, `area: authentication`
--   **Scope**: `scope: breaking`, `scope: major`, `scope: minor`, `scope: patch`
+- **Priority**: `priority: critical`, `priority: high`, `priority: medium`, `priority: low`
+- **Type**: `type: bug`, `type: feature`, `type: enhancement`, `type: security`
+- **Status**: `status: in-progress`, `status: needs-review`, `status: blocked`
+- **Component**: `component: frontend`, `component: backend`, `component: docker`
+- **Area**: `area: cards`, `area: sets`, `area: search`, `area: authentication`
+- **Scope**: `scope: breaking`, `scope: major`, `scope: minor`, `scope: patch`
 
 ### Issue Branch Automation (`/.github/issue-branch.yml`)
 
 Automatic branch creation based on issue labels:
 
--   `type: bug` → `hotfix/123-issue-title`
--   `type: feature` → `feature/123-issue-title`
--   `type: maintenance` → `chore/123-issue-title`
--   `type: documentation` → `docs/123-issue-title`
+- `type: bug` → `hotfix/123-issue-title`
+- `type: feature` → `feature/123-issue-title`
+- `type: maintenance` → `chore/123-issue-title`
+- `type: documentation` → `docs/123-issue-title`
 
 ## Configuration Files
 
@@ -245,14 +245,14 @@ Automatic branch creation based on issue labels:
 
 ### Required
 
--   `TRADINGCARDAPI_CLIENT_ID`: API client ID
--   `TRADINGCARDAPI_CLIENT_SECRET`: API client secret
+- `TRADINGCARDAPI_CLIENT_ID`: API client ID
+- `TRADINGCARDAPI_CLIENT_SECRET`: API client secret
 
 ### Optional
 
--   `CLAUDE_API_KEY`: Enable AI-powered release summaries
--   `GITHUB_TOKEN`: Enhanced GitHub integration
--   `DOCKER_TAG_*`: Override Docker image tags
+- `CLAUDE_API_KEY`: Enable AI-powered release summaries
+- `GITHUB_TOKEN`: Enhanced GitHub integration
+- `DOCKER_TAG_*`: Override Docker image tags
 
 ## Branch Strategies
 
@@ -327,18 +327,18 @@ git push origin main --tags
 
 ### Features
 
--   Intelligent commit summarization
--   User-focused release descriptions
--   Automatic categorization
--   Professional formatting
+- Intelligent commit summarization
+- User-focused release descriptions
+- Automatic categorization
+- Professional formatting
 
 ### Fallback
 
 If Claude API is unavailable:
 
--   System falls back to template-based generation
--   All functionality remains available
--   No interruption to release process
+- System falls back to template-based generation
+- All functionality remains available
+- No interruption to release process
 
 ## Troubleshooting
 
@@ -411,22 +411,22 @@ chore: update dependencies
 
 ### 2. Branch Management
 
--   Use descriptive branch names
--   Follow the branch type conventions
--   Keep feature branches focused and small
+- Use descriptive branch names
+- Follow the branch type conventions
+- Keep feature branches focused and small
 
 ### 3. Release Preparation
 
--   Always run `make release-preview` first
--   Review generated changelog and release notes
--   Test the release in staging environment
--   Use semantic version increments appropriately
+- Always run `make release-preview` first
+- Review generated changelog and release notes
+- Test the release in staging environment
+- Use semantic version increments appropriately
 
 ### 4. Issue Management
 
--   Apply appropriate labels to issues
--   Use issue templates for consistency
--   Link PRs to issues for automatic tracking
+- Apply appropriate labels to issues
+- Use issue templates for consistency
+- Link PRs to issues for automatic tracking
 
 ## Integration with CI/CD
 

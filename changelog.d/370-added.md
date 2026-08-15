@@ -1,2 +1,2 @@
--   **[Issue #370]** Add a config-driven Trading Card API call-to-action to the set detail and set checklist pages.
-    -   The CTA is opt-out per environment via `PRODUCT_CTA_API_ENABLED`; the MCP call-to-action is deliberately excluded and ships separately in #409.
+- **[Issue #370]** Add a config-driven Trading Card API call-to-action to the set detail and set checklist pages.
+    - The CTA is opt-out per environment via `PRODUCT_CTA_API_ENABLED`; the MCP call-to-action is deliberately excluded and ships separately in #409.
