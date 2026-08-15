@@ -1,0 +1,2 @@
+- **[Issue #407]** Remove the certbot call from the container entrypoint so startup no longer waits on certificate renewal.
+    - A certificate must already be present on the mounted `/etc/letsencrypt` volume before the container starts, since nginx will not start without one; see `docs/TLS-CERTIFICATES.md` for bootstrapping a brand-new host.
