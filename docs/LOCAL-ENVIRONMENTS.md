@@ -19,8 +19,8 @@ MIX_SENDINBLUE_API_KEY=<your sendinblue api key>
 
 The Card Almanac project supports multiple local development configurations to match different development needs:
 
--   **⚡ Minimal Almanac**: Lightweight almanac development (almanac + database only)
--   **🔧 Full Development**: Complete local stack with all services
+- **⚡ Minimal Almanac**: Lightweight almanac development (almanac + database only)
+- **🔧 Full Development**: Complete local stack with all services
 
 ## Environment Configurations
 
@@ -40,21 +40,21 @@ make upd
 
 **What runs locally:**
 
--   ✅ Card Almanac app (8541) <https://cardalmanac.dev:8541/>
--   ✅ MySQL database (13307)
+- ✅ Card Almanac app (8541) <https://cardalmanac.dev:8541/>
+- ✅ MySQL database (13307)
 
 **External dependencies:**
 
--   🌐 Trading Card API (`host.docker.internal:8243`)
+- 🌐 Trading Card API (`host.docker.internal:8243`)
 
 **Best for:**
 
--   Almanac UI/UX development
--   Database schema changes
--   Fast iteration on almanac features
--   Minimal resource usage
--   Quick development cycles
--   Testing almanac changes independently
+- Almanac UI/UX development
+- Database schema changes
+- Fast iteration on almanac features
+- Minimal resource usage
+- Quick development cycles
+- Testing almanac changes independently
 
 ---
 
@@ -68,22 +68,22 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 
 **What runs locally:**
 
--   ✅ Card Almanac app (8541) <https://cardalmanac.dev:8541/>
--   ✅ Trading Card API (8243) <https://api.tradingcardapi.dev:8243/>
--   ✅ Admin interface (8480) <https://admin.tradingcardapi.dev:8480/>
--   ✅ MySQL database (13307)
+- ✅ Card Almanac app (8541) <https://cardalmanac.dev:8541/>
+- ✅ Trading Card API (8243) <https://api.tradingcardapi.dev:8243/>
+- ✅ Admin interface (8480) <https://admin.tradingcardapi.dev:8480/>
+- ✅ MySQL database (13307)
 
 **External dependencies:** None
 
 **Best for:**
 
--   Full-stack feature development
--   Almanac + API integration work
--   Testing complete workflows
--   Debugging cross-service issues
--   Admin interface development
--   Testing API hotfixes and custom branches
--   End-to-end testing
+- Full-stack feature development
+- Almanac + API integration work
+- Testing complete workflows
+- Debugging cross-service issues
+- Admin interface development
+- Testing API hotfixes and custom branches
+- End-to-end testing
 
 ## Configuration Files
 
@@ -191,13 +191,13 @@ DB_DATABASE=tradingcards
 
 ## Benefits
 
--   ✅ **Flexible development** - Choose the right environment for your task
--   ✅ **Resource efficient** - Run only what you need for almanac development
--   ✅ **Simple setup** - Just two environments to understand
--   ✅ **Easy testing** - Switch environments as needed
--   ✅ **Backward compatible** - Existing workflows unchanged
--   ✅ **Independent development** - Work on almanac without running full stack
--   ✅ **Cross-project consistency** - Matches admin and API project patterns
+- ✅ **Flexible development** - Choose the right environment for your task
+- ✅ **Resource efficient** - Run only what you need for almanac development
+- ✅ **Simple setup** - Just two environments to understand
+- ✅ **Easy testing** - Switch environments as needed
+- ✅ **Backward compatible** - Existing workflows unchanged
+- ✅ **Independent development** - Work on almanac without running full stack
+- ✅ **Cross-project consistency** - Matches admin and API project patterns
 
 ## Troubleshooting
 

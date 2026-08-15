@@ -13,17 +13,21 @@ jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0 # Fetch full history for version calculation
       - name: Calculate Next Version
+        id: version
         run: |
           # Make version script executable and calculate next version
           chmod +x build/version.sh
           VERSION=$(./build/version.sh next)
           echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Next release version: $VERSION"
       - name: Set up Docker Buildx
         id: buildx
@@ -31,12 +35,12 @@ jobs:
         with:
           install: true
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and Push Image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v6
         with:
           builder: ${{ steps.buildx.outputs.name }}
           tags: "picklewagon/${{ env.SERVICE_NAME }}:${{ env.VERSION }}"
@@ -47,15 +51,13 @@ jobs:
       - name: Set Release Version
         run: |
           echo "RELEASE_VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
-          echo "RELEASE_TAG=v${{ env.VERSION }}" >> $GITHUB_ENV
+          echo "RELEASE_TAG=${{ env.VERSION }}" >> $GITHUB_ENV
       - name: Generate Release Notes
         run: |
           # Make release scripts executable
           chmod +x build/*.sh
-          # Generate release notes using our automation system
-          ./build/generate-release-notes.sh --format github ${{ env.VERSION }} > release_notes.md
-        env:
-          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          # Generate release notes using our automation system (without AI to avoid API key dependency)
+          ./build/generate-release-notes.sh --format github --no-ai ${{ env.VERSION }} > release_notes.md
       - name: Create Release
         uses: actions/create-release@v1
         env:
@@ -75,7 +77,7 @@ jobs:
       - uses: avakar/create-deployment@v1
         id: deployment
         with:
-          ref: ${{ env.VERSION }}
+          ref: ${{ needs.create-release.outputs.version }}
           auto_merge: false
           environment: production
           transient_environment: true
