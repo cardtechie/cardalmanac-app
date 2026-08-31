@@ -45,9 +45,16 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           tags: "picklewagon/${{ env.SERVICE_NAME }}:${{ env.VERSION }}"
           push: true
+          # Named explicitly rather than relying on `runtime` being the last
+          # stage, so a later reorder of the Dockerfile cannot silently start
+          # shipping the fat dev image.
+          target: runtime
           build-args: |
             VERSION=${{ env.VERSION }}
-            COMPOSER_TOKEN=${{ secrets.COMPOSER_TOKEN }}
+          # Passed as a BuildKit secret, not a build-arg: `docker history`
+          # renders ARG values in plaintext, and this image is published.
+          secrets: |
+            composer_token=${{ secrets.COMPOSER_TOKEN }}
       - name: Set Release Version
         run: |
           echo "RELEASE_VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
