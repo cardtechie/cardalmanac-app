@@ -1,0 +1,2 @@
+- **[Issue #76]** Push GA4 events onto the GTM dataLayer for the homepage call-to-action links, so the homepage conversion can be marked as a key event in Analytics.
+    - The GTM trigger, tag and GA4 key-event toggle are still manual, one-time steps in the Google UI; `docs/ANALYTICS.md` walks through them.
