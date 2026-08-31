@@ -172,7 +172,9 @@ COPY ./composer.json ./composer.lock ./
 # a layer; the auth.json composer derives from it is removed in the same step.
 # An empty or absent secret is fine -- both VCS repositories are public, so an
 # unauthenticated install only risks anonymous GitHub API rate limits.
-RUN --mount=type=secret,id=composer_token set -eux; \
+# `set -eu`, deliberately NOT `-eux`: xtrace would echo the expanded
+# `composer config ... <token>` line straight into the build log.
+RUN --mount=type=secret,id=composer_token set -eu; \
     if [ -s /run/secrets/composer_token ]; then \
         composer config --global github-oauth.github.com "$(cat /run/secrets/composer_token)"; \
     fi; \
@@ -276,7 +278,9 @@ RUN set -eux; \
 # `npm test` (prettier + vendor/bin/parallel-lint) and phpunit out of this image.
 WORKDIR /var/www/app
 COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
-RUN --mount=type=secret,id=composer_token set -eux; \
+# `set -eu`, not `-eux`: see the same note in the vendor stage -- xtrace would
+# echo the token into the build log.
+RUN --mount=type=secret,id=composer_token set -eu; \
     if [ -s /run/secrets/composer_token ]; then \
         composer config --global github-oauth.github.com "$(cat /run/secrets/composer_token)"; \
     fi; \
