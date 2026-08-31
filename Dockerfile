@@ -139,7 +139,12 @@ ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules
 # Install composer packages
 WORKDIR /var/www/app
 COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
-RUN composer config github-oauth.github.com ${COMPOSER_TOKEN}
+# Both composer VCS sources are public, so this credential is optional. Only
+# configure it when a non-empty build-arg is supplied; an absent or empty
+# token must be a no-op rather than a hard failure.
+RUN if [ -n "${COMPOSER_TOKEN}" ]; then \
+        composer config github-oauth.github.com "${COMPOSER_TOKEN}"; \
+    fi
 RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
 
 WORKDIR /var/www
