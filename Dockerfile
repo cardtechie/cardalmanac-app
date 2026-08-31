@@ -142,10 +142,19 @@ COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
 # Both composer VCS sources are public, so this credential is optional. Only
 # configure it when a non-empty build-arg is supplied; an absent or empty
 # token must be a no-op rather than a hard failure.
-RUN if [ -n "${COMPOSER_TOKEN}" ]; then \
+#
+# Configure, install, and remove the credential in a SINGLE RUN so the token
+# never lands in a committed image layer. `composer config github-oauth` writes
+# ${COMPOSER_HOME}/auth.json; splitting config and install across two RUNs would
+# commit that file (token included) into the intermediate layer and ship it.
+# `set -e` aborts the layer on a composer failure, so a failed build never
+# commits the credential either.
+RUN set -e; \
+    if [ -n "${COMPOSER_TOKEN}" ]; then \
         composer config github-oauth.github.com "${COMPOSER_TOKEN}"; \
-    fi
-RUN composer install --no-scripts --no-autoloader --ansi --no-interaction
+    fi; \
+    composer install --no-scripts --no-autoloader --ansi --no-interaction; \
+    rm -f "${COMPOSER_HOME}/auth.json"
 
 WORKDIR /var/www
 COPY --chown=www-data:www-data ./package.json ./package-lock.json ./
