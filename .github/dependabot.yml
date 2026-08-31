@@ -17,7 +17,7 @@ updates:
     commit-message:
       prefix: "composer"
       prefix-development: "composer-dev"
-      include: "security"
+      include: "scope"
     assignees:
       - "picklewagon"
     labels:
@@ -42,7 +42,7 @@ updates:
     commit-message:
       prefix: "npm"
       prefix-development: "npm-dev"
-      include: "security"
+      include: "scope"
     assignees:
       - "picklewagon"
     labels:
@@ -84,7 +84,7 @@ updates:
     open-pull-requests-limit: 0
     commit-message:
       prefix: "actions"
-      include: "security"
+      include: "scope"
     assignees:
       - "picklewagon"
     labels:
