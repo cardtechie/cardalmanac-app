@@ -14,7 +14,9 @@
  * safe when GTM is blocked outright, so callers never need to guard.
  *
  * @param {string} event  GA4 event name, snake_case (e.g. "view_app_click").
- * @param {Object} params Additional GA4 event parameters.
+ * @param {Object} params Additional GA4 event parameters. A stray `event` key
+ *   here is ignored: the `event` argument is spread last so it always wins and
+ *   a caller can never silently rename the event it thinks it is sending.
  */
 export function pushEvent(event, params = {}) {
   if (!event) {
@@ -22,7 +24,7 @@ export function pushEvent(event, params = {}) {
   }
 
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ event, ...params });
+  window.dataLayer.push({ ...params, event });
 }
 
 /**
@@ -76,7 +78,21 @@ function readPayload(element) {
  */
 export function bindAnalyticsEvents(root = document) {
   root.addEventListener("click", (clickEvent) => {
-    const target = clickEvent.target.closest("[data-analytics-event]");
+    // clickEvent.target is an EventTarget, not necessarily an Element: a click
+    // can land on a text node, on the document, or on an SVG node, none of
+    // which have .closest(). Walking to the nearest Element first keeps one
+    // stray click from throwing and killing delegated tracking for the page.
+    const source = clickEvent.target;
+    const origin =
+      source instanceof Element
+        ? source
+        : (source && source.parentElement) || null;
+
+    if (!origin) {
+      return;
+    }
+
+    const target = origin.closest("[data-analytics-event]");
 
     if (!target) {
       return;
