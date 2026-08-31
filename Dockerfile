@@ -326,6 +326,14 @@ CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.con
 ##############################################################################
 FROM base AS runtime
 
+# Stamped by .github/workflows/build-release.yaml, which passes the calculated
+# release version as `--build-arg VERSION=...`. Declared in this stage only,
+# because `runtime` is the sole target that workflow builds. The label is what
+# makes the build-arg observable: `docker inspect` on a published image reports
+# the release it was cut from.
+ARG VERSION=dev
+LABEL org.opencontainers.image.version="${VERSION}"
+
 WORKDIR /var/www/app
 
 # Application code first, then the built artifacts on top of it. public/js,
