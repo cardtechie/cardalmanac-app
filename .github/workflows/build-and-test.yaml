@@ -26,10 +26,17 @@ jobs:
           context: ./
           builder: ${{ steps.buildx.outputs.name }}
           file: Dockerfile
+          # The test suite needs the dev toolchain: `npm test` runs prettier out
+          # of node_modules and `composer lint` out of the dev vendor tree, and
+          # tests.entrypoint.sh runs `composer dump-autoload`. None of that
+          # exists in the shipped `runtime` stage.
+          target: dev
           push: false
           load: true
           tags: picklewagon/cardalmanac-app:test
-          build-args: |
-            COMPOSER_TOKEN=${{ secrets.COMPOSER_TOKEN }}
+          # Passed as a BuildKit secret, not a build-arg: `docker history`
+          # renders ARG values in plaintext.
+          secrets: |
+            composer_token=${{ secrets.COMPOSER_TOKEN }}
       - name: Run test suite
         run: DOCKER_TAG_CAAPP=test docker compose -f .docker/tests.docker-compose.yaml run caapp npm test
