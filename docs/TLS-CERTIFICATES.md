@@ -38,10 +38,10 @@ than a nicety.
 
 Renewal runs out-of-band in GitHub Actions, not in the container entrypoint:
 
--   **Workflow:** `.github/workflows/renew-certificate.yaml`
--   **Schedule:** twice daily (`cron: "17 3,15 * * *"`). A run is a no-op unless the
-    certificate is inside its 30-day renewal window.
--   **Manual trigger:** `workflow_dispatch` — use this for an immediate check.
+- **Workflow:** `.github/workflows/renew-certificate.yaml`
+- **Schedule:** twice daily (`cron: "17 3,15 * * *"`). A run is a no-op unless the
+  certificate is inside its 30-day renewal window.
+- **Manual trigger:** `workflow_dispatch` — use this for an immediate check.
 
     ```bash
     gh workflow run renew-certificate.yaml -R cardtechie/cardalmanac-app
