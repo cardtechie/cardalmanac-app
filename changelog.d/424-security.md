@@ -1,0 +1,2 @@
+- **[Issue #424]** Clear both critical npm advisories and the axios high-severity backlog, and unblock Dependabot CI by dropping an unused stale credential from the test build.
+    - The complementary fix is operator-side: the repo-level Dependabot secrets `COMPOSER_TOKEN`, `DOCKER_USERNAME` and `DOCKER_PASSWORD` date from 2023-12-21 and should be deleted so the fresher org-level values apply.
