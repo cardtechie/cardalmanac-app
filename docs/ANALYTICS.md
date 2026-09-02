@@ -1,15 +1,32 @@
 # Analytics
 
-Card Almanac measures traffic with **GA4, loaded through Google Tag Manager**.
-The GTM container snippet lives in `resources/views/partials/head-gtm.blade.php`
-(and its `<noscript>` half in `partials/body-gtm.blade.php`), and is included by
-every layout. The GA4 configuration tag itself lives inside the GTM container,
-not in this repo — there is deliberately no `gtag.js` snippet in the codebase.
+Card Almanac measures traffic with **GA4**. The GTM container snippet
+(`GTM-5HZ6CZV`) lives in `resources/views/partials/head-gtm.blade.php` — with its
+`<noscript>` half in `partials/body-gtm.blade.php` — and is included by every
+layout. There is deliberately no `gtag.js` snippet in the codebase.
+
+GA4 property **Card Almanac** (`G-5HFBKYZFKL`, stream `5143941701`) is confirmed
+receiving traffic. How the Google tag reaches the page is worth writing down,
+because it is not what you would guess:
+
+- The GTM container holds **no GA4 configuration tag**. Opening a GA4 Event tag
+  in GTM shows the warning _"No Google tag found in this container."_
+- GTM's container overview nonetheless shows a Google tag, `Card Almanac - GA4`
+  (`G-5HFBKYZFKL` / `GT-KDTKB27`), sitting between the container and the
+  destination.
+
+The likely reading is that the Google tag is linked to the container through
+GA4's own install flow rather than existing as a tag object you can edit.
+**This has not been verified** — it is inference from the two observations
+above. If GA4 event tags ever fire in GTM Preview but nothing lands in GA4,
+this is the first thing to check: adding an explicit Google tag to the
+container would be the fix.
 
 > The former `partials/analytics.blade.php` hard-coded the Universal Analytics
 > property `UA-26467066-4`. Universal Analytics stopped processing hits on
 > 1 July 2023 and the properties were deleted in 2024, so that snippet was
-> shipping a request that went nowhere. It was removed in #76.
+> shipping a request that went nowhere. It was removed in #76, along with
+> pausing its counterpart tag inside the GTM container — see below.
 
 ## Firing an event from the site
 
@@ -89,6 +106,12 @@ everything the homepage CTAs need:
 | Tag (GA4 Event)        | `GA4 - view_app_click`     | Sends the event with `cta_location`                 |
 | Tag (GA4 Event)        | `GA4 - blog_article_click` | Sends the event with `cta_location`, `article_slug` |
 
+> **Already applied.** This was imported into workspace `76-homepage-events`
+> and published on 2026-09-01 — a clean merge, 7 added / 0 modified / 0 deleted.
+> The steps below are the record of how, and what to repeat against another
+> container. The remaining GA4-side work is in "After the container is
+> published" further down.
+
 To apply it:
 
 1. **Check the destination.** The `GA4 Measurement ID` constant is set to
@@ -103,18 +126,23 @@ To apply it:
    0 modifications; anything else means the container already had objects by
    these names.
 4. Verify in Preview (below), then **Submit** to publish the container version.
-5. **GA4 → Admin → Events.** Once an event has been received at least once it
-   appears in the list — toggle **Mark as key event**. (GA4 renamed
-   "conversions" to "key events" in 2024; "goals" was the Universal Analytics
-   term and no longer exists.)
-6. **GA4 → Admin → Custom definitions → Custom dimensions.** Register
-   `cta_location` and `article_slug` as event-scoped dimensions, or they will
-   not be queryable in reports.
 
 Note that `newsletter_signup` is deliberately **not** in the import file — it
 cannot fire until the mailing list form is re-enabled (see the caveat below).
 
-### Verifying in GTM Preview
+### The paused Universal Analytics tag
+
+The same container carried a five-year-old tag, `Google Analytics - pageviews`
+(type Universal Analytics, firing on **All Pages**) — the GTM-side twin of the
+`partials/analytics.blade.php` snippet #76 deleted from the codebase. It was
+sending a pageview hit to a property Google deleted in 2024, on every page load.
+
+It was **paused**, not deleted, in the same container version. Pausing cannot
+affect GA4 numbers — UA and GA4 are separate pipelines and GA4 was never fed by
+it — and leaves an obvious undo if it turns out to matter. Delete it once
+enough time has passed that nobody wants it back.
+
+## Verifying in GTM Preview
 
 Preview works against any site loading the container, including local dev, so
 none of this needs a deploy:
@@ -137,7 +165,23 @@ returning nothing is the tell; allowlist the host to debug.
 Allow up to 24 hours before a newly marked key event shows in the standard
 reports; Realtime and Preview are the immediate feedback loop.
 
-### Adding another tracked CTA later
+## After the container is published
+
+These two are GA4-side and cannot be done from GTM or the repo. Neither is
+done yet.
+
+1. **GA4 → Admin → Events → Mark as key event**, for `view_app_click` and
+   `blog_article_click`. An event only appears in that list once it has been
+   received at least once, so this cannot be done ahead of a deploy. (GA4
+   renamed "conversions" to "key events" in 2024; "goals" was the Universal
+   Analytics term and no longer exists — which is why #76's original title is
+   the one thing about it that could not be implemented literally.)
+2. **GA4 → Admin → Custom definitions → Custom dimensions.** Register
+   `cta_location` and `article_slug` as **event-scoped** dimensions. Without
+   this the events still count, but you cannot break them down by which CTA
+   fired — which is most of the value.
+
+## Adding another tracked CTA later
 
 Add the `data-analytics-*` attributes to the markup, then repeat the GTM half
 by hand: a Custom Event trigger on the new event name, a GA4 Event tag pointing
