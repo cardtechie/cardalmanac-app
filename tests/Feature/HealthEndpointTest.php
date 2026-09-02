@@ -58,6 +58,19 @@ class HealthEndpointTest extends TestCase
     }
 
     /**
+     * The endpoint is polled by monitoring, which holds no cookies. If the web
+     * group's session middleware stayed attached, every probe would start and
+     * persist a fresh session.
+     */
+    public function test_it_does_not_start_a_session(): void
+    {
+        $response = $this->get('/health');
+
+        $response->assertOk();
+        $response->assertCookieMissing(config('session.cookie'));
+    }
+
+    /**
      * The whole point of the change: a version stamped into the image has to
      * come back out over HTTP, without shell access to the host.
      */
