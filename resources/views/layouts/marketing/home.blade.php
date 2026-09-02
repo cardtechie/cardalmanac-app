@@ -18,7 +18,6 @@
             'csrfToken' => csrf_token(),
         ]) !!};
     </script>
-    @include('partials.analytics')
     @include('partials.head-gtm')
 </head>
 <body>

@@ -30,9 +30,18 @@
 
 <script>
 import sendinblueApi from "../api/send-in-blue/sendinblue.api";
+import { pushEvent } from "../analytics";
 
 export default {
   name: "MailingListForm",
+  props: {
+    // Where this form is embedded, sent as a GA4 event parameter so the same
+    // component can be tracked separately per placement.
+    ctaLocation: {
+      type: String,
+      default: "unknown",
+    },
+  },
   data() {
     return {
       regex:
@@ -57,10 +66,9 @@ export default {
       } else {
         try {
           await sendinblueApi.subscribe(this.email);
-          /*this.$gtag.event('signup', {
-                      event_category: 'newsletter',
-                      event_label: 'coming soon',
-                    });*/
+          pushEvent("newsletter_signup", {
+            cta_location: this.ctaLocation,
+          });
           this.state = "success";
         } catch (e) {
           this.errors.push(
