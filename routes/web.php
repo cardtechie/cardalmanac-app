@@ -32,7 +32,19 @@ Route::get('/health', function () {
         'version' => getVersion(),
         'environment' => config('app.env'),
     ]);
-})->name('health');
+})
+    ->name('health')
+    // This endpoint exists to be polled by monitoring, and a monitor does not
+    // hold cookies -- with the web group's session middleware attached, every
+    // probe would start (and write) a brand new session. The payload reads
+    // nothing from the session, so the whole cookie/session chain comes off.
+    ->withoutMiddleware([
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ]);
 
 Route::get('/', 'IndexController@index')->name('home');
 Route::get('/about', 'AboutController@index')->name('about');
