@@ -9,6 +9,11 @@ load-env:
 		echo "Warning: No .env or .env.local file found"; \
 	fi
 
+# COMPOSER_TOKEN is no longer passed with --build-arg: `docker history`
+# renders ARG values in plaintext, so an ARG publishes the credential in the
+# image's layer metadata. docker-compose.yml declares it as a build secret
+# sourced from the COMPOSER_TOKEN environment variable, which the exports
+# below provide.
 up:
 	@if [ -f .env ]; then \
 		export $$(grep -vE "^(#.*|\s*)$$" .env); \
@@ -16,7 +21,7 @@ up:
 		export $$(grep -vE "^(#.*|\s*)$$" .env.local); \
 	fi; \
 	docker compose pull && \
-	docker compose build --build-arg COMPOSER_TOKEN=$${COMPOSER_TOKEN} && \
+	docker compose build && \
 	docker compose up
 
 upd:
@@ -26,7 +31,7 @@ upd:
 		export $$(grep -vE "^(#.*|\s*)$$" .env.local); \
 	fi; \
 	docker compose pull && \
-	docker compose build --build-arg COMPOSER_TOKEN=$${COMPOSER_TOKEN} && \
+	docker compose build && \
 	docker compose up -d
 
 up-full:
@@ -36,7 +41,7 @@ up-full:
 		export $$(grep -vE "^(#.*|\s*)$$" .env.local); \
 	fi; \
 	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml pull && \
-	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml build --build-arg COMPOSER_TOKEN=$${COMPOSER_TOKEN} && \
+	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml build && \
 	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml up
 
 upd-full:
@@ -46,7 +51,7 @@ upd-full:
 		export $$(grep -vE "^(#.*|\s*)$$" .env.local); \
 	fi; \
 	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml pull && \
-	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml build --build-arg COMPOSER_TOKEN=$${COMPOSER_TOKEN} && \
+	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml build && \
 	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml up -d
 
 down:

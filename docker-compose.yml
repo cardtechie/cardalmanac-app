@@ -2,6 +2,8 @@ services:
     caapp:
         build:
             context: ./
+            secrets:
+                - composer_token
         image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
         env_file:
             - ./.env.local
@@ -63,3 +65,11 @@ services:
 
 networks:
     overlay:
+
+secrets:
+    # Mounted into the build for `composer config github-oauth.github.com` and
+    # never written to a layer, so it cannot leak through `docker history`.
+    # Optional: the build succeeds without it, at the cost of anonymous GitHub
+    # API rate limits on the two VCS repositories in composer.json.
+    composer_token:
+        environment: COMPOSER_TOKEN

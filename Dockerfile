@@ -1,6 +1,5 @@
+# syntax=docker/dockerfile:1.7
 FROM php:8.2-fpm AS build
-
-ARG COMPOSER_TOKEN
 
 ENV MIX_APP_URL="https://cardalmanac.com"
 
@@ -139,19 +138,23 @@ ENV PATH="/composer/vendor/bin:/var/www/app/vendor/bin:/var/www/app/node_modules
 # Install composer packages
 WORKDIR /var/www/app
 COPY --chown=www-data:www-data ./composer.json ./composer.lock ./
-# Both composer VCS sources are public, so this credential is optional. Only
-# configure it when a non-empty build-arg is supplied; an absent or empty
-# token must be a no-op rather than a hard failure.
+# The token arrives as a BuildKit secret, never as an ARG: `docker history`
+# renders ARG values in plaintext, so an ARG publishes the credential in the
+# metadata of every layer built after it, and this image is published.
 #
-# Configure, install, and remove the credential in a SINGLE RUN so the token
-# never lands in a committed image layer. `composer config github-oauth` writes
-# ${COMPOSER_HOME}/auth.json; splitting config and install across two RUNs would
-# commit that file (token included) into the intermediate layer and ship it.
-# `set -e` aborts the layer on a composer failure, so a failed build never
-# commits the credential either.
-RUN set -e; \
-    if [ -n "${COMPOSER_TOKEN}" ]; then \
-        composer config github-oauth.github.com "${COMPOSER_TOKEN}"; \
+# `--global` matters. Without it `composer config github-oauth` writes a
+# project-local ./auth.json -- i.e. /var/www/app/auth.json, which this image
+# ships -- rather than ${COMPOSER_HOME}/auth.json. Configure, install, and
+# remove the credential in a SINGLE RUN so it never lands in a committed layer;
+# `set -e` aborts on a composer failure, so a failed build commits nothing
+# either. Deliberately not `set -eux`: xtrace would echo the expanded
+# `composer config ... <token>` line straight into the build log.
+#
+# Both composer VCS sources are public, so the secret is optional -- an absent
+# or empty one is a no-op, costing only anonymous GitHub API rate limits.
+RUN --mount=type=secret,id=composer_token set -e; \
+    if [ -s /run/secrets/composer_token ]; then \
+        composer config --global github-oauth.github.com "$(cat /run/secrets/composer_token)"; \
     fi; \
     composer install --no-scripts --no-autoloader --ansi --no-interaction; \
     rm -f "${COMPOSER_HOME}/auth.json"
