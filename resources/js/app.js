@@ -3,6 +3,7 @@ import Example from "./components/ExampleComponent";
 import MailingListForm from "./components/MailingListForm";
 import NavDrawer from "./components/NavDrawer";
 import SetChecklist from "./components/SetChecklist";
+import { bindAnalyticsEvents } from "./analytics";
 import vuetify from "./vuetify";
 
 /**
@@ -25,6 +26,12 @@ window.Vue = require("vue").default;
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+
+/**
+ * Delegated GA4 click tracking for any element carrying data-analytics-event.
+ * Bound before Vue boots so a mount failure cannot take tracking down with it.
+ */
+bindAnalyticsEvents();
 
 const app = createApp({});
 app.component("example-component", Example);

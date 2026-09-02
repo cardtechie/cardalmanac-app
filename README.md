@@ -179,3 +179,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Website**: [Card Almanac](https://cardalmanac.dev)
 - **Twitter**: [@cardalmanac](https://twitter.com/cardalmanac)
 - **API Documentation**: [Trading Card API](https://tradingcardapi.dev)
+- **TLS Certificates**: [docs/TLS-CERTIFICATES.md](docs/TLS-CERTIFICATES.md)
