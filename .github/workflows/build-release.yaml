@@ -47,7 +47,10 @@ jobs:
           push: true
           build-args: |
             VERSION=${{ env.VERSION }}
-            COMPOSER_TOKEN=${{ secrets.COMPOSER_TOKEN }}
+          # Passed as a BuildKit secret, not a build-arg: `docker history`
+          # renders ARG values in plaintext, and this image is published.
+          secrets: |
+            composer_token=${{ secrets.COMPOSER_TOKEN }}
       - name: Set Release Version
         run: |
           echo "RELEASE_VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
