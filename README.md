@@ -21,7 +21,7 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
 ### Prerequisites
 
 - Docker and Docker Compose
-- GitHub Personal Access Token (for Composer dependencies)
+- GitHub Personal Access Token (optional — raises the anonymous GitHub API rate limit when Composer fetches dependencies; builds succeed without one)
 
 ### Installation
 
