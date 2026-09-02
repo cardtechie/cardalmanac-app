@@ -38,7 +38,10 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
     # Copy environment file
     cp .env.example .env
 
-    # Add your GitHub Personal Access Token to .env
+    # Optional: a GitHub Personal Access Token raises the anonymous GitHub API
+    # rate limit during composer install. Both Composer VCS sources are public,
+    # so builds succeed without it. It is passed to the build as a BuildKit
+    # secret and never written into the image.
     echo "COMPOSER_TOKEN=your_github_token_here" >> .env
 
     # Add Trading Card API credentials (optional for basic browsing)

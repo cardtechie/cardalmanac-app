@@ -1,0 +1,3 @@
+- **[Issue #435]** Stop publishing the Composer GitHub token in the Docker image: it is now a BuildKit secret rather than a build ARG, so it no longer appears in `docker history` layer metadata, and `composer config --global` plus a same-layer `rm` keeps `auth.json` out of the shipped filesystem.
+    - Local `make up` builds no longer embed the developer's personal token either; `docker-compose.yml` sources the same secret from the `COMPOSER_TOKEN` environment variable, and an unset one is a no-op because both Composer VCS sources are public.
+    - The complementary fix is operator-side: the token readable in already-published image tags must be revoked, and those tags purged or rebuilt.
