@@ -353,6 +353,14 @@ COPY --from=assets --chown=www-data:www-data /app/public/mix-manifest.json ./pub
 RUN cp .env.local .env \
     && chmod 775 ./.docker/scripts/*.sh
 
+# Stamp the build arg into a file the application can read, so a running
+# container can report which release it is (getVersion() in helpers/helpers.php
+# resolves this file). This MUST stay after the `COPY . .` above -- that COPY
+# rewrites this directory and would otherwise erase the file. Kept as its own
+# layer so a version-only rebuild does not invalidate the .env layer above.
+RUN printf '%s\n' "${VERSION}" > VERSION \
+    && chown www-data:www-data VERSION
+
 ENTRYPOINT ["/var/www/app/.docker/scripts/entrypoint.sh"]
 
 EXPOSE 80 443 9001
