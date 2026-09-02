@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 
 /**
- * Coverage for #76: homepage call-to-action events for the GA4 goal.
+ * Coverage for #76: homepage call-to-action tracking for the GA4 key events.
  *
  * The events themselves are pushed onto the GTM dataLayer by
  * resources/js/analytics.js; what PHP can guarantee is that the markup carries
