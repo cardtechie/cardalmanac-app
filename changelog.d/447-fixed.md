@@ -1,0 +1,1 @@
+- **[Issue #447]** Add the back-merge and changelog-fragment workflows to `main` so they run at all — GitHub only triggers `push` workflows from the default branch, so the automation meant to keep `develop` in sync with `main` had never been able to fire.
