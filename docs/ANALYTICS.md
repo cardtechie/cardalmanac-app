@@ -67,35 +67,82 @@ guard.
 component is commented out in `resources/views/home.blade.php`, and the form
 cannot work in production regardless (see the caveat at the end of this file).
 
-## Configuring the goal in GA4 — manual, one time per event
+## Configuring the key events in GA4
 
 Pushing to the dataLayer is only half the job. A dataLayer event does **not**
-reach GA4 on its own: the GTM container has to listen for it and forward it.
-This part is UI work in your Google account and cannot be done from the repo.
+reach GA4 on its own: the GTM container (`GTM-5HZ6CZV`) has to listen for it and
+forward it. That part lives in your Google account, not in this repo — but the
+container objects it needs are checked in as an importable file.
 
-For each event above:
+### Import the container objects
 
-1. **GTM → Triggers → New → Custom Event.** Set _Event name_ to the exact
-   string (e.g. `view_app_click`). Fires on: All Custom Events.
-2. **GTM → Tags → New → Google Analytics: GA4 Event.** Point it at your GA4
-   configuration tag / measurement ID, set _Event Name_ to the same string, and
-   attach the trigger from step 1.
-3. Add the parameters under _Event Parameters_. Each one needs a **Data Layer
-   Variable** in GTM (Variables → New → Data Layer Variable) whose name matches
-   the pushed key exactly — `cta_location`, `article_slug`.
-4. **Preview** the container, click the CTA on the site, and confirm the tag
-   fires and the parameters are populated.
-5. **Submit / publish** the container version.
-6. **GA4 → Admin → Events.** Once the event has been received at least once it
-   appears in the list; toggle **Mark as key event**. (GA4 renamed
+`docs/gtm/cardalmanac-ga4-events.json` is a GTM container export containing
+everything the homepage CTAs need:
+
+| Object                 | Name                       | Purpose                                             |
+| ---------------------- | -------------------------- | --------------------------------------------------- |
+| Variable (Constant)    | `GA4 Measurement ID`       | The single place the destination is set             |
+| Variable (Data Layer)  | `DLV - cta_location`       | Reads `cta_location` off the dataLayer              |
+| Variable (Data Layer)  | `DLV - article_slug`       | Reads `article_slug` off the dataLayer              |
+| Trigger (Custom Event) | `CE - view_app_click`      | Fires on `view_app_click`                           |
+| Trigger (Custom Event) | `CE - blog_article_click`  | Fires on `blog_article_click`                       |
+| Tag (GA4 Event)        | `GA4 - view_app_click`     | Sends the event with `cta_location`                 |
+| Tag (GA4 Event)        | `GA4 - blog_article_click` | Sends the event with `cta_location`, `article_slug` |
+
+To apply it:
+
+1. **Check the destination.** The `GA4 Measurement ID` constant is set to
+   `G-5HFBKYZFKL`, the Card Almanac web stream (GA4 → Admin → Data streams).
+   Both tags read the destination from that one variable, so pointing this
+   container at a different property is a one-line change.
+2. **GTM → Admin → Import Container.** Choose the file, import into a **new
+   workspace** (e.g. `76-homepage-events`), and pick **Merge → Rename
+   conflicting tags, triggers and variables** so nothing already in the
+   container is overwritten.
+3. Review the diff GTM shows before confirming. It should list 7 additions and
+   0 modifications; anything else means the container already had objects by
+   these names.
+4. Verify in Preview (below), then **Submit** to publish the container version.
+5. **GA4 → Admin → Events.** Once an event has been received at least once it
+   appears in the list — toggle **Mark as key event**. (GA4 renamed
    "conversions" to "key events" in 2024; "goals" was the Universal Analytics
    term and no longer exists.)
+6. **GA4 → Admin → Custom definitions → Custom dimensions.** Register
+   `cta_location` and `article_slug` as event-scoped dimensions, or they will
+   not be queryable in reports.
 
-Custom parameters also need registering under **GA4 → Admin → Custom
-definitions → Custom dimensions** before they are queryable in reports.
+Note that `newsletter_signup` is deliberately **not** in the import file — it
+cannot fire until the mailing list form is re-enabled (see the caveat below).
 
-Allow up to 24 hours before a newly marked key event is populated in the
-standard reports; use **Realtime** and GTM Preview for immediate verification.
+### Verifying in GTM Preview
+
+Preview works against any site loading the container, including local dev, so
+none of this needs a deploy:
+
+1. `make up`, then open https://cardalmanac.dev:8543/.
+2. In GTM, click **Preview** and enter that URL.
+3. Click the homepage "View app" and "View Article" CTAs. Each should appear in
+   the Tag Assistant event stream as `view_app_click` / `blog_article_click`
+   with the matching GA4 tag under **Tags Fired**, and the parameters populated
+   in the tag's detail view.
+4. GA4 → Reports → Realtime confirms the hit actually landed.
+
+If Preview connects but no tags ever fire — and the page's own dataLayer pushes
+are happening — check that `www.googletagmanager.com` resolves. Ad-blocking DNS
+resolvers (Pi-hole, NextDNS, AdGuard, some VPNs) blackhole that host while
+leaving `tagmanager.google.com` reachable, so the GTM admin UI works perfectly
+while the container never loads on the site. `dig +short www.googletagmanager.com`
+returning nothing is the tell; allowlist the host to debug.
+
+Allow up to 24 hours before a newly marked key event shows in the standard
+reports; Realtime and Preview are the immediate feedback loop.
+
+### Adding another tracked CTA later
+
+Add the `data-analytics-*` attributes to the markup, then repeat the GTM half
+by hand: a Custom Event trigger on the new event name, a GA4 Event tag pointing
+at `{{GA4 Measurement ID}}` with that trigger attached, and a Data Layer
+Variable for any parameter name not already covered above.
 
 ## Caveat: the newsletter form is not production-ready
 
