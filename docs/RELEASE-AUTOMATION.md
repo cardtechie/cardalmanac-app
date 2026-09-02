@@ -8,6 +8,7 @@ The Card Almanac release automation system provides:
 
 - **Semantic Versioning**: Automatic version calculation based on git branches and tags
 - **Automated Changelog**: Keep a Changelog format with intelligent commit categorization
+- **Conflict-Free Changelogs**: Per-PR `changelog.d/` fragments collated once at release
 - **AI-Powered Release Notes**: Claude API integration for intelligent release summaries
 - **Branch-Aware Workflows**: Different version strategies for different branch types
 - **GitHub Integration**: Enhanced labels, issue automation, and release workflows
@@ -88,7 +89,7 @@ Automated changelog management following [Keep a Changelog](https://keepachangel
 ./build/update-changelog.sh preview            # Preview changes
 ./build/update-changelog.sh update             # Update with current version
 ./build/update-changelog.sh update 1.2.3       # Update with specific version
-./build/update-changelog.sh add-unreleased "New feature" "Added"
+./build/update-changelog.sh add-unreleased "New feature" "Added"   # legacy manual path
 ./build/update-changelog.sh finalize           # Move unreleased to version
 ```
 
@@ -99,7 +100,45 @@ Automated changelog management following [Keep a Changelog](https://keepachangel
 - Conventional commit detection
 - Unreleased section management
 
-### 3. Release Notes Generation (`build/generate-release-notes.sh`)
+> **Note:** `add-unreleased` (and `make changelog-add`) is the **legacy manual
+> path**, kept for entries that are not tied to a pull request. Routine per-PR
+> entries go to a `changelog.d/` fragment instead — see
+> [Changelog fragments](#changelog-fragments) below.
+
+### 3. Changelog Fragments (`build/collate-changelog.sh`)
+
+Per-PR changelog entries are **not** appended to the shared `## [Unreleased]`
+section of `CHANGELOG.md`. Every concurrent PR editing that one block re-conflicts
+every other open PR's changelog, so each PR instead writes its own fragment file:
+
+```text
+changelog.d/<issue>-<type>.md
+```
+
+where `<type>` is one of `added`, `changed`, `deprecated`, `removed`, `fixed`,
+`security`. The body is the single Keep a Changelog list line that would have gone
+under the matching `### <Type>` heading (plus at most one indented caveat
+sub-bullet). Unique path per PR, so this is genuinely zero-conflict. The full
+convention lives in [`changelog.d/README.md`](../changelog.d/README.md).
+
+A CI gate (`.github/workflows/changelog-fragment.yaml`) fails any PR that adds no
+fragment. Add the `skip-changelog` label to opt a trivial PR (or a Dependabot PR)
+out of the gate.
+
+**Usage:**
+
+```bash
+./build/collate-changelog.sh                   # Fold fragments into [Unreleased], then delete them
+./build/collate-changelog.sh --preview         # Non-destructive: show the assembled [Unreleased]
+./build/collate-changelog.sh --changelog FILE --fragments-dir DIR
+```
+
+Collation runs **once, at release**: `make changelog-update` and `make
+release-prepare` invoke the collator ahead of `build/update-changelog.sh` so the
+fragments land in `## [Unreleased]` before the version cut. It is a clean no-op
+when no fragments are pending.
+
+### 4. Release Notes Generation (`build/generate-release-notes.sh`)
 
 AI-powered release notes with Claude API integration:
 
@@ -140,11 +179,15 @@ make version-patch        # Show next patch version
 ### Changelog Management
 
 ```bash
-make changelog-preview    # Preview changelog update
-make changelog-update     # Update changelog with current version
-make changelog-add        # Add entry to unreleased section (interactive)
+make changelog-preview    # Collate fragments in preview mode, then preview changelog update
+make changelog-update     # Collate fragments, then update changelog with current version
+make changelog-add        # Legacy: add entry to unreleased section (interactive)
 make changelog-finalize   # Move unreleased to version section
 ```
+
+`changelog-preview` and `changelog-update` run `build/collate-changelog.sh` first
+so pending `changelog.d/` fragments are folded into `## [Unreleased]`.
+`changelog-add` is the legacy manual path for entries not tied to a PR.
 
 ### Release Notes
 
@@ -191,8 +234,10 @@ Automatic branch creation based on issue labels:
 | --------------------------------- | ---------------------------------- |
 | `build/version.sh`                | Version calculation and management |
 | `build/update-changelog.sh`       | Changelog automation               |
+| `build/collate-changelog.sh`      | Changelog fragment collation       |
 | `build/generate-release-notes.sh` | Release notes generation           |
 | `CHANGELOG.md`                    | Project changelog                  |
+| `changelog.d/`                    | Per-PR changelog fragments         |
 | `.github/labels.yaml`             | GitHub label definitions           |
 | `.github/issue-branch.yml`        | Issue branch automation            |
 
@@ -250,7 +295,10 @@ make release-preview
 make release-prepare
 
 # Review and commit
+# release-prepare collates changelog.d/ fragments into CHANGELOG.md and stages
+# their deletion, so `git add -A changelog.d` picks up the consumed fragments.
 git add CHANGELOG.md RELEASE_NOTES.md
+git add -A changelog.d
 git commit -m "Prepare release 1.3.0-beta.1"
 ```
 
