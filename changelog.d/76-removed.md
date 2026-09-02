@@ -1,0 +1,1 @@
+- **[Issue #76]** Remove the hard-coded Universal Analytics (`UA-`) snippet, which had been sending requests nowhere since Google stopped processing Universal Analytics hits in July 2023. GA4 continues to load through the existing Google Tag Manager container.

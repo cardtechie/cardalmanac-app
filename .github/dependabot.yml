@@ -11,13 +11,13 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/Denver"
+    # Version updates are disabled deliberately (see #348); security updates
+    # are unaffected by this limit and continue to open PRs.
     open-pull-requests-limit: 0
     commit-message:
       prefix: "composer"
       prefix-development: "composer-dev"
-      include: "security"
-    reviewers:
-      - "picklewagon"
+      include: "scope"
     assignees:
       - "picklewagon"
     labels:
@@ -36,13 +36,13 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/Denver"
+    # Version updates are disabled deliberately (see #348); security updates
+    # are unaffected by this limit and continue to open PRs.
     open-pull-requests-limit: 0
     commit-message:
       prefix: "npm"
       prefix-development: "npm-dev"
-      include: "security"
-    reviewers:
-      - "picklewagon"
+      include: "scope"
     assignees:
       - "picklewagon"
     labels:
@@ -79,12 +79,12 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "America/Denver"
+    # Version updates are disabled deliberately (see #348); security updates
+    # are unaffected by this limit and continue to open PRs.
     open-pull-requests-limit: 0
     commit-message:
       prefix: "actions"
-      include: "security"
-    reviewers:
-      - "picklewagon"
+      include: "scope"
     assignees:
       - "picklewagon"
     labels:

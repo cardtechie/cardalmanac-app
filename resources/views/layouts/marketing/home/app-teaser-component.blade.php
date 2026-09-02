@@ -16,7 +16,12 @@
         <div class="row">
             <div class="col-span-12 mt-4">
                 <p class="text-center">
-                    <a href="{{ route('app.index') }}" class="font-bold hover:underline uppercase">View app</a>
+                    <a
+                        href="{{ route('app.index') }}"
+                        class="font-bold hover:underline uppercase"
+                        data-analytics-event="view_app_click"
+                        data-analytics-cta-location="homepage_app_teaser"
+                    >View app</a>
                 </p>
             </div>
         </div>
