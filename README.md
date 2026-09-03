@@ -21,7 +21,7 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
 ### Prerequisites
 
 - Docker and Docker Compose
-- GitHub Personal Access Token (for Composer dependencies)
+- GitHub Personal Access Token (optional — raises the anonymous GitHub API rate limit when Composer fetches dependencies; builds succeed without one)
 
 ### Installation
 
@@ -38,8 +38,16 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
     # Copy environment file
     cp .env.example .env
 
-    # Add your GitHub Personal Access Token to .env
-    echo "COMPOSER_TOKEN=your_github_token_here" >> .env
+    # Optional: a GitHub Personal Access Token raises the anonymous GitHub API
+    # rate limit during composer install. Both Composer VCS sources are public,
+    # so builds succeed without it. It is passed to the build as a BuildKit
+    # secret and never written into the image.
+    #
+    # Only add it if you have a real token. A placeholder is worse than nothing:
+    # composer authenticates with whatever it is given, and GitHub answers a
+    # bogus credential with 401 where it would have answered anonymously with
+    # 200. Leave this line commented out otherwise.
+    # echo "COMPOSER_TOKEN=<your real github token>" >> .env
 
     # Add Trading Card API credentials (optional for basic browsing)
     echo "TRADINGCARDAPI_CLIENT_ID=your_client_id" >> .env
