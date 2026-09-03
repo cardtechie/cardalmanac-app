@@ -16,7 +16,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Local Development Setup
 
-1. Add GitHub Personal Access Token to `.env` as `COMPOSER_TOKEN`
+1. Optionally add a GitHub Personal Access Token to `.env` as `COMPOSER_TOKEN` (passed to the build as a
+   BuildKit secret, never as an ARG). Both Composer VCS sources are public, so builds succeed without it;
+   only add a real token, since a placeholder makes GitHub answer 401 where it would answer 200 anonymously
 2. Run `make up`
 3. Access https://cardalmanac.dev:8543/ (type `thisisunsafe` for cert warnings)
 
