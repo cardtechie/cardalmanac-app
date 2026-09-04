@@ -21,7 +21,7 @@ if (!function_exists('resolveApplicationVersion')) {
      *
      * @return string
      */
-    function resolveApplicationVersion()
+    function resolveApplicationVersion(): string
     {
         $fromEnvironment = env('APP_VERSION');
         if (is_string($fromEnvironment) && trim($fromEnvironment) !== '') {
@@ -43,10 +43,14 @@ if (!function_exists('resolveApplicationVersion')) {
             }
         }
 
-        if (file_exists(base_path('.git'))) {
-            exec('git symbolic-ref HEAD', $gitBranch);
-            if (is_array($gitBranch) &&
-                array_key_exists(0, $gitBranch) &&
+        if (function_exists('exec') && file_exists(base_path('.git'))) {
+            $gitBranch = [];
+            // Suppressed deliberately, and exec() is guarded by function_exists
+            // above: hardened hosts disable it via disable_functions, and a
+            // shell that is missing or refuses to run should fall through to
+            // the next rung rather than emit a warning into a rendered page.
+            @exec('git symbolic-ref HEAD', $gitBranch);
+            if (array_key_exists(0, $gitBranch) &&
                 str_contains($gitBranch[0], 'refs/heads/')) {
                 return str_replace('refs/heads/', '', $gitBranch[0]);
             }
@@ -69,7 +73,7 @@ if (!function_exists('getVersion')) {
      *                         The test suite uses this to exercise each rung.
      * @return string
      */
-    function getVersion($refresh = false)
+    function getVersion($refresh = false): string
     {
         static $resolved = null;
 
