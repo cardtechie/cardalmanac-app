@@ -110,7 +110,7 @@ The app works with these key entities from the Trading Card API:
 
 ### Custom Helper Functions (`helpers/helpers.php`)
 
-- **getVersion()**: Returns git branch in development or version in production
+- **getVersion()**: Resolves the running application's version, in precedence order: the `APP_VERSION` environment variable, then the `VERSION` file the Dockerfile's runtime stage stamps with the release calculated by `build/version.sh`, then the checked-out git branch (local development only — `.git` is excluded by `.dockerignore`), then `'N/A'`. Surfaced by the `/health` route and the site footer
 - **renderTitle()**: Consistent page title formatting across the application
 
 ### Navigation & Breadcrumbs
