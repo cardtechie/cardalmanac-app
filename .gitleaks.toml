@@ -6,7 +6,7 @@
 # base64 APP_KEY in a YAML environment block matches none of those. These rules
 # close that gap.
 #
-# The scan runs against the working tree only (--no-git), not history. After
+# The scan runs against the working tree only (`gitleaks dir`), not history. After
 # rotation the historical production key is inert, and #430 explicitly rules out
 # a history rewrite, so a history-wide scan would fail permanently on a dead key.
 
