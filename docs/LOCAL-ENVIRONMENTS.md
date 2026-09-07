@@ -32,15 +32,14 @@ untracked `.env`:
 echo "APP_KEY=base64:$(head -c 32 /dev/urandom | base64)"
 ```
 
-The two auxiliary stacks take their keys the same way. Both default to empty, so
-export them only if the corresponding container complains about a missing
-application key:
-
-| Variable        | Used by                                               |
-| --------------- | ----------------------------------------------------- |
-| `APP_KEY`       | Card Almanac app (generated automatically when unset) |
-| `APP_KEY_TCAPI` | `tcapi` service in `.docker/docker-compose.full.yml`  |
-| `APP_KEY_ADMIN` | `admin` service in `.docker/docker-compose.full.yml`  |
+The `tcapi` and `admin` services in the full stack no longer receive an `APP_KEY`
+from this repository at all. Each runs another project's image, and each of those
+images ships its own local key in its own baked `.env`; setting the variable here
+-- even to an empty string -- would shadow it, because Laravel's immutable
+`Dotenv` will not overwrite an environment variable that is already present, and
+the container would boot into "No application encryption key has been specified".
+If one of those containers ever does need a specific key, set it in that
+project's repository rather than here.
 
 In production the key is supplied by the `APP_KEY` repository secret, written
 into `cardalmanac.env` by `.github/workflows/deployment.yaml` and read by
