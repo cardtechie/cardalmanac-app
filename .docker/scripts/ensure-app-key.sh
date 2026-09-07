@@ -9,7 +9,20 @@
 # substitution path wired up in .github/workflows/deployment.yaml; local and CI
 # runs generate an ephemeral one here.
 
+# Both entrypoints source this under `set -ex`. With xtrace left on, every line
+# below is echoed in expanded form into container and CI logs -- including the
+# `APP_KEY=base64:...` assignment, and the guard test below when a real key was
+# supplied. Disable xtrace for the body and restore the caller's setting on
+# every exit path. Handling it here rather than at each `.` call site keeps one
+# copy of the rule and covers any future caller.
+__eak_xtrace=''
+case $- in
+    *x*) __eak_xtrace='x'; set +x ;;
+esac
+
 if [ -n "${APP_KEY:-}" ]; then
+    if [ -n "$__eak_xtrace" ]; then set -x; fi
+    unset __eak_xtrace
     return 0 2>/dev/null || exit 0
 fi
 
@@ -19,6 +32,8 @@ fi
 if [ "${APP_ENV:-}" = "production" ]; then
     echo "ensure-app-key: APP_KEY is unset or empty and APP_ENV=production; refusing to generate one." >&2
     echo "ensure-app-key: supply it via cardalmanac.env - see .github/workflows/deployment.yaml." >&2
+    if [ -n "$__eak_xtrace" ]; then set -x; fi
+    unset __eak_xtrace
     return 1 2>/dev/null || exit 1
 fi
 
@@ -29,3 +44,6 @@ fi
 APP_KEY="base64:$(head -c 32 /dev/urandom | base64 | tr -d '\n')"
 export APP_KEY
 echo "ensure-app-key: generated an ephemeral APP_KEY for APP_ENV=${APP_ENV:-unset}."
+
+if [ -n "$__eak_xtrace" ]; then set -x; fi
+unset __eak_xtrace
