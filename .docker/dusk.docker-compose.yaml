@@ -62,7 +62,6 @@ services:
       - dusktestsnw
     environment:
       APP_ENV: testing
-      APP_KEY: "${APP_KEY_TCAPI:-}"
       APP_DEBUG: "true"
       APP_URL: "https://api.tradingcardapi.dev:${TCAPI_PORT_HTTP:-8243}"
       DB_CONNECTION: mysql

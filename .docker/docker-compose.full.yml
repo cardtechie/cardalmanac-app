@@ -25,7 +25,6 @@ services:
       - overlay
     environment:
       APP_ENV: local
-      APP_KEY: "${APP_KEY_TCAPI:-}"
       APP_DEBUG: "true"
       APP_URL: "https://api.tradingcardapi.dev:${TCAPI_PORT_HTTP:-8243}"
       DB_HOST: mysql
@@ -57,7 +56,6 @@ services:
       - overlay
     environment:
       APP_ENV: local
-      APP_KEY: "${APP_KEY_ADMIN:-}"
       APP_DEBUG: "true"
       APP_LOG_LEVEL: debug
       APP_URL: "http://localhost"
