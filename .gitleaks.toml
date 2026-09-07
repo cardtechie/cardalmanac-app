@@ -1,0 +1,63 @@
+# gitleaks configuration for cardalmanac-app (#430).
+#
+# Extends the upstream default rule set with Laravel-aware patterns. The first
+# pass of the public-release audit scanned history for token-shaped prefixes
+# (ghp_, xkeysib-, AKIA, sk_live_, PEM headers) and reported clean, because a
+# base64 APP_KEY in a YAML environment block matches none of those. These rules
+# close that gap.
+#
+# The scan runs against the working tree only (`gitleaks dir`), not history. After
+# rotation the historical production key is inert, and #430 explicitly rules out
+# a history rewrite, so a history-wide scan would fail permanently on a dead key.
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "laravel-app-key"
+description = "Laravel APP_KEY (base64-encoded 32-byte key)"
+# Matches both the dotenv form (APP_KEY=base64:...) and the YAML environment
+# form (APP_KEY: "base64:..."), for any *_KEY / *_SECRET-shaped assignment.
+regex = '''(?i)\b[a-z0-9_]*(?:app_key|cipher_key|encryption_key)[a-z0-9_]*\s*[:=]\s*["']?base64:[A-Za-z0-9+/]{40,}={0,2}["']?'''
+keywords = ["base64:"]
+entropy = 3.5
+
+[[rules]]
+id = "mailgun-legacy-private-key"
+description = "Mailgun legacy private API key (key- prefix)"
+regex = '''(?i)\b[a-z0-9_]*mailgun[a-z0-9_]*\s*[:=]\s*["']?key-[a-f0-9]{32}["']?'''
+keywords = ["key-"]
+
+[[rules]]
+id = "generic-base64-secret-assignment"
+description = "base64:-prefixed secret assigned to any *_SECRET variable"
+regex = '''(?i)\b[a-z0-9_]*secret[a-z0-9_]*\s*[:=]\s*["']?base64:[A-Za-z0-9+/]{40,}={0,2}["']?'''
+keywords = ["base64:"]
+entropy = 3.5
+
+[allowlist]
+description = "Paths and values that are not credentials"
+paths = [
+  '''(^|/)package-lock\.json$''',
+  '''(^|/)composer\.lock$''',
+  '''(^|/)node_modules/''',
+  '''(^|/)public/(js|css)/''',
+  '''(^|/)public/mix-manifest\.json$''',
+  '''(^|/)storage/''',
+  '''(^|/)\.git/''',
+  # Self-signed TLS keys for the local-only development hostnames
+  # (cardalmanac.dev, api.tradingcardapi.dev, admin.tradingcardapi.dev). They
+  # are committed on purpose so `make up` serves HTTPS with no per-developer
+  # setup, they are not valid for any public hostname, and no production
+  # certificate is stored in this repository -- prod certs live on the host in
+  # /var/www/cardalmanac.com/certs, mounted at runtime.
+  '''(^|/)\.docker/(cert|api|admin)/[^/]+\.key$''',
+]
+regexes = [
+  # Documentation and template placeholders, not real values.
+  '''base64:REDACTED''',
+  '''base64:your-key-here''',
+  # The local MySQL password in the dev compose files is the literal string
+  # "password" on a container that is never exposed off the developer's machine.
+  '''(?i)(DB_PASSWORD|MYSQL_(ROOT_)?PASSWORD)\s*[:=]\s*["']?\$?\{?[A-Z_]*:?-?password\}?["']?''',
+]

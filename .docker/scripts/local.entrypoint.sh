@@ -8,6 +8,10 @@ fi
 
 cd /var/www/app
 
+# Export an APP_KEY when none was supplied. No key literal is committed to this
+# repository (#430), so local runs generate an ephemeral one here.
+. /var/www/app/.docker/scripts/ensure-app-key.sh
+
 # Run the default entrypoint script here - this will check for init/provisioning scripts and run them;
 # We do this here to ensure that we are fully provisioned before we continue
 /var/www/app/.docker/scripts/entrypoint.sh
