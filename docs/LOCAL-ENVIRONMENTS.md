@@ -15,6 +15,39 @@ TRADINGCARDAPI_CLIENT_SECRET=<your client secret>
 MIX_SENDINBLUE_API_KEY=<your sendinblue api key>
 ```
 
+## Application Keys
+
+`APP_KEY` is **not committed to this repository** (#430). Nothing needs to be set
+up for it locally: the local and test entrypoints source
+`.docker/scripts/ensure-app-key.sh`, which exports a freshly generated ephemeral
+key whenever `APP_KEY` is unset or empty.
+
+The practical consequence is that the key changes on every container start, so
+existing session cookies stop decrypting and you are logged out after a
+`make up`. To keep a stable session across restarts, pin one in your own
+untracked `.env`:
+
+```bash
+# Generate once, then paste into .env (which is gitignored).
+echo "APP_KEY=base64:$(head -c 32 /dev/urandom | base64)"
+```
+
+The two auxiliary stacks take their keys the same way. Both default to empty, so
+export them only if the corresponding container complains about a missing
+application key:
+
+| Variable        | Used by                                               |
+| --------------- | ----------------------------------------------------- |
+| `APP_KEY`       | Card Almanac app (generated automatically when unset) |
+| `APP_KEY_TCAPI` | `tcapi` service in `.docker/docker-compose.full.yml`  |
+| `APP_KEY_ADMIN` | `admin` service in `.docker/docker-compose.full.yml`  |
+
+In production the key is supplied by the `APP_KEY` repository secret, written
+into `cardalmanac.env` by `.github/workflows/deployment.yaml` and read by
+Compose when `deploy.sh` brings the stack up. `.docker/prod.docker-compose.yaml`
+declares it as a mandatory substitution, so a deploy with the secret missing
+fails loudly rather than silently falling back to some other key.
+
 ## Environment Overview
 
 The Card Almanac project supports multiple local development configurations to match different development needs:
@@ -92,6 +125,7 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 | `docker-compose.yml`              | Base almanac services (minimal) | Minimal Almanac  |
 | `.docker/docker-compose.full.yml` | Adds API + Admin                | Full Development |
 | `.env.local`                      | Default configuration           | Development      |
+| `.gitleaks.toml`                  | Secret-scanning rules (CI gate) | All              |
 
 ## Port Reference
 
@@ -162,10 +196,15 @@ make upd
 ### Minimal Almanac (.env.local)
 
 ```bash
+APP_KEY=                                              # Blank: generated per container
 TRADINGCARDAPI_URL=https://host.docker.internal:8243  # External API
 DB_HOST=mysql
 DB_DATABASE=tradingcards
 ```
+
+`.env.local` is baked into the image as `.env` (`Dockerfile:195`), so a value
+committed there would become every container's fallback key. It is deliberately
+left blank -- see [Application Keys](#application-keys).
 
 ### Full Development (.docker/docker-compose.full.yml)
 
