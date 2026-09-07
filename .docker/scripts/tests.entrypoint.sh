@@ -7,6 +7,11 @@ if [ "${1#-}" != "$1" ]; then
 fi
 
 cd /var/www/app
+
+# Export an APP_KEY when none was supplied. No key literal is committed to this
+# repository (#430), so CI runs generate an ephemeral one here.
+. /var/www/app/.docker/scripts/ensure-app-key.sh
+
 # refresh libraries now that our code is bind-mounted in place
 composer dump-autoload
 

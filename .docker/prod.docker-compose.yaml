@@ -14,7 +14,7 @@ services:
     environment:
       APP_DEBUG: "false"
       APP_ENV: production
-      APP_KEY: "***REMOVED***"
+      APP_KEY: "${APP_KEY:?APP_KEY must be supplied via cardalmanac.env}"
       APP_LOG_LEVEL: error
       APP_URL: https://cardalmanac.com
       MIX_APP_URL: https://cardalmanac.com

@@ -1,0 +1,2 @@
+- **[Issue #430]** Remove every committed `APP_KEY` literal and deliver the production key through the existing GitHub-secrets path, with Laravel-aware secret scanning in CI.
+    - Requires an `APP_KEY` repository secret and a rotated key on the host before the next deploy; deploys now fail fast without one, and rotation logs every user out.
