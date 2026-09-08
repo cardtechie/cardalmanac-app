@@ -11,7 +11,7 @@ services:
             TRADINGCARDAPI_URL: "https://host.docker.internal:8243"
             TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
             TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
-            MIX_SENDINBLUE_API_KEY: "${MIX_SENDINBLUE_API_KEY}"
+            BREVO_API_KEY: "${BREVO_API_KEY}"
         working_dir: /var/www/app
         volumes:
             - .:/var/www/app:consistent

@@ -11,8 +11,10 @@ To setup the Card Almanac to work with the Trading Card API, create a `.env` fil
 TRADINGCARDAPI_CLIENT_ID=<your client ID>
 TRADINGCARDAPI_CLIENT_SECRET=<your client secret>
 
-# SendinBlue Integration (for mailing list)
-MIX_SENDINBLUE_API_KEY=<your sendinblue api key>
+# Brevo (formerly SendinBlue) Integration (for the newsletter signup).
+# Deliberately not MIX_-prefixed: Laravel Mix inlines every MIX_* variable
+# into the public JS bundle, which would publish the key (#426).
+BREVO_API_KEY=<your brevo api key>
 ```
 
 ## Application Keys
