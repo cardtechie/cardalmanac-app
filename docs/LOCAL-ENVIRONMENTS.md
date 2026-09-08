@@ -47,6 +47,25 @@ Compose when `deploy.sh` brings the stack up. `.docker/prod.docker-compose.yaml`
 declares it as a mandatory substitution, so a deploy with the secret missing
 fails loudly rather than silently falling back to some other key.
 
+## Local Mail
+
+The full stack's `admin` container defaults to the `log` mail driver, so mail is
+written to the container log instead of being delivered and **no credential is
+required** for local development. No Mailgun credential is committed to this
+repository.
+
+To exercise real Mailgun delivery locally, set all three variables in your own
+untracked root `.env`:
+
+```dotenv
+MAIL_DRIVER=mailgun
+MAILGUN_DOMAIN=<your mailgun sending domain>
+MAILGUN_SECRET=<your mailgun api key>
+```
+
+Compose substitutes them into the `admin` service; leaving them unset keeps the
+`log` default.
+
 ## Environment Overview
 
 The Card Almanac project supports multiple local development configurations to match different development needs:
@@ -211,7 +230,12 @@ left blank -- see [Application Keys](#application-keys).
 TRADINGCARDAPI_URL=https://tcapi:443  # Local API container
 DB_HOST=mysql
 DB_DATABASE=tradingcards
+MAIL_DRIVER=log                       # Default: mail goes to the container log
+MAILGUN_DOMAIN=                       # Blank unless opting into Mailgun
+MAILGUN_SECRET=                       # Blank unless opting into Mailgun
 ```
+
+See [Local Mail](#local-mail) for the Mailgun opt-in.
 
 ## Choosing the Right Environment
 
