@@ -126,6 +126,22 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 | `.env.local`                      | Default configuration           | Development      |
 | `.gitleaks.toml`                  | Secret-scanning rules (CI gate) | All              |
 
+### Browser tests and the removed Dusk stack
+
+This repository ships **no Laravel Dusk stack**. `laravel/dusk` is not a
+dependency, `tests/Browser/` does not exist, and the `.docker/dusk.*` compose
+files it once carried were an unwired copy of another repository's stack — four
+of their bind mounts pointed at paths that do not exist here. They were removed
+in #461. Browser coverage for the Trading Card API lives in
+`cardtechie/tradingcardapi-admin`.
+
+The `TRADINGCARDAPI_CLIENT_ID` / `TRADINGCARDAPI_CLIENT_SECRET` pair formerly
+committed in that compose file was a fixture for the API's `ClientTokenSeeder`,
+which refuses to run unless `APP_ENV=testing` — no automated path could insert
+it into a production database. The literals themselves were replaced with
+environment substitutions in #430. Local and full-stack runs read both values
+from the developer's `.env`, as **Initial Setup** above describes.
+
 ## Port Reference
 
 | Environment          | Almanac | API      | Admin | MySQL |
