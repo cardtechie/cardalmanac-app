@@ -165,6 +165,11 @@ main() {
         exit 1
     fi
 
+    # hits.txt below holds matched credential VALUES, and the rebuilt
+    # expressions file is a full credential list. Set the umask before the
+    # first create so neither is briefly world-readable.
+    umask 077
+
     assert_mirror_clone "$pre" "pre-rewrite mirror"
     assert_mirror_clone "$post" "rewritten mirror"
 

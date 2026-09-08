@@ -322,6 +322,11 @@ main() {
         exit 1
     fi
 
+    # Everything this script writes is credential-bearing. Set the umask before
+    # the first create so no file is ever briefly world-readable between its
+    # creation and its chmod.
+    umask 077
+
     assert_mirror_clone "$mirror"
     load_allowlist_regexes
 
