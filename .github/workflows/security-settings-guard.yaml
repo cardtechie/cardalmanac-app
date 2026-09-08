@@ -35,17 +35,32 @@ jobs:
         run: |
           set -euo pipefail
 
-          settings=$(gh api "repos/${REPO}" --jq '{
-            visibility: .visibility,
-            ss: (.security_and_analysis.secret_scanning.status // "unreadable"),
-            pp: (.security_and_analysis.secret_scanning_push_protection.status // "unreadable")
-          }')
+          # An under-scoped token is the most likely real failure here, and it
+          # surfaces as a non-zero `gh api` rather than a null block. Capture
+          # the failure instead of letting `set -e` abort with a bare gh error,
+          # so both shapes reach the same explanatory message below.
+          if raw=$(gh api "repos/${REPO}" 2>&1); then
+            api_error=""
+          else
+            api_error="${raw}"
+          fi
 
-          visibility=$(printf '%s' "${settings}" | jq -r .visibility)
-          ss=$(printf '%s' "${settings}" | jq -r .ss)
-          pp=$(printf '%s' "${settings}" | jq -r .pp)
-
-          echo "visibility=${visibility} secret_scanning=${ss} push_protection=${pp}"
+          if [ -z "${api_error}" ]; then
+            settings=$(printf '%s' "${raw}" | jq '{
+              visibility: (.visibility // "unknown"),
+              ss: (.security_and_analysis.secret_scanning.status // "unreadable"),
+              pp: (.security_and_analysis.secret_scanning_push_protection.status // "unreadable")
+            }')
+            visibility=$(printf '%s' "${settings}" | jq -r .visibility)
+            ss=$(printf '%s' "${settings}" | jq -r .ss)
+            pp=$(printf '%s' "${settings}" | jq -r .pp)
+            echo "visibility=${visibility} secret_scanning=${ss} push_protection=${pp}"
+          else
+            visibility="unknown"
+            ss="unreadable"
+            pp="unreadable"
+            echo "gh api failed for repos/${REPO}"
+          fi
 
           if [ "${ss}" = "unreadable" ] || [ "${pp}" = "unreadable" ]; then
             echo "::error::Could not read 'security_and_analysis' on ${REPO}."
@@ -54,6 +69,11 @@ jobs:
             echo "access, so this is a token-scope problem, NOT evidence that the"
             echo "settings are disabled. Widen PROJECT_TOKEN, or verify by hand:"
             echo "  gh api repos/${REPO} --jq .security_and_analysis"
+            if [ -n "${api_error}" ]; then
+              echo ""
+              echo "gh reported:"
+              printf '%s\n' "${api_error}"
+            fi
             exit 1
           fi
 
