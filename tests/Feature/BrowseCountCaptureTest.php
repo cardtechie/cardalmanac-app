@@ -242,6 +242,51 @@ class BrowseCountCaptureTest extends TestCase
             ->assertExitCode(0);
     }
 
+    public function test_compare_against_a_file_that_is_not_an_artifact_fails_loudly(): void
+    {
+        $notAnArtifact = $this->tempPath('browse-counts-garbage.json');
+        file_put_contents($notAnArtifact, '{"hello":"world"}');
+
+        $this->fakeApi(
+            $this->paginator([], 0),
+            ['all' => $this->paginator([], 0)]
+        );
+
+        $out = $this->tempPath('browse-counts-garbage-after.json');
+
+        // A file that parses but carries no counts must not read as "nothing moved".
+        $this->artisan('browse:capture-counts', ['--out' => $out, '--compare' => $notAnArtifact])
+            ->assertExitCode(1);
+    }
+
+    public function test_compare_warns_when_the_two_captures_came_from_different_apis(): void
+    {
+        $before = $this->tempPath('browse-counts-other-api.json');
+        file_put_contents($before, json_encode([
+            'captured_at' => '2026-09-01T00:00:00+00:00',
+            'api_url' => 'https://staging.example.test',
+            'app_version' => getVersion(),
+            'counts' => ['genres.total' => 3, 'genres.returned' => 0, 'sets.total' => 137, 'sets.returned' => 0],
+            'labels' => [],
+            'failures' => [],
+        ]));
+
+        config(['tradingcardapi.url' => 'https://api.example.test']);
+
+        $this->fakeApi(
+            $this->paginator([], 3),
+            ['all' => $this->paginator([], 137)]
+        );
+
+        $out = $this->tempPath('browse-counts-other-api-after.json');
+
+        // Identical numbers across two different APIs are a coincidence, not a
+        // gate measurement -- the zero delta must not read as a silent pass.
+        $this->artisan('browse:capture-counts', ['--out' => $out, '--compare' => $before])
+            ->expectsOutputToContain('DIFFERENT API URLs')
+            ->assertExitCode(0);
+    }
+
     public function test_compare_against_a_missing_artifact_fails_loudly(): void
     {
         $this->fakeApi(
