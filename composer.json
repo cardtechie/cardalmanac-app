@@ -1,12 +1,19 @@
 {
-    "name": "laravel/laravel",
+    "name": "cardtechie/cardalmanac-app",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "The definitive digital trading card almanac - comprehensive data, interactive checklists, and collection tools for trading card collectors and enthusiasts.",
     "keywords": [
-        "framework",
+        "trading-cards",
+        "card-almanac",
+        "collectibles",
         "laravel"
     ],
+    "homepage": "https://cardalmanac.com",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/cardtechie/cardalmanac-app/issues",
+        "source": "https://github.com/cardtechie/cardalmanac-app"
+    },
     "require": {
         "php": "^8.2",
         "cardtechie/tradingcardapi-sdk-php": "^0.1.9",
@@ -59,10 +66,6 @@
         ]
     },
     "repositories": [
-        {
-            "type": "composer",
-            "url": "https://wpackagist.org"
-        },
         {
             "type": "vcs",
             "url": "https://github.com/picklewagon/laravel-commonmark-blog"
