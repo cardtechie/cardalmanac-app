@@ -47,15 +47,21 @@ class NewsletterController extends Controller
             $response = Http::withHeaders([
                 'api-key' => $key,
                 'accept' => 'application/json',
-            ])->post($endpoint, [
-                'email' => $validated['email'],
-                'includeListIds' => config('services.brevo.list_ids'),
-                'templateId' => config('services.brevo.template_id'),
-                // Built from the route so the confirmation link can never
-                // drift onto a URL this application does not serve, which is
-                // how it came to 404 in production.
-                'redirectionUrl' => route('newsletter.confirmed'),
-            ]);
+            ])
+                // This call sits on the critical path of a public page, so it
+                // gets an explicit budget rather than the client's 30s
+                // default: a slow Brevo must not pin a PHP-FPM worker.
+                ->connectTimeout(5)
+                ->timeout(10)
+                ->post($endpoint, [
+                    'email' => $validated['email'],
+                    'includeListIds' => config('services.brevo.list_ids'),
+                    'templateId' => config('services.brevo.template_id'),
+                    // Built from the route so the confirmation link can never
+                    // drift onto a URL this application does not serve, which
+                    // is how it came to 404 in production.
+                    'redirectionUrl' => route('newsletter.confirmed'),
+                ]);
         } catch (Throwable $e) {
             Log::warning('Newsletter subscribe request to Brevo failed.', [
                 'exception' => $e->getMessage(),

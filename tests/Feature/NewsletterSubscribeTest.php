@@ -163,6 +163,25 @@ class NewsletterSubscribeTest extends TestCase
     }
 
     /**
+     * The homepage include was commented out in ba64a72 pending exactly this
+     * proxy. It is live again, and a future template edit must not silently
+     * re-disable it while the endpoint keeps reporting healthy.
+     */
+    public function test_the_homepage_renders_the_mailing_list_component(): void
+    {
+        $source = file_get_contents(resource_path('views/home.blade.php'));
+
+        $this->assertStringContainsString(
+            "@include('layouts.marketing.home.mailing-list-component')",
+            $source
+        );
+        $this->assertStringNotContainsString('{{--', $source);
+
+        $html = view('layouts.marketing.home.mailing-list-component')->render();
+        $this->assertStringContainsString('<mailing-list-form', $html);
+    }
+
+    /**
      * Guards the acceptance criterion directly at the source level: no
      * MIX_-prefixed secret, and no Brevo client, anywhere in resources/js/.
      */
