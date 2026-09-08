@@ -188,3 +188,4 @@ This project is open-sourced software licensed under the [MIT license](https://o
 - **Twitter**: [@cardalmanac](https://twitter.com/cardalmanac)
 - **API Documentation**: [Trading Card API](https://tradingcardapi.dev)
 - **TLS Certificates**: [docs/TLS-CERTIFICATES.md](docs/TLS-CERTIFICATES.md)
+- **Security Scanning**: [docs/SECURITY-SCANNING.md](docs/SECURITY-SCANNING.md)

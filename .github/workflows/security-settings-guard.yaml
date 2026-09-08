@@ -1,0 +1,93 @@
+name: Security Settings Guard
+
+# Fail once this repository is public and GitHub-native secret scanning or push
+# protection is not enabled. Tracking issue: #470 (public-release gate).
+#
+# Runbook: docs/SECURITY-SCANNING.md
+#
+# Deliberately NOT triggered on pull_request: the settings are repository-global,
+# so a per-PR run would say nothing about the PR and would sit permanently red
+# until the visibility flip.
+
+on:
+  schedule:
+    # Mondays at 07:00 UTC.
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security-settings-guard:
+    name: Secret scanning and push protection are enabled
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check secret scanning and push protection
+        env:
+          # security_and_analysis is only returned to a caller with repository
+          # admin access, so the default GITHUB_TOKEN is not sufficient.
+          # PROJECT_TOKEN is an org secret already scoped to all repositories
+          # (see .github/workflows/assign-sprint.yaml).
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          settings=$(gh api "repos/${REPO}" --jq '{
+            visibility: .visibility,
+            ss: (.security_and_analysis.secret_scanning.status // "unreadable"),
+            pp: (.security_and_analysis.secret_scanning_push_protection.status // "unreadable")
+          }')
+
+          visibility=$(printf '%s' "${settings}" | jq -r .visibility)
+          ss=$(printf '%s' "${settings}" | jq -r .ss)
+          pp=$(printf '%s' "${settings}" | jq -r .pp)
+
+          echo "visibility=${visibility} secret_scanning=${ss} push_protection=${pp}"
+
+          if [ "${ss}" = "unreadable" ] || [ "${pp}" = "unreadable" ]; then
+            echo "::error::Could not read 'security_and_analysis' on ${REPO}."
+            echo ""
+            echo "GitHub only returns that block to a caller with repository admin"
+            echo "access, so this is a token-scope problem, NOT evidence that the"
+            echo "settings are disabled. Widen PROJECT_TOKEN, or verify by hand:"
+            echo "  gh api repos/${REPO} --jq .security_and_analysis"
+            exit 1
+          fi
+
+          if [ "${visibility}" != "public" ]; then
+            echo "::notice::${REPO} is ${visibility}; skipping the check."
+            echo ""
+            echo "Secret scanning and push protection are expected to be off before"
+            echo "the public-visibility flip — GitHub-native scanning on a private"
+            echo "repository requires a Secret Protection license. See"
+            echo "docs/SECURITY-SCANNING.md for the enable-at-the-flip sequence."
+            exit 0
+          fi
+
+          failed=0
+
+          if [ "${ss}" != "enabled" ]; then
+            echo "::error::Secret scanning is '${ss}' on the public repository ${REPO}; expected 'enabled'."
+            failed=1
+          fi
+
+          if [ "${pp}" != "enabled" ]; then
+            echo "::error::Secret scanning push protection is '${pp}' on the public repository ${REPO}; expected 'enabled'."
+            failed=1
+          fi
+
+          if [ "${failed}" -ne 0 ]; then
+            echo ""
+            echo "Re-enable both in Settings -> Code security, or run:"
+            echo "  gh api -X PATCH repos/${REPO} \\"
+            echo "    -f 'security_and_analysis[secret_scanning][status]=enabled' \\"
+            echo "    -f 'security_and_analysis[secret_scanning_push_protection][status]=enabled'"
+            echo ""
+            echo "See docs/SECURITY-SCANNING.md."
+            exit 1
+          fi
+
+          echo "::notice::${REPO} is public with secret scanning and push protection enabled."
