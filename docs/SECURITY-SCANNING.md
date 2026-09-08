@@ -115,7 +115,7 @@ Native scanning is a **backstop**, not the primary defence. It is worth enabling
 
 The scan covers the **working tree only** (`gitleaks dir`), never history. That is deliberate: the historical production `APP_KEY` was rotated in [#430](https://github.com/cardtechie/cardalmanac-app/issues/430) and is now inert, that issue explicitly rules out a history rewrite, and a history-wide scan would therefore fail forever on a dead key.
 
-Two layers, two jobs:
+The layers:
 
 | Layer                  | Covers                                          | Runs                                    |
 | ---------------------- | ----------------------------------------------- | --------------------------------------- |
