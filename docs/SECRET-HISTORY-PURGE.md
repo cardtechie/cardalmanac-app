@@ -20,18 +20,18 @@ public publishes the full history. But the reverse matters too, and the issue's 
 scope table did not reflect it: **`HEAD` is already clean.** Every value that table marked
 as live at `HEAD` is now delivered by variable reference, empty, or explicitly allowlisted.
 
-| Secret | Where it is | Status |
-| --- | --- | --- |
-| `tradingcardadmin` DB password (as `DB_PASSWORD` **and** `CARDS_DB_PASSWORD`) | history only (`20f0dce`, `8b77b2c`) | **LIVE** — blocked on `tradingcardapi-admin#1414` |
-| Admin production `APP_KEY` | history only (`20f0dce`, `8b77b2c`) | **LIVE** — still at `tradingcardapi-admin` HEAD; blocked on `tradingcardapi-admin#1414` |
-| DigitalOcean cluster host (`DB_HOST`, `CARDS_DB_HOST`) | history only | Live coordinate for a live cluster |
-| `cardalmanac_blog` DB password | history only | Dead — revoked in #468 |
-| This repo's production `APP_KEY` | history only | Removed from HEAD by #430; rotate per #430 |
-| Mailgun API key | history only | `MAILGUN_SECRET` at HEAD is a varref; only `MAILGUN_DOMAIN` is a literal, and a domain is not a credential |
-| Passport client ID + secret | history only | Both varrefs at HEAD |
-| Local dev `APP_KEY` | HEAD (`.env.local`) | Empty (`APP_KEY=`) |
-| Local dev DB password | HEAD | The literal string `password`, on containers never exposed off the developer machine; allowlisted in `.gitleaks.toml` |
-| Self-signed dev TLS private keys | HEAD (`.docker/{admin,api,cert}/*.key`) | Deliberately committed, allowlisted in `.gitleaks.toml`; owned by #425 |
+| Secret                                                                        | Where it is                             | Status                                                                                                                |
+| ----------------------------------------------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `tradingcardadmin` DB password (as `DB_PASSWORD` **and** `CARDS_DB_PASSWORD`) | history only (`20f0dce`, `8b77b2c`)     | **LIVE** — blocked on `tradingcardapi-admin#1414`                                                                     |
+| Admin production `APP_KEY`                                                    | history only (`20f0dce`, `8b77b2c`)     | **LIVE** — still at `tradingcardapi-admin` HEAD; blocked on `tradingcardapi-admin#1414`                               |
+| DigitalOcean cluster host (`DB_HOST`, `CARDS_DB_HOST`)                        | history only                            | Live coordinate for a live cluster                                                                                    |
+| `cardalmanac_blog` DB password                                                | history only                            | Dead — revoked in #468                                                                                                |
+| This repo's production `APP_KEY`                                              | history only                            | Removed from HEAD by #430; rotate per #430                                                                            |
+| Mailgun API key                                                               | history only                            | `MAILGUN_SECRET` at HEAD is a varref; only `MAILGUN_DOMAIN` is a literal, and a domain is not a credential            |
+| Passport client ID + secret                                                   | history only                            | Both varrefs at HEAD                                                                                                  |
+| Local dev `APP_KEY`                                                           | HEAD (`.env.local`)                     | Empty (`APP_KEY=`)                                                                                                    |
+| Local dev DB password                                                         | HEAD                                    | The literal string `password`, on containers never exposed off the developer machine; allowlisted in `.gitleaks.toml` |
+| Self-signed dev TLS private keys                                              | HEAD (`.docker/{admin,api,cert}/*.key`) | Deliberately committed, allowlisted in `.gitleaks.toml`; owned by #425                                                |
 
 So the remaining exposure is **entirely historical**, which is what this procedure
 addresses — and the scope must be derived from history, not from a HEAD-facing table.
@@ -50,12 +50,12 @@ rewrite only stops shipping the evidence to the public.
 
 All of these must be **closed** before the procedure below is run:
 
-| Blocker | What it covers |
-| --- | --- |
-| [#430](https://github.com/cardtechie/cardalmanac-app/issues/430) | This repo's production `APP_KEY` |
-| [#460](https://github.com/cardtechie/cardalmanac-app/issues/460) | Mailgun API key |
-| [#461](https://github.com/cardtechie/cardalmanac-app/issues/461) | Passport client secret |
-| [#463](https://github.com/cardtechie/cardalmanac-app/issues/463) | `.env.local` untracking |
+| Blocker                                                                                       | What it covers                                                    |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [#430](https://github.com/cardtechie/cardalmanac-app/issues/430)                              | This repo's production `APP_KEY`                                  |
+| [#460](https://github.com/cardtechie/cardalmanac-app/issues/460)                              | Mailgun API key                                                   |
+| [#461](https://github.com/cardtechie/cardalmanac-app/issues/461)                              | Passport client secret                                            |
+| [#463](https://github.com/cardtechie/cardalmanac-app/issues/463)                              | `.env.local` untracking                                           |
 | [`tradingcardapi-admin#1414`](https://github.com/cardtechie/tradingcardapi-admin/issues/1414) | Admin production `APP_KEY` and the `tradingcardadmin` DB password |
 
 `tradingcardapi-admin#1414` is the long pole. Those two credentials cannot be rotated
@@ -65,7 +65,7 @@ until that repository stops shipping them in its deploy compose file, or
 **None of these secrets is confined to this repository.** The `tradingcardadmin` password,
 the admin `APP_KEY`, the Mailgun key and the Passport secret each appear in
 `tradingcardapi-admin`, `tradingcardapi-api` or `cardtechie-site` as well. Rotation is a
-cross-repo coordination problem, and purging *this* repository's history does not by
+cross-repo coordination problem, and purging _this_ repository's history does not by
 itself neutralize any of those values.
 
 Once every value is rotated, this rewrite becomes **optional risk reduction** rather than
@@ -75,13 +75,13 @@ a hard gate. See [Decision](#decision-go-or-no-go).
 
 Re-measure these at run time rather than trusting the numbers below; they move.
 
-| Cost | Reading (2026-09-08) | How to re-check |
-| --- | --- | --- |
-| Every commit SHA changes | 723 commits on `main` | `git rev-list --count origin/main` |
-| Open PR refs break | 32 open, of which 4 are not bot-authored | `gh pr list --state open --limit 100 --json number,author` |
-| Collaborators must re-clone | 1 (`picklewagon`) | repository settings |
-| Forks must be handled separately | 0 | `gh repo view --json forkCount` |
-| External SHA references go stale | CHANGELOG entries, Asana links, deploy tags | — |
+| Cost                             | Reading (2026-09-08)                        | How to re-check                                            |
+| -------------------------------- | ------------------------------------------- | ---------------------------------------------------------- |
+| Every commit SHA changes         | 723 commits on `main`                       | `git rev-list --count origin/main`                         |
+| Open PR refs break               | 32 open, of which 4 are not bot-authored    | `gh pr list --state open --limit 100 --json number,author` |
+| Collaborators must re-clone      | 1 (`picklewagon`)                           | repository settings                                        |
+| Forks must be handled separately | 0                                           | `gh repo view --json forkCount`                            |
+| External SHA references go stale | CHANGELOG entries, Asana links, deploy tags | —                                                          |
 
 The Dependabot PRs can be closed en masse; Dependabot re-opens them against the rewritten
 history on its next run. **Non-bot PRs cannot be treated that way** — merge or close them
@@ -206,7 +206,7 @@ workspace clone under `runner-workspaces/`, and any deploy checkout on the host.
 ### 8. Final gate
 
 Re-run the working-tree scan, and scan the rewritten history independently — the verifier
-proves only that the *known* literal set is gone, and an independent scan is what catches
+proves only that the _known_ literal set is gone, and an independent scan is what catches
 a secret that was never on the list:
 
 ```bash
@@ -262,13 +262,13 @@ The two options:
 
 - **Purge.** Follow the procedure above. Costs: a full re-SHA of 723 commits, every clone
   re-cloned, open PR branches rebuilt, external SHA references broken.
-- **Rotate and accept.** Rotate every value (which the gate conditions require *either
-  way*), leave history intact, and accept that the historical values are dead. Close #462
+- **Rotate and accept.** Rotate every value (which the gate conditions require _either
+  way_), leave history intact, and accept that the historical values are dead. Close #462
   as `wontfix` and record the decision here. This is #462's own "Alternative worth
   considering," and it is what #430 already chose.
 
 Two inputs that were not available when #462 was written both push toward the purge being
-*cheaper* than the issue assumes: there are no forks and a single collaborator, so "have
+_cheaper_ than the issue assumes: there are no forks and a single collaborator, so "have
 every collaborator re-clone" is one `git clone`; and most open PRs are Dependabot, which
 re-opens its own.
 
