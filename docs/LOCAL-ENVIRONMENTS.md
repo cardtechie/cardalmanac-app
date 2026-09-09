@@ -224,18 +224,24 @@ DB_DATABASE=tradingcards
 committed there would become every container's fallback key. It is deliberately
 left blank -- see [Application Keys](#application-keys).
 
-### Full Development (.docker/docker-compose.full.yml)
+### Full Development (values seen by the containers)
+
+`.docker/docker-compose.full.yml` supplies these, but not all from the same
+place. The first three are hardcoded in the compose file; the `MAIL_*` entries
+are `${VAR:-default}` substitutions read from your untracked root `.env`, and
+the values shown are what you get when it leaves them unset.
 
 ```bash
-TRADINGCARDAPI_URL=https://tcapi:443  # Local API container
-DB_HOST=mysql
-DB_DATABASE=tradingcards
-MAIL_DRIVER=log                       # Default: mail goes to the container log
-MAILGUN_DOMAIN=                       # Blank unless opting into Mailgun
-MAILGUN_SECRET=                       # Blank unless opting into Mailgun
+TRADINGCARDAPI_URL=https://tcapi:443  # Set in the compose file
+DB_HOST=mysql                         # Set in the compose file
+DB_DATABASE=tradingcards              # Set in the compose file
+MAIL_DRIVER=log                       # From root .env; default: mail goes to the container log
+MAILGUN_DOMAIN=                       # From root .env; blank unless opting into Mailgun
+MAILGUN_SECRET=                       # From root .env; blank unless opting into Mailgun
 ```
 
-See [Local Mail](#local-mail) for the Mailgun opt-in.
+To change a `MAIL_*` value, edit your root `.env` -- not the compose file. See
+[Local Mail](#local-mail) for the Mailgun opt-in.
 
 ## Choosing the Right Environment
 
