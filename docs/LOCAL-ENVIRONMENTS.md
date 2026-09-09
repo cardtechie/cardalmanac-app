@@ -213,6 +213,43 @@ DB_HOST=mysql
 DB_DATABASE=tradingcards
 ```
 
+## Pointing the App at a Live or Staging API
+
+Some checks have to run against a real API rather than a local stack — notably
+the browse-count capture in
+[DRAFT-STATUS-GATE-VERIFICATION.md](DRAFT-STATUS-GATE-VERIFICATION.md), whose
+whole point is that a real request carrying the real token is the only thing
+that can observe a silent server-side gate.
+
+Set these in your untracked `.env` and restart the container:
+
+```dotenv
+TRADINGCARDAPI_URL=https://api.tradingcardapi.com
+TRADINGCARDAPI_CLIENT_ID=<the client id for that environment>
+TRADINGCARDAPI_CLIENT_SECRET=<the client secret for that environment>
+```
+
+Then run the capture inside the app container:
+
+```bash
+docker compose exec caapp php artisan browse:capture-counts \
+  --set=<a set id with a checklist> \
+  --out=storage/app/browse-counts-before.json
+```
+
+Notes:
+
+- **Credentials are per environment.** A local client id will authenticate
+  against a local API and fail against a remote one; the capture records the
+  failure rather than aborting, so check the artifact's `failures` map before
+  trusting a run.
+- **`TRADINGCARDAPI_SSL_VERIFY` should stay `true`** against a real API. It
+  exists for local instances without a valid certificate, and turning it off
+  against a remote host hides a genuine trust failure.
+- **The artifact records `TRADINGCARDAPI_URL` in its header**, so a capture
+  taken against the wrong environment is detectable after the fact — and
+  `browse:capture-counts --compare` warns when two artifacts disagree on it.
+
 ## Choosing the Right Environment
 
 | Scenario                 | Recommended Environment | Command                                        |
