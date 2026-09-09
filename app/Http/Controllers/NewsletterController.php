@@ -63,8 +63,12 @@ class NewsletterController extends Controller
                     'redirectionUrl' => route('newsletter.confirmed'),
                 ]);
         } catch (Throwable $e) {
+            // Pass the Throwable itself, not just its message: Monolog's
+            // normalizer expands an exception in the context into its class,
+            // code, file, line and stack trace, which is what makes a
+            // production failure diagnosable.
             Log::warning('Newsletter subscribe request to Brevo failed.', [
-                'exception' => $e->getMessage(),
+                'exception' => $e,
             ]);
 
             return $this->failure();
