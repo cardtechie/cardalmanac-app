@@ -176,7 +176,7 @@ Dependabot will automatically ignore `dev-main` dependencies that should be manu
 
 ## Security
 
-If you discover a security vulnerability, please send an email to the maintainers. All security vulnerabilities will be promptly addressed.
+Please report security vulnerabilities privately — see [SECURITY.md](SECURITY.md) for the disclosure process and contact address. Do not open a public issue for an unfixed vulnerability.
 
 ## License
 
