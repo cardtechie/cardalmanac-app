@@ -1,0 +1,2 @@
+- **[Issue #469]** Add a `SECURITY.md` disclosure policy naming a real private reporting address, and repoint the README's Security section at it.
+    - GitHub private vulnerability reporting stays unavailable until the repository is public; enable it at that flip.
