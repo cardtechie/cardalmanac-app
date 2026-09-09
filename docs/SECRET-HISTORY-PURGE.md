@@ -95,8 +95,10 @@ matters for the public flip.
 
 ## Procedure
 
-Run every step from a scratch directory outside the repository. Nothing below touches a
-working clone.
+The scripts live in this repository, so run them from your checkout — but keep every
+_artifact_ (the mirrors and the generated expressions file) in a scratch directory outside
+it, which is what the explicit `--out` below is for. No step rewrites, checks out, or
+otherwise mutates the working clone you invoke them from.
 
 ### 1. Confirm the gates
 
@@ -115,11 +117,14 @@ git clone --mirror git@github.com:cardtechie/cardalmanac-app.git /path/to/scratc
 ### 3. Generate the expressions file
 
 ```bash
-build/secret-purge-expressions.sh /path/to/scratch/cam-backup.git
+build/secret-purge-expressions.sh --out /path/to/scratch/purge /path/to/scratch/cam-backup.git
 ```
 
-Writes `<repo>/.secret-purge/replace-text.txt`, mode `0600`. That path is gitignored, and
-the script refuses to run against anything but a bare mirror.
+Writes `/path/to/scratch/purge/replace-text.txt`, mode `0600`. Pass `--out` explicitly:
+without it the file lands in `<repo>/.secret-purge/`, inside your checkout. That default
+path is gitignored, so it is safe rather than wrong — but a credential-bearing artifact
+belongs in the same scratch area as the mirrors, not in a normal working clone. The script
+refuses to run against anything but a bare mirror.
 
 > **The generated file is a plaintext list of live credentials.** Do not commit it, paste
 > it into an issue or a PR, or let it reach a CI log. Delete it when the purge is verified.
@@ -136,7 +141,8 @@ The script prints two tables. **Read both before continuing.**
   `DB_HOST` and `DB_USERNAME`, which in the dev compose files hold 4- and 5-character
   tokens — and a `literal:` rewrite of a token that short replaces **every** occurrence of
   it across all of history, including unrelated prose. That is far more damaging than
-  leaving a non-secret in place.
+  leaving a non-secret in place. `gitleaks-allowlist` means the value matched an allowlist
+  regex in `.gitleaks.toml` — the repository has already declared it not-a-credential.
 
 Nothing is dropped silently. If you disagree with an exclusion, add its
 `literal:<value>==>***REMOVED***` line to the file by hand, or lower `--min-length`.
@@ -150,7 +156,7 @@ password and username, and the Mailgun and Passport values.
 ```bash
 cp -R /path/to/scratch/cam-backup.git /path/to/scratch/cam-rewritten.git
 git -C /path/to/scratch/cam-rewritten.git filter-repo \
-    --force --replace-text /path/to/repo/.secret-purge/replace-text.txt
+    --force --replace-text /path/to/scratch/purge/replace-text.txt
 ```
 
 `git filter-repo` is not bundled with git — install it separately
@@ -217,8 +223,8 @@ docker run --rm -v "/path/to/scratch/cam-rewritten.git:/repo:ro" zricethezav/git
     git /repo --config /repo/.gitleaks.toml --redact --exit-code 1
 ```
 
-Then delete `.secret-purge/replace-text.txt` and the backup mirror, once you are confident
-the rewrite is not going to be rolled back.
+Then delete `/path/to/scratch/purge/replace-text.txt` and the backup mirror, once you are
+confident the rewrite is not going to be rolled back.
 
 ## Rollback
 

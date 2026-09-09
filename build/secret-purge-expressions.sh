@@ -283,11 +283,25 @@ extract_assignments() {
     '
 }
 
+# Aggregate VALUE<TAB>KEY pairs from the file named by $1 into one line per
+# distinct value -- VALUE<TAB>KEY[ KEY...] -- preserving first-seen order.
+aggregate_pairs() {
+    awk -F'\t' '
+        {
+            v = $1; k = $2
+            if (!(v in seen)) { seen[v] = 1; order[++n] = v; keys[v] = k; next }
+            if (index(" " keys[v] " ", " " k " ") == 0) keys[v] = keys[v] " " k
+        }
+        END { for (i = 1; i <= n; i++) printf "%s\t%s\n", order[i], keys[order[i]] }
+    ' "$1"
+}
+
 SCRATCH_DIR=""
 # shellcheck disable=SC2329  # invoked indirectly via trap
 cleanup() {
     if [[ -n "$SCRATCH_DIR" && -d "$SCRATCH_DIR" ]]; then
         rm -f "$SCRATCH_DIR/.pairs.$$" "$SCRATCH_DIR/.agg.$$" \
+              "$SCRATCH_DIR/.allow-pairs.$$" "$SCRATCH_DIR/.allow-agg.$$" \
               "$SCRATCH_DIR/.head.$$" "$SCRATCH_DIR/.skipped.$$"
     fi
 }
@@ -342,6 +356,14 @@ main() {
     : > "$pairs_file"
     chmod 600 "$pairs_file"
 
+    # Allowlisted values are filtered out during the history walk, before
+    # aggregation, so they need their own pair file to survive as far as the
+    # EXCLUDED table. Reporting them there is what makes the script's
+    # "nothing is dropped silently" guarantee true.
+    local allow_pairs_file="$out_dir/.allow-pairs.$$"
+    : > "$allow_pairs_file"
+    chmod 600 "$allow_pairs_file"
+
     local path rev blob key value line scanned_blobs=0
 
     for path in "${SCOPE_PATHS[@]}"; do
@@ -373,6 +395,7 @@ main() {
 
                 if is_allowlisted "$key" "$value"; then
                     log_info "Allowlisted (gitleaks): $key / $(fingerprint "$value")"
+                    printf '%s\t%s\n' "$value" "$key" >> "$allow_pairs_file"
                     continue
                 fi
 
@@ -385,14 +408,7 @@ main() {
     local agg_file="$out_dir/.agg.$$"
     : > "$agg_file"
     chmod 600 "$agg_file"
-    awk -F'\t' '
-        {
-            v = $1; k = $2
-            if (!(v in seen)) { seen[v] = 1; order[++n] = v; keys[v] = k; next }
-            if (index(" " keys[v] " ", " " k " ") == 0) keys[v] = keys[v] " " k
-        }
-        END { for (i = 1; i <= n; i++) printf "%s\t%s\n", order[i], keys[order[i]] }
-    ' "$pairs_file" > "$agg_file"
+    aggregate_pairs "$pairs_file" > "$agg_file"
 
     local distinct
     distinct="$(wc -l < "$agg_file" | tr -d '[:space:]')"
@@ -458,7 +474,7 @@ main() {
 
         if [[ -n "$reason" ]]; then
             skipped=$((skipped + 1))
-            printf '%-14s  %-6s  %-16s  %s\n' \
+            printf '%-14s  %-6s  %-18s  %s\n' \
                 "$(fingerprint "$value")" "${#value}" "$reason" "$seen_keys" >> "$skipped_file"
             continue
         fi
@@ -468,12 +484,31 @@ main() {
         printf '%-14s  %-6s  %s\n' "$(fingerprint "$value")" "${#value}" "$seen_keys"
     done < "$agg_file"
     rm -f "$pairs_file" "$agg_file" "$head_content"
+
+    # The allowlisted values never reached $agg_file, so fold them into the
+    # EXCLUDED table here rather than leaving them to a --verbose-only log line.
+    if [[ -s "$allow_pairs_file" ]]; then
+        local allow_agg_file="$out_dir/.allow-agg.$$"
+        : > "$allow_agg_file"
+        chmod 600 "$allow_agg_file"
+        aggregate_pairs "$allow_pairs_file" > "$allow_agg_file"
+        while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            value="${line%%$'\t'*}"
+            seen_keys="${line#*$'\t'}"
+            skipped=$((skipped + 1))
+            printf '%-14s  %-6s  %-18s  %s\n' \
+                "$(fingerprint "$value")" "${#value}" "gitleaks-allowlist" "$seen_keys" >> "$skipped_file"
+        done < "$allow_agg_file"
+        rm -f "$allow_agg_file"
+    fi
+    rm -f "$allow_pairs_file"
     echo ""
 
     if [[ "$skipped" -gt 0 ]]; then
         echo "EXCLUDED -- reported, not written (see --help for what each reason means)"
-        printf '%-14s  %-6s  %-16s  %s\n' "FINGERPRINT" "CHARS" "REASON" "SEEN AS"
-        printf '%-14s  %-6s  %-16s  %s\n' "--------------" "------" "----------------" "-------"
+        printf '%-14s  %-6s  %-18s  %s\n' "FINGERPRINT" "CHARS" "REASON" "SEEN AS"
+        printf '%-14s  %-6s  %-18s  %s\n' "--------------" "------" "------------------" "-------"
         cat "$skipped_file"
         echo ""
     fi
