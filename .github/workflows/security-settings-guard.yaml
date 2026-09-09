@@ -65,9 +65,25 @@ jobs:
           if [ "${ss}" = "unreadable" ] || [ "${pp}" = "unreadable" ]; then
             echo "::error::Could not read 'security_and_analysis' on ${REPO}."
             echo ""
-            echo "GitHub only returns that block to a caller with repository admin"
-            echo "access, so this is a token-scope problem, NOT evidence that the"
-            echo "settings are disabled. Widen PROJECT_TOKEN, or verify by hand:"
+            if [ -n "${api_error}" ]; then
+              # The call itself failed. Token scope is the most likely cause but
+              # not the only one that lands here, so name it as a candidate and
+              # print gh's own output rather than asserting a diagnosis.
+              echo "The 'gh api' call failed outright, so this is NOT evidence that"
+              echo "the settings are disabled. An under-scoped PROJECT_TOKEN (401 or"
+              echo "403) is the most likely cause, but rate limiting and transient"
+              echo "GitHub API or network errors (5xx) reach this branch too — read"
+              echo "gh's output below to tell them apart."
+            else
+              # The call succeeded and GitHub still omitted the block, which it
+              # does only for a caller without repository admin access. Here the
+              # token-scope diagnosis is definite.
+              echo "The call succeeded but GitHub omitted that block, which it does"
+              echo "for any caller without repository admin access — so this is a"
+              echo "token-scope problem, NOT evidence that the settings are disabled."
+            fi
+            echo ""
+            echo "Widen PROJECT_TOKEN, or verify by hand:"
             echo "  gh api repos/${REPO} --jq .security_and_analysis"
             if [ -n "${api_error}" ]; then
               echo ""
