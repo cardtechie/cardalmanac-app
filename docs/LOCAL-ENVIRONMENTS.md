@@ -140,7 +140,9 @@ committed in that compose file was a fixture for the API's `ClientTokenSeeder`,
 which refuses to run unless `APP_ENV=testing` — no automated path could insert
 it into a production database. The literals themselves were replaced with
 environment substitutions in #430. Local and full-stack runs read both values
-from the developer's `.env`, as **Initial Setup** above describes.
+from the developer's `.env`, as **Initial Setup** above describes. The
+`make up` / `upd` / `up-full` / `upd-full` targets fall back to `.env.local`
+when no `.env` is present, so either file can supply the pair.
 
 ## Port Reference
 
