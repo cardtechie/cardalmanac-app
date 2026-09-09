@@ -287,6 +287,78 @@ class BrowseCountCaptureTest extends TestCase
             ->assertExitCode(0);
     }
 
+    public function test_compare_against_a_count_less_baseline_fails_loudly(): void
+    {
+        $before = $this->tempPath('browse-counts-empty-baseline.json');
+        file_put_contents($before, json_encode([
+            'captured_at' => '2026-09-01T00:00:00+00:00',
+            'api_url' => 'https://api.example.test',
+            'app_version' => getVersion(),
+            'counts' => [],
+            'labels' => [],
+            'failures' => ['genres' => 'AuthenticationException: nope'],
+        ]));
+
+        config(['tradingcardapi.url' => 'https://api.example.test']);
+
+        $this->fakeApi(
+            $this->paginator([], 3),
+            ['all' => $this->paginator([], 137)]
+        );
+
+        $out = $this->tempPath('browse-counts-empty-baseline-after.json');
+
+        // A baseline with no counts diffs to zero keys and zero changes. Reading
+        // that as "nothing moved" is the false green #437 exists to prevent.
+        $this->artisan('browse:capture-counts', ['--out' => $out, '--compare' => $before])
+            ->assertExitCode(1);
+    }
+
+    public function test_compare_fails_when_the_fresh_capture_recorded_no_counts(): void
+    {
+        $before = $this->tempPath('browse-counts-live-baseline.json');
+        file_put_contents($before, json_encode([
+            'captured_at' => '2026-09-01T00:00:00+00:00',
+            'api_url' => 'https://api.example.test',
+            'app_version' => getVersion(),
+            'counts' => ['genres.total' => 3, 'sets.total' => 137],
+            'labels' => [],
+            'failures' => [],
+        ]));
+
+        config(['tradingcardapi.url' => 'https://api.example.test']);
+
+        // Every capture unit fails -- e.g. an SDK or API change this app has not
+        // caught up with. The artifact carries no counts at all.
+        $this->fakeApi(
+            new AuthenticationException('Client authentication failed'),
+            ['all' => new AuthenticationException('Client authentication failed')]
+        );
+
+        $out = $this->tempPath('browse-counts-no-counts-after.json');
+
+        $this->artisan('browse:capture-counts', ['--out' => $out, '--compare' => $before])
+            ->assertExitCode(1);
+    }
+
+    public function test_a_capture_that_cannot_be_written_fails_rather_than_reporting_success(): void
+    {
+        // A regular file where the artifact's directory should be: mkdir cannot
+        // create it, so the artifact can never land on disk.
+        $blocker = $this->tempPath('browse-counts-blocker');
+        file_put_contents($blocker, 'not a directory');
+
+        $this->fakeApi(
+            $this->paginator([], 0),
+            ['all' => $this->paginator([], 0)]
+        );
+
+        // The artifact is the whole point of the command -- an in-memory capture
+        // that was printed but never written must not exit zero.
+        $this->artisan('browse:capture-counts', ['--out' => $blocker . '/capture.json'])
+            ->assertExitCode(1);
+    }
+
     public function test_compare_against_a_missing_artifact_fails_loudly(): void
     {
         $this->fakeApi(
