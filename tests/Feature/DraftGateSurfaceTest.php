@@ -113,13 +113,24 @@ class DraftGateSurfaceTest extends TestCase
     public function test_the_app_reads_no_entity_gated_by_the_draft_status_gate(): void
     {
         $offenders = [];
+        $unreadable = [];
 
         foreach ($this->scannedFiles() as $relative) {
             if (array_key_exists($relative, self::ALLOWED)) {
                 continue;
             }
 
-            $contents = (string) file_get_contents(base_path($relative));
+            $contents = @file_get_contents(base_path($relative));
+
+            // A file this guard could not read was never scanned. Casting the
+            // false to a string would make it look like an empty file, and an
+            // empty file matches no pattern -- a silent skip that reads as a
+            // pass. Fail on it instead.
+            if ($contents === false) {
+                $unreadable[] = $relative;
+
+                continue;
+            }
 
             foreach (self::GATED_PATTERNS as $pattern) {
                 if (preg_match($pattern, $contents) === 1) {
@@ -128,6 +139,14 @@ class DraftGateSurfaceTest extends TestCase
                 }
             }
         }
+
+        $this->assertSame(
+            [],
+            $unreadable,
+            'This guard could not read one or more scanned files, so they were never checked '
+            . "for gated-entity references -- an unreadable file must not read as a clean one.\n\n"
+            . 'Unreadable file(s): ' . implode(', ', $unreadable)
+        );
 
         $this->assertSame(
             [],

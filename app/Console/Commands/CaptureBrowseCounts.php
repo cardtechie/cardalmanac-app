@@ -38,7 +38,9 @@ class CaptureBrowseCounts extends Command
         $artifact = $this->capture();
 
         $outPath = $this->resolveOutPath($artifact['captured_at']);
-        $this->writeArtifact($outPath, $artifact);
+        if (! $this->writeArtifact($outPath, $artifact)) {
+            return self::FAILURE;
+        }
         $this->info(sprintf('Capture written to %s', $outPath));
 
         $this->renderArtifact($artifact);
@@ -162,19 +164,35 @@ class CaptureBrowseCounts extends Command
     }
 
     /**
+     * Write the capture artifact, reporting rather than swallowing an IO failure.
+     *
+     * The artifact is the whole point of the command: a capture that was printed
+     * but never landed on disk cannot be compared later, so a write failure has
+     * to be fatal rather than a success with nothing behind it.
+     *
      * @param  array<string, mixed>  $artifact
      */
-    private function writeArtifact(string $path, array $artifact): void
+    private function writeArtifact(string $path, array $artifact): bool
     {
         $directory = dirname($path);
-        if (! is_dir($directory)) {
-            mkdir($directory, 0755, true);
+        if (! is_dir($directory) && ! @mkdir($directory, 0755, true) && ! is_dir($directory)) {
+            $this->error(sprintf('Could not create directory %s for the capture artifact.', $directory));
+
+            return false;
         }
 
-        file_put_contents(
+        $written = @file_put_contents(
             $path,
             json_encode($artifact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
         );
+
+        if ($written === false) {
+            $this->error(sprintf('Could not write the capture artifact to %s.', $path));
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -218,6 +236,22 @@ class CaptureBrowseCounts extends Command
         $before = json_decode((string) file_get_contents($path), true);
         if (! is_array($before) || ! isset($before['counts']) || ! is_array($before['counts'])) {
             $this->error(sprintf('%s is not a browse-count artifact.', $path));
+
+            return self::FAILURE;
+        }
+
+        // An empty `counts` on either side is a failed capture, not a measurement.
+        // Without this, two count-less artifacts diff to zero keys, zero changes,
+        // and a green exit -- exactly the false pass this command exists to make
+        // impossible (e.g. every capture unit failing after an SDK/API change).
+        if ($before['counts'] === []) {
+            $this->error(sprintf('%s records no counts -- it is not a usable baseline.', $path));
+
+            return self::FAILURE;
+        }
+
+        if ($after['counts'] === []) {
+            $this->error('This capture recorded no counts, so there is nothing to compare. Treat it as a failed capture, not a stable zero delta.');
 
             return self::FAILURE;
         }
