@@ -14,3 +14,9 @@ yarn-error.log
 /.idea
 /.vscode
 auth.json
+
+# Scratch directory for the secret-history-purge tooling (#462). Holds the
+# generated git filter-repo --replace-text expressions file, which is a
+# plaintext list of live credentials and must never be committed.
+# See docs/SECRET-HISTORY-PURGE.md.
+/.secret-purge/
