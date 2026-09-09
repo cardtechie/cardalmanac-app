@@ -164,11 +164,15 @@ class CaptureBrowseCounts extends Command
     }
 
     /**
-     * Write the capture artifact, reporting rather than swallowing an IO failure.
+     * Write the capture artifact, reporting rather than swallowing an encoding
+     * or IO failure.
      *
      * The artifact is the whole point of the command: a capture that was printed
      * but never landed on disk cannot be compared later, so a write failure has
-     * to be fatal rather than a success with nothing behind it.
+     * to be fatal rather than a success with nothing behind it. The same goes for
+     * an encoding failure -- json_encode() returns false rather than throwing, so
+     * an unencodable label or failure message would otherwise land an artifact
+     * holding a single newline and still report success.
      *
      * @param  array<string, mixed>  $artifact
      */
@@ -181,10 +185,18 @@ class CaptureBrowseCounts extends Command
             return false;
         }
 
-        $written = @file_put_contents(
-            $path,
-            json_encode($artifact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
-        );
+        $encoded = json_encode($artifact, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+
+        if ($encoded === false) {
+            $this->error(sprintf(
+                'Could not encode the capture artifact as JSON: %s.',
+                json_last_error_msg()
+            ));
+
+            return false;
+        }
+
+        $written = @file_put_contents($path, $encoded . "\n");
 
         if ($written === false) {
             $this->error(sprintf('Could not write the capture artifact to %s.', $path));

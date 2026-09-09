@@ -186,6 +186,31 @@ class BrowseCountCaptureTest extends TestCase
         $this->assertSame(9, $artifact['counts']['sets.total']);
     }
 
+    public function test_an_unencodable_capture_fails_rather_than_writing_an_empty_artifact(): void
+    {
+        // A lone 0xB1 byte is not valid UTF-8, so json_encode() returns false.
+        // Before #437's follow-up that produced a file holding only a newline
+        // while the command still exited 0 -- the exact false green this command
+        // exists to rule out.
+        $broken = new GenreModel(['id' => 'g-broken', 'name' => "Base\xB1ball"]);
+
+        $this->fakeApi(
+            $this->paginator([$broken], 1),
+            [
+                'g-broken' => $this->paginator([1], 1),
+                'all' => $this->paginator([1], 1),
+            ]
+        );
+
+        $out = $this->tempPath('browse-counts-unencodable.json');
+
+        $this->artisan('browse:capture-counts', ['--out' => $out])
+            ->expectsOutputToContain('Could not encode the capture artifact as JSON')
+            ->assertExitCode(1);
+
+        $this->assertFileDoesNotExist($out, 'A capture that could not be encoded must not leave an artifact behind.');
+    }
+
     public function test_compare_reports_a_delta_and_exits_non_zero_when_a_count_moves(): void
     {
         $before = $this->tempPath('browse-counts-before.json');
