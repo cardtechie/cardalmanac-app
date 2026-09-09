@@ -1,0 +1,2 @@
+- **[Issue #470]** Add a secret-scanning and push-protection runbook plus a scheduled guard that fails once the repo is public and either setting is off.
+    - Enabling the settings is an operator action in repo Settings; the guard only reports drift, and needs the `PROJECT_TOKEN` org secret because `security_and_analysis` is admin-only.
