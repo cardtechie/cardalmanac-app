@@ -188,18 +188,26 @@ by hand: a Custom Event trigger on the new event name, a GA4 Event tag pointing
 at `{{GA4 Measurement ID}}` with that trigger attached, and a Data Layer
 Variable for any parameter name not already covered above.
 
-## Caveat: the newsletter form is not production-ready
+## The newsletter form and `newsletter_signup`
 
-`resources/js/api/send-in-blue/index.api.js` reads the Brevo (Sendinblue) API
-key from `process.env.MIX_SENDINBLUE_API_KEY`. Laravel Mix inlines `MIX_*`
-variables into the **public** JS bundle at build time, which means:
+`MailingListForm.vue` posts to the internal `POST /newsletter/subscribe` route
+rather than calling Brevo from the browser (#426). `NewsletterController`
+validates the address and makes the double opt-in call from PHP, reading the
+API key from `config('services.brevo.key')`, which is populated by an
+**unprefixed** `BREVO_API_KEY`.
 
-- If a production build ever runs with that variable set, the API key is
-  readable by anyone who views the bundle.
-- The current production build ran **without** it, so the key is not exposed —
-  but the header is sent as `undefined` and Brevo rejects the request. The form
-  would show its generic failure message to every visitor.
+The unprefixed name is the point. Laravel Mix inlines every `MIX_*` variable
+into the **public** JS bundle at build time, so the previous
+`MIX_SENDINBLUE_API_KEY` design would have published a live key to every
+visitor the first time a production build ran with it set. Never reintroduce a
+`MIX_`-prefixed secret, and never read an API key from `resources/js/`.
 
-Re-enabling the mailing list therefore needs a server-side proxy route that
-holds the key in `config/services.php` and calls Brevo from PHP. Until then the
-component stays commented out and `newsletter_signup` will not fire.
+The component is enabled on the homepage, so `newsletter_signup` fires on a
+successful proxied subscribe. It does **not** fire when the endpoint returns a
+validation error (422), a throttle rejection (429), or an upstream failure
+(502) — the event tracks confirmed submissions, not attempts.
+
+The list and template identifiers live in `config/services.php` alongside the
+key, and the double opt-in `redirectionUrl` is built with
+`route('newsletter.confirmed')`, so the confirmation link cannot drift onto a
+URL this application does not serve.

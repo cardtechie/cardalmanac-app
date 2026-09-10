@@ -29,7 +29,6 @@
 </template>
 
 <script>
-import sendinblueApi from "../api/send-in-blue/sendinblue.api";
 import { pushEvent } from "../analytics";
 
 export default {
@@ -65,7 +64,12 @@ export default {
         this.state = null;
       } else {
         try {
-          await sendinblueApi.subscribe(this.email);
+          // Posted to an internal Laravel route, which holds the Brevo API
+          // key server-side (#426). window.axios is configured in
+          // resources/js/bootstrap.js and sends the XSRF token automatically.
+          await window.axios.post("/newsletter/subscribe", {
+            email: this.email,
+          });
           pushEvent("newsletter_signup", {
             cta_location: this.ctaLocation,
           });

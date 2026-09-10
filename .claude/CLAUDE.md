@@ -91,7 +91,7 @@ The app works with these key entities from the Trading Card API:
 #### API Integration (`resources/js/api/`)
 
 - **cards/set.api.js**: Set-related API operations
-- **send-in-blue/**: Email marketing API integration
+- (Brevo/newsletter calls are **not** here: they go through the server-side `POST /newsletter/subscribe` route so no API key reaches the bundle — see #426)
 
 #### Templates & Views
 
