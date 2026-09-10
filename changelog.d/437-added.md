@@ -1,0 +1,2 @@
+- **[Issue #437]** Add `browse:capture-counts` and a draft-gate surface guard so the API's draft-status gate can be verified against real browse counts.
+    - The before/after comparison stays open until `STATUS_GATE_ON_CARDABLE_ENABLED` is enabled in an environment this app can query.

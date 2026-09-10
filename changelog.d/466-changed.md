@@ -1,0 +1,2 @@
+- **[Issue #466]** Replace the Laravel-skeleton identity in `composer.json` with real project metadata and remove the dead `wpackagist.org` repository and stray `wordpress` droplet tag.
+    - `composer.lock`'s `content-hash` and `plugin-api-version` are regenerated; no package versions change.
