@@ -47,6 +47,25 @@ Compose when `deploy.sh` brings the stack up. `.docker/prod.docker-compose.yaml`
 declares it as a mandatory substitution, so a deploy with the secret missing
 fails loudly rather than silently falling back to some other key.
 
+## Local Mail
+
+The full stack's `admin` container defaults to the `log` mail driver, so mail is
+written to the container log instead of being delivered and **no credential is
+required** for local development. No Mailgun credential is committed to this
+repository.
+
+To exercise real Mailgun delivery locally, set all three variables in your own
+untracked root `.env`:
+
+```dotenv
+MAIL_DRIVER=mailgun
+MAILGUN_DOMAIN=<your mailgun sending domain>
+MAILGUN_SECRET=<your mailgun api key>
+```
+
+Compose substitutes them into the `admin` service; leaving them unset keeps the
+`log` default.
+
 ## Environment Overview
 
 The Card Almanac project supports multiple local development configurations to match different development needs:
@@ -223,13 +242,24 @@ DB_DATABASE=tradingcards
 committed there would become every container's fallback key. It is deliberately
 left blank -- see [Application Keys](#application-keys).
 
-### Full Development (.docker/docker-compose.full.yml)
+### Full Development (values seen by the containers)
+
+`.docker/docker-compose.full.yml` supplies these, but not all from the same
+place. The first three are hardcoded in the compose file; the `MAIL_*` entries
+are `${VAR:-default}` substitutions read from your untracked root `.env`, and
+the values shown are what you get when it leaves them unset.
 
 ```bash
-TRADINGCARDAPI_URL=https://tcapi:443  # Local API container
-DB_HOST=mysql
-DB_DATABASE=tradingcards
+TRADINGCARDAPI_URL=https://tcapi:443  # Set in the compose file
+DB_HOST=mysql                         # Set in the compose file
+DB_DATABASE=tradingcards              # Set in the compose file
+MAIL_DRIVER=log                       # From root .env; default: mail goes to the container log
+MAILGUN_DOMAIN=                       # From root .env; blank unless opting into Mailgun
+MAILGUN_SECRET=                       # From root .env; blank unless opting into Mailgun
 ```
+
+To change a `MAIL_*` value, edit your root `.env` -- not the compose file. See
+[Local Mail](#local-mail) for the Mailgun opt-in.
 
 ## Pointing the App at a Live or Staging API
 

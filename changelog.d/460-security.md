@@ -1,0 +1,2 @@
+- **[Issue #460]** Default the local full-stack environment to the `log` mail driver and externalize the last hardcoded Mailgun value, so no Mailgun credential is needed for local development.
+    - The exposed Mailgun key still requires rotation in the Mailgun account; this change only removes the need for it locally.
