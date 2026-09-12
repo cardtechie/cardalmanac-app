@@ -49,6 +49,22 @@ Route::get('/health', function () {
 Route::get('/', 'IndexController@index')->name('home');
 Route::get('/about', 'AboutController@index')->name('about');
 
+/*
+ * Newsletter double opt-in (#426). The Brevo API key is held server-side by
+ * NewsletterController; nothing about it reaches the JS bundle. The subscribe
+ * endpoint is unauthenticated and spends a third-party quota, so it is
+ * throttled by the 'newsletter' limiter in RouteServiceProvider.
+ *
+ * Declared with the relative "Controller@method" form, like the routes above:
+ * RouteServiceProvider groups this file under the App\Http\Controllers
+ * namespace, which is prepended to string controller references.
+ */
+Route::post('/newsletter/subscribe', 'NewsletterController@subscribe')
+    ->middleware('throttle:newsletter')
+    ->name('newsletter.subscribe');
+Route::get('/complete-newsletter-signup', 'NewsletterController@confirmed')
+    ->name('newsletter.confirmed');
+
 Route::prefix('app')->name('app.')->group(function () {
     Route::get('/', 'AppController@index')->name('index');
     Route::controller(SetController::class)->group(function () {

@@ -33,6 +33,34 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Brevo (formerly Sendinblue)
+    |--------------------------------------------------------------------------
+    |
+    | Credentials for the newsletter double opt-in call, which is made from
+    | PHP by App\Http\Controllers\NewsletterController.
+    |
+    | BREVO_API_KEY is deliberately *not* MIX_-prefixed. Laravel Mix inlines
+    | every MIX_* variable into the public JS bundle at build time, so a
+    | prefixed name would publish a live API key to every visitor (#426).
+    | Never rename this to MIX_BREVO_API_KEY, and never read it from
+    | resources/js/.
+    |
+    | The list and template identifiers are not secrets and are stable across
+    | environments, so they are literal defaults rather than env() reads.
+    |
+    */
+
+    'brevo' => [
+        'key' => env('BREVO_API_KEY'),
+        'base_url' => env('BREVO_BASE_URL', 'https://api.brevo.com/v3'),
+        'list_ids' => [
+            4, // CardTechie Notifications
+        ],
+        'template_id' => 1,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Product Calls To Action
     |--------------------------------------------------------------------------
     |

@@ -60,5 +60,12 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+
+        // The newsletter subscribe endpoint is unauthenticated and spends a
+        // third-party quota on every call, so it is throttled well below the
+        // general API limit (#426).
+        RateLimiter::for('newsletter', function (Request $request) {
+            return Limit::perMinute(5)->by($request->ip());
+        });
     }
 }

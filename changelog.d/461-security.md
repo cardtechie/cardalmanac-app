@@ -1,0 +1,2 @@
+- **[Issue #461]** Remove the orphaned Dusk compose stack that carried a committed Trading Card API client ID and secret, and record the verification that the pair was a testing-only seeder fixture.
+    - The same credential pair is still committed in `cardtechie/tradingcardapi-admin` and `cardtechie/cardtechie-site`, which need their own fixes.

@@ -11,8 +11,10 @@ To setup the Card Almanac to work with the Trading Card API, create a `.env` fil
 TRADINGCARDAPI_CLIENT_ID=<your client ID>
 TRADINGCARDAPI_CLIENT_SECRET=<your client secret>
 
-# SendinBlue Integration (for mailing list)
-MIX_SENDINBLUE_API_KEY=<your sendinblue api key>
+# Brevo (formerly SendinBlue) Integration (for the newsletter signup).
+# Deliberately not MIX_-prefixed: Laravel Mix inlines every MIX_* variable
+# into the public JS bundle, which would publish the key (#426).
+BREVO_API_KEY=<your brevo api key>
 ```
 
 ## Application Keys
@@ -46,6 +48,25 @@ into `cardalmanac.env` by `.github/workflows/deployment.yaml` and read by
 Compose when `deploy.sh` brings the stack up. `.docker/prod.docker-compose.yaml`
 declares it as a mandatory substitution, so a deploy with the secret missing
 fails loudly rather than silently falling back to some other key.
+
+## Local Mail
+
+The full stack's `admin` container defaults to the `log` mail driver, so mail is
+written to the container log instead of being delivered and **no credential is
+required** for local development. No Mailgun credential is committed to this
+repository.
+
+To exercise real Mailgun delivery locally, set all three variables in your own
+untracked root `.env`:
+
+```dotenv
+MAIL_DRIVER=mailgun
+MAILGUN_DOMAIN=<your mailgun sending domain>
+MAILGUN_SECRET=<your mailgun api key>
+```
+
+Compose substitutes them into the `admin` service; leaving them unset keeps the
+`log` default.
 
 ## Environment Overview
 
@@ -126,6 +147,24 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 | `.env.local`                      | Default configuration           | Development      |
 | `.gitleaks.toml`                  | Secret-scanning rules (CI gate) | All              |
 
+### Browser tests and the removed Dusk stack
+
+This repository ships **no Laravel Dusk stack**. `laravel/dusk` is not a
+dependency, `tests/Browser/` does not exist, and the `.docker/dusk.*` compose
+files it once carried were an unwired copy of another repository's stack — four
+of their bind mounts pointed at paths that do not exist here. They were removed
+in #461. Browser coverage for the Trading Card API lives in
+`cardtechie/tradingcardapi-admin`.
+
+The `TRADINGCARDAPI_CLIENT_ID` / `TRADINGCARDAPI_CLIENT_SECRET` pair formerly
+committed in that compose file was a fixture for the API's `ClientTokenSeeder`,
+which refuses to run unless `APP_ENV=testing` — no automated path could insert
+it into a production database. The literals themselves were replaced with
+environment substitutions in #430. Local and full-stack runs read both values
+from the developer's `.env`, as **Initial Setup** above describes. The
+`make up` / `upd` / `up-full` / `upd-full` targets fall back to `.env.local`
+when no `.env` is present, so either file can supply the pair.
+
 ## Port Reference
 
 | Environment          | Almanac | API      | Admin | MySQL |
@@ -205,13 +244,24 @@ DB_DATABASE=tradingcards
 committed there would become every container's fallback key. It is deliberately
 left blank -- see [Application Keys](#application-keys).
 
-### Full Development (.docker/docker-compose.full.yml)
+### Full Development (values seen by the containers)
+
+`.docker/docker-compose.full.yml` supplies these, but not all from the same
+place. The first three are hardcoded in the compose file; the `MAIL_*` entries
+are `${VAR:-default}` substitutions read from your untracked root `.env`, and
+the values shown are what you get when it leaves them unset.
 
 ```bash
-TRADINGCARDAPI_URL=https://tcapi:443  # Local API container
-DB_HOST=mysql
-DB_DATABASE=tradingcards
+TRADINGCARDAPI_URL=https://tcapi:443  # Set in the compose file
+DB_HOST=mysql                         # Set in the compose file
+DB_DATABASE=tradingcards              # Set in the compose file
+MAIL_DRIVER=log                       # From root .env; default: mail goes to the container log
+MAILGUN_DOMAIN=                       # From root .env; blank unless opting into Mailgun
+MAILGUN_SECRET=                       # From root .env; blank unless opting into Mailgun
 ```
+
+To change a `MAIL_*` value, edit your root `.env` -- not the compose file. See
+[Local Mail](#local-mail) for the Mailgun opt-in.
 
 ## Pointing the App at a Live or Staging API
 

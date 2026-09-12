@@ -1,0 +1,2 @@
+- **[Issue #426]** Move the newsletter signup behind a rate-limited server-side Brevo proxy so no API key can reach the browser bundle.
+    - Requires a new unprefixed `BREVO_API_KEY` in the deploy environment; the old `MIX_SENDINBLUE_API_KEY` is removed and must not be re-added.
