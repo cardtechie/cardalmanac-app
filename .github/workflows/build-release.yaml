@@ -45,6 +45,10 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           tags: "picklewagon/${{ env.SERVICE_NAME }}:${{ env.VERSION }}"
           push: true
+          # Named explicitly rather than relying on `runtime` being the last
+          # stage, so a later reorder of the Dockerfile cannot silently start
+          # shipping the fat dev image.
+          target: runtime
           build-args: |
             VERSION=${{ env.VERSION }}
           # Passed as a BuildKit secret, not a build-arg: `docker history`

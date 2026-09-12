@@ -19,6 +19,33 @@ Route::get('/welcome', function () {
     return view('welcome');
 });
 
+/*
+ * Liveness + version endpoint. Deliberately /health and not /ping: nginx
+ * matches `location ~ ^/(status|ping)$` in .docker/config/nginx-status.conf and
+ * hands both straight to PHP-FPM's built-in ping page, so a Laravel route at
+ * /ping would never be reached -- and repointing that location would break the
+ * container healthcheck contract in .docker/prod.docker-compose.yaml.
+ */
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'version' => getVersion(),
+        'environment' => config('app.env'),
+    ]);
+})
+    ->name('health')
+    // This endpoint exists to be polled by monitoring, and a monitor does not
+    // hold cookies -- with the web group's session middleware attached, every
+    // probe would start (and write) a brand new session. The payload reads
+    // nothing from the session, so the whole cookie/session chain comes off.
+    ->withoutMiddleware([
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ]);
+
 Route::get('/', 'IndexController@index')->name('home');
 Route::get('/about', 'AboutController@index')->name('about');
 
