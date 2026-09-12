@@ -1,0 +1,2 @@
+- **[Issue #6]** Finish the multi-stage Docker build so the production image ships only what runs — no compilers, `-dev` headers, Node, Composer, Xdebug, `node_modules`, or dev Composer dependencies — and move the Composer token to a BuildKit secret so it no longer appears in `docker history`.
+    - Consumers must now name a build stage: CI tests and local development build `--target dev`, the release build ships `--target runtime`, and `COMPOSER_TOKEN` is passed as a build secret rather than `--build-arg`.
