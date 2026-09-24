@@ -135,7 +135,8 @@ refuses to run against anything but a bare mirror.
 > The scripts themselves never print a value — everything is reported by truncated SHA-256
 > fingerprint and character count, so their output is safe to paste.
 
-The script prints two tables. **Read both before continuing.**
+The script prints two tables always, plus a third, conditional one. **Read all printed
+tables before continuing.**
 
 - **INCLUDED** — what will be rewritten.
 - **EXCLUDED** — what will not, and why. `present-at-head` means the value still exists in
@@ -165,7 +166,9 @@ each entry belongs in `SCOPE_KEYS` and needs a follow-up run.
 
 Sanity-check the count against the scope table above: the expected shape is several
 distinct 51-character `APP_KEY` values, one 60-character cluster host, the 16-character
-password and username, eight 64-character `WP_*` values, and the Mailgun and Passport
+password and username, the admin production database name (`DB_DATABASE` **and**
+`CARDS_DB_DATABASE` — present in the scope table above, so its absence from this shape
+should not go unnoticed), eight 64-character `WP_*` values, and the Mailgun and Passport
 values.
 
 ### 4. Rewrite
