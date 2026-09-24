@@ -9,12 +9,19 @@ load-env:
 		echo "Warning: No .env or .env.local file found"; \
 	fi
 
+# Dev TLS certs are generated locally rather than committed (#425). Idempotent:
+# an existing cert/key pair is left alone. Run `make certs -- --force` (or call
+# the script directly with --force) to regenerate.
+.PHONY: certs
+certs:
+	@./.docker/scripts/generate-dev-certs.sh
+
 # COMPOSER_TOKEN is no longer passed with --build-arg: `docker history`
 # renders ARG values in plaintext, so an ARG publishes the credential in the
 # image's layer metadata. docker-compose.yml declares it as a build secret
 # sourced from the COMPOSER_TOKEN environment variable, which the exports
 # below provide.
-up:
+up: certs
 	@if [ -f .env ]; then \
 		export $$(grep -vE "^(#.*|\s*)$$" .env); \
 	elif [ -f .env.local ]; then \
@@ -24,7 +31,7 @@ up:
 	docker compose build && \
 	docker compose up
 
-upd:
+upd: certs
 	@if [ -f .env ]; then \
 		export $$(grep -vE "^(#.*|\s*)$$" .env); \
 	elif [ -f .env.local ]; then \
@@ -34,7 +41,7 @@ upd:
 	docker compose build && \
 	docker compose up -d
 
-up-full:
+up-full: certs
 	@if [ -f .env ]; then \
 		export $$(grep -vE "^(#.*|\s*)$$" .env); \
 	elif [ -f .env.local ]; then \
@@ -44,7 +51,7 @@ up-full:
 	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml build && \
 	docker compose -f docker-compose.yml -f .docker/docker-compose.full.yml up
 
-upd-full:
+upd-full: certs
 	@if [ -f .env ]; then \
 		export $$(grep -vE "^(#.*|\s*)$$" .env); \
 	elif [ -f .env.local ]; then \
