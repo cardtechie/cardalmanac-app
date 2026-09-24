@@ -1,2 +1,2 @@
 - **[Issue #495]** Remove production DB coordinates from the purge runbook and add the missing WordPress salts to the purge generator.
-  - Take the #494 backup mirror only after this merges; before it, the generator excluded the DB username and database name as present-at-head.
+    - Take the #494 backup mirror only after this merges; before it, the generator excluded the DB username and database name as present-at-head.
