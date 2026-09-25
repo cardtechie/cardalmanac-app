@@ -49,8 +49,12 @@ SCOPE_PATHS=(
 
 # Assignment keys whose values are in scope. Covers the DigitalOcean cluster
 # coordinates (host/user/database) as well as the passwords and keys, because
-# the #462 scope table lists them.
-SCOPE_KEYS="APP_KEY DB_PASSWORD DB_USERNAME DB_HOST DB_DATABASE CARDS_DB_PASSWORD CARDS_DB_USERNAME CARDS_DB_HOST CARDS_DB_DATABASE MAILGUN_SECRET TRADINGCARDAPI_CLIENT_ID TRADINGCARDAPI_CLIENT_SECRET"
+# the #462 scope table lists them. The eight WP_* keys were a #495 addition:
+# the original #462 inventory missed the WordPress auth keys/salts that lived
+# in .env.local from cc39616 to 06aa06b, which meant neither this generator
+# nor the verifier (which rebuilds its literal set through this generator)
+# would ever look for them.
+SCOPE_KEYS="APP_KEY DB_PASSWORD DB_USERNAME DB_HOST DB_DATABASE CARDS_DB_PASSWORD CARDS_DB_USERNAME CARDS_DB_HOST CARDS_DB_DATABASE MAILGUN_SECRET TRADINGCARDAPI_CLIENT_ID TRADINGCARDAPI_CLIENT_SECRET WP_AUTH_KEY WP_SECURE_AUTH_KEY WP_LOGGED_IN_KEY WP_NONCE_KEY WP_AUTH_SALT WP_SECURE_AUTH_SALT WP_LOGGED_IN_SALT WP_NONCE_SALT"
 
 # Colors for output
 RED='\033[0;31m'
@@ -96,6 +100,18 @@ What is EXCLUDED, and why:
     Every exclusion is reported with its fingerprint, never silently dropped.
     To force one back in, add its 'literal:<value>==>***REMOVED***' line to the
     expressions file by hand.
+
+UNSCOPED (#495):
+    A third table, printed after EXCLUDED when non-empty. Every assignment
+    found in the scope paths' history whose KEY is not in this script's fixed
+    key-name set, whose value is at least --min-length characters, and which
+    is not a variable reference. Reported by fingerprint, character count and
+    key name only -- never the value, and never written to the expressions
+    file. It exists because a fixed key-name allowlist can only ever catch a
+    key somebody already thought of; review it and decide, by key name,
+    whether an entry belongs in this script's key set before trusting a green
+    purge. A non-empty UNSCOPED table does not change this script's exit
+    status.
 
 Safety:
     - Refuses to run against a non-bare clone, so it can never be pointed at a
@@ -241,15 +257,18 @@ is_allowlisted() {
     return 1
 }
 
-# Emit "KEY<TAB>VALUE" for every in-scope assignment in the content on stdin.
-# Handles both the dotenv (KEY=value) and YAML (KEY: value) forms this
-# repository actually uses, with or without surrounding quotes.
-extract_assignments() {
-    awk -v keys="$SCOPE_KEYS" '
-        BEGIN {
-            n = split(keys, k, " ")
-            for (i = 1; i <= n; i++) want[k[i]] = 1
-        }
+# Emit "KEY<TAB>VALUE" for EVERY assignment in the content on stdin, in or out
+# of SCOPE_KEYS. Handles both the dotenv (KEY=value) and YAML (KEY: value)
+# forms this repository actually uses, with or without surrounding quotes.
+#
+# This is the single shared parser for both the in-scope (INCLUDED/EXCLUDED)
+# and out-of-scope (UNSCOPED, #495) passes -- the key-set filtering happens in
+# the caller (is_scoped_key, below), not here. #495 was the second inventory
+# gap found in this same purge tooling (the eight WP_* keys were the first);
+# having two separately-maintained awk extractors is exactly how a THIRD gap
+# would happen, so there is deliberately only one.
+extract_all_assignments() {
+    awk '
         {
             line = $0
             sub(/\r$/, "", line)
@@ -260,7 +279,6 @@ extract_assignments() {
 
             key = substr(line, 1, RLENGTH - 1)
             gsub(/[[:space:]]/, "", key)
-            if (!(toupper(key) in want)) next
 
             val = substr(line, RLENGTH + 1)
             sub(/^[[:space:]]+/, "", val)
@@ -283,6 +301,15 @@ extract_assignments() {
     '
 }
 
+# True if KEY (already uppercased) is one of the fixed SCOPE_KEYS.
+is_scoped_key() {
+    local key="$1"
+    case " $SCOPE_KEYS " in
+        *" $key "*) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 # Aggregate VALUE<TAB>KEY pairs from the file named by $1 into one line per
 # distinct value -- VALUE<TAB>KEY[ KEY...] -- preserving first-seen order.
 aggregate_pairs() {
@@ -302,7 +329,8 @@ cleanup() {
     if [[ -n "$SCRATCH_DIR" && -d "$SCRATCH_DIR" ]]; then
         rm -f "$SCRATCH_DIR/.pairs.$$" "$SCRATCH_DIR/.agg.$$" \
               "$SCRATCH_DIR/.allow-pairs.$$" "$SCRATCH_DIR/.allow-agg.$$" \
-              "$SCRATCH_DIR/.head.$$" "$SCRATCH_DIR/.skipped.$$"
+              "$SCRATCH_DIR/.unscoped-pairs.$$" "$SCRATCH_DIR/.unscoped-agg.$$" \
+              "$SCRATCH_DIR/.head.$$" "$SCRATCH_DIR/.skipped.$$" "$SCRATCH_DIR/.unscoped.$$"
     fi
 }
 trap cleanup EXIT INT TERM
@@ -364,6 +392,14 @@ main() {
     : > "$allow_pairs_file"
     chmod 600 "$allow_pairs_file"
 
+    # Out-of-scope assignments (key not in SCOPE_KEYS) go here instead of
+    # being dropped (#495). Same VALUE<TAB>KEY shape as pairs_file/
+    # allow_pairs_file, aggregated and printed the same way, as the UNSCOPED
+    # table -- never written to the expressions file.
+    local unscoped_pairs_file="$out_dir/.unscoped-pairs.$$"
+    : > "$unscoped_pairs_file"
+    chmod 600 "$unscoped_pairs_file"
+
     local path rev blob key value line scanned_blobs=0
 
     for path in "${SCOPE_PATHS[@]}"; do
@@ -378,11 +414,20 @@ main() {
                 key="${line%%$'\t'*}"
                 value="${line#*$'\t'}"
 
-                # Variable references and command substitutions are not values.
+                # Variable references and command substitutions are not
+                # values, in scope or out of it.
                 # shellcheck disable=SC2016  # the single quotes are deliberate: these are literal patterns, not expansions
                 case "$value" in
                     *'${'*|*'$('*) continue ;;
                 esac
+
+                if ! is_scoped_key "$key"; then
+                    # Out of SCOPE_KEYS: a candidate for the UNSCOPED report,
+                    # never for the expressions file. Length filtering happens
+                    # at print time, same as the INCLUDED/EXCLUDED tables.
+                    printf '%s\t%s\n' "$value" "$key" >> "$unscoped_pairs_file"
+                    continue
+                fi
 
                 # The replace-text format uses '==>' as its separator; a value
                 # containing it would produce an unparseable expressions file.
@@ -400,7 +445,7 @@ main() {
                 fi
 
                 printf '%s\t%s\n' "$value" "$key" >> "$pairs_file"
-            done < <(printf '%s\n' "$blob" | extract_assignments)
+            done < <(printf '%s\n' "$blob" | extract_all_assignments)
         done < <(git -C "$mirror" rev-list --all -- "$path" 2>/dev/null || true)
     done
 
@@ -514,6 +559,40 @@ main() {
     fi
     rm -f "$skipped_file"
 
+    # UNSCOPED (#495): out-of-scope assignments, length-filtered here rather
+    # than at collection time -- same pattern as INCLUDED/EXCLUDED above.
+    # Reported by fingerprint/chars/key only, never written to the
+    # expressions file, and never changes this script's exit status.
+    if [[ -s "$unscoped_pairs_file" ]]; then
+        local unscoped_agg_file="$out_dir/.unscoped-agg.$$"
+        : > "$unscoped_agg_file"
+        chmod 600 "$unscoped_agg_file"
+        aggregate_pairs "$unscoped_pairs_file" > "$unscoped_agg_file"
+
+        local unscoped_file="$out_dir/.unscoped.$$"
+        : > "$unscoped_file"
+        chmod 600 "$unscoped_file"
+        while IFS= read -r line; do
+            [[ -z "$line" ]] && continue
+            value="${line%%$'\t'*}"
+            seen_keys="${line#*$'\t'}"
+            [[ ${#value} -lt "$min_length" ]] && continue
+            printf '%-14s  %-6s  %s\n' \
+                "$(fingerprint "$value")" "${#value}" "$seen_keys" >> "$unscoped_file"
+        done < "$unscoped_agg_file"
+        rm -f "$unscoped_agg_file"
+
+        if [[ -s "$unscoped_file" ]]; then
+            echo "UNSCOPED -- not written; review before rewriting (key not in SCOPE_KEYS)"
+            printf '%-14s  %-6s  %s\n' "FINGERPRINT" "CHARS" "KEY"
+            printf '%-14s  %-6s  %s\n' "--------------" "------" "---"
+            cat "$unscoped_file"
+            echo ""
+        fi
+        rm -f "$unscoped_file"
+    fi
+    rm -f "$unscoped_pairs_file"
+
     if [[ "$included" -eq 0 ]]; then
         log_error "Every candidate was excluded -- the expressions file has no literals."
         log_error "filter-repo would be a no-op. Review the EXCLUDED table above and lower"
@@ -524,7 +603,8 @@ main() {
     log_success "Wrote $out_file (mode 0600) -- $included literal(s), $skipped excluded"
     echo ""
     echo "Next:"
-    echo "  1. Review both tables above and the expressions file line count."
+    echo "  1. Review all tables above (EXCLUDED, and UNSCOPED when printed) and the"
+    echo "     expressions file line count."
     echo "  2. git -C <mirror> filter-repo --replace-text \"$out_file\""
     echo "  3. build/verify-secret-purge.sh <pre-rewrite-mirror> <rewritten-mirror>"
     echo ""

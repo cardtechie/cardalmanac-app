@@ -20,18 +20,21 @@ public publishes the full history. But the reverse matters too, and the issue's 
 scope table did not reflect it: **`HEAD` is already clean.** Every value that table marked
 as live at `HEAD` is now delivered by variable reference, empty, or explicitly allowlisted.
 
-| Secret                                                                        | Where it is                             | Status                                                                                                                |
-| ----------------------------------------------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `tradingcardadmin` DB password (as `DB_PASSWORD` **and** `CARDS_DB_PASSWORD`) | history only (`20f0dce`, `8b77b2c`)     | **LIVE** — blocked on `tradingcardapi-admin#1414`                                                                     |
-| Admin production `APP_KEY`                                                    | history only (`20f0dce`, `8b77b2c`)     | **LIVE** — still at `tradingcardapi-admin` HEAD; blocked on `tradingcardapi-admin#1414`                               |
-| DigitalOcean cluster host (`DB_HOST`, `CARDS_DB_HOST`)                        | history only                            | Live coordinate for a live cluster                                                                                    |
-| `cardalmanac_blog` DB password                                                | history only                            | Dead — revoked in #468                                                                                                |
-| This repo's production `APP_KEY`                                              | history only                            | Removed from HEAD by #430; rotate per #430                                                                            |
-| Mailgun API key                                                               | history only                            | `MAILGUN_SECRET` and `MAILGUN_DOMAIN` are both varrefs at HEAD (#460)                                                 |
-| Passport client ID + secret                                                   | history only                            | Both varrefs at HEAD                                                                                                  |
-| Local dev `APP_KEY`                                                           | HEAD (`.env.local`)                     | Empty (`APP_KEY=`)                                                                                                    |
-| Local dev DB password                                                         | HEAD                                    | The literal string `password`, on containers never exposed off the developer machine; allowlisted in `.gitleaks.toml` |
-| Self-signed dev TLS private keys                                              | HEAD (`.docker/{admin,api,cert}/*.key`) | Deliberately committed, allowlisted in `.gitleaks.toml`; owned by #425                                                |
+| Secret                                                                                                                                                                              | Where it is                                                                                        | Status                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Admin production DB password (as `DB_PASSWORD` **and** `CARDS_DB_PASSWORD`)                                                                                                         | history only (`20f0dce`, `8b77b2c`)                                                                | **LIVE** — blocked on `tradingcardapi-admin#1414`                                                                     |
+| Admin production DB username (as `DB_USERNAME` **and** `CARDS_DB_USERNAME`)                                                                                                         | history only (`20f0dce`, `8b77b2c`) — was also in this document's own text until #495 corrected it | **LIVE** — blocked on `tradingcardapi-admin#1414`                                                                     |
+| Admin production DB database name (as `DB_DATABASE` **and** `CARDS_DB_DATABASE`)                                                                                                    | history only (`20f0dce`, `8b77b2c`) — was also in this document's own text until #495 corrected it | **LIVE** — blocked on `tradingcardapi-admin#1414`                                                                     |
+| Admin production `APP_KEY`                                                                                                                                                          | history only (`20f0dce`, `8b77b2c`)                                                                | **LIVE** — still at `tradingcardapi-admin` HEAD; blocked on `tradingcardapi-admin#1414`                               |
+| DigitalOcean cluster host (`DB_HOST`, `CARDS_DB_HOST`)                                                                                                                              | history only                                                                                       | Live coordinate for a live cluster                                                                                    |
+| `cardalmanac_blog` DB password                                                                                                                                                      | history only                                                                                       | Dead — revoked in #468                                                                                                |
+| This repo's production `APP_KEY`                                                                                                                                                    | history only                                                                                       | Removed from HEAD by #430; rotate per #430                                                                            |
+| Mailgun API key                                                                                                                                                                     | history only (`.docker/docker-compose.full.yml`, `.env.local` from `20f0dce`)                      | `MAILGUN_SECRET` and `MAILGUN_DOMAIN` are both varrefs at HEAD (#460)                                                 |
+| Passport client ID + secret                                                                                                                                                         | history only                                                                                       | Both varrefs at HEAD                                                                                                  |
+| Eight `WP_*` auth keys/salts (`WP_AUTH_KEY`, `WP_SECURE_AUTH_KEY`, `WP_LOGGED_IN_KEY`, `WP_NONCE_KEY`, `WP_AUTH_SALT`, `WP_SECURE_AUTH_SALT`, `WP_LOGGED_IN_SALT`, `WP_NONCE_SALT`) | history only (`.env.local`, `cc39616` → `06aa06b`, removed by `b0e4c82`)                           | Dead — WordPress removed in #108; blog is flat-file (#468)                                                            |
+| Local dev `APP_KEY`                                                                                                                                                                 | HEAD (`.env.local`)                                                                                | Empty (`APP_KEY=`)                                                                                                    |
+| Local dev DB password                                                                                                                                                               | HEAD                                                                                               | The literal string `password`, on containers never exposed off the developer machine; allowlisted in `.gitleaks.toml` |
+| Self-signed dev TLS private keys                                                                                                                                                    | HEAD (`.docker/{admin,api,cert}/*.key`)                                                            | Deliberately committed, allowlisted in `.gitleaks.toml`; owned by #425                                                |
 
 So the remaining exposure is **entirely historical**, which is what this procedure
 addresses — and the scope must be derived from history, not from a HEAD-facing table.
@@ -50,21 +53,22 @@ rewrite only stops shipping the evidence to the public.
 
 All of these must be **closed** before the procedure below is run:
 
-| Blocker                                                                                       | What it covers                                                    |
-| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [#430](https://github.com/cardtechie/cardalmanac-app/issues/430)                              | This repo's production `APP_KEY`                                  |
-| [#460](https://github.com/cardtechie/cardalmanac-app/issues/460)                              | Mailgun API key                                                   |
-| [#461](https://github.com/cardtechie/cardalmanac-app/issues/461)                              | Passport client secret                                            |
-| [#463](https://github.com/cardtechie/cardalmanac-app/issues/463)                              | `.env.local` untracking                                           |
-| [`tradingcardapi-admin#1414`](https://github.com/cardtechie/tradingcardapi-admin/issues/1414) | Admin production `APP_KEY` and the `tradingcardadmin` DB password |
+| Blocker                                                                                       | What it covers                                                            |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| [#430](https://github.com/cardtechie/cardalmanac-app/issues/430)                              | This repo's production `APP_KEY`                                          |
+| [#460](https://github.com/cardtechie/cardalmanac-app/issues/460)                              | Mailgun API key                                                           |
+| [#461](https://github.com/cardtechie/cardalmanac-app/issues/461)                              | Passport client secret                                                    |
+| [#463](https://github.com/cardtechie/cardalmanac-app/issues/463)                              | `.env.local` untracking                                                   |
+| [`tradingcardapi-admin#1414`](https://github.com/cardtechie/tradingcardapi-admin/issues/1414) | Admin production `APP_KEY`, DB password, DB username and DB database name |
 
-`tradingcardapi-admin#1414` is the long pole. Those two credentials cannot be rotated
-until that repository stops shipping them in its deploy compose file, or
+`tradingcardapi-admin#1414` is the long pole. Those credentials cannot be rotated until
+that repository stops shipping them in its deploy compose file, or
 `admin.tradingcardapi.com` goes down at rotation.
 
-**None of these secrets is confined to this repository.** The `tradingcardadmin` password,
-the admin `APP_KEY`, the Mailgun key and the Passport secret each appear in
-`tradingcardapi-admin`, `tradingcardapi-api` or `cardtechie-site` as well. Rotation is a
+**None of these secrets is confined to this repository.** The admin DB credentials
+(password, username, database name), the admin `APP_KEY`, the Mailgun key and the
+Passport secret each appear in `tradingcardapi-admin`, `tradingcardapi-api` or
+`cardtechie-site` as well. Rotation is a
 cross-repo coordination problem, and purging _this_ repository's history does not by
 itself neutralize any of those values.
 
@@ -131,7 +135,8 @@ refuses to run against anything but a bare mirror.
 > The scripts themselves never print a value — everything is reported by truncated SHA-256
 > fingerprint and character count, so their output is safe to paste.
 
-The script prints two tables. **Read both before continuing.**
+The script prints two tables always, plus a third, conditional one. **Read all printed
+tables before continuing.**
 
 - **INCLUDED** — what will be rewritten.
 - **EXCLUDED** — what will not, and why. `present-at-head` means the value still exists in
@@ -147,9 +152,24 @@ The script prints two tables. **Read both before continuing.**
 Nothing is dropped silently. If you disagree with an exclusion, add its
 `literal:<value>==>***REMOVED***` line to the file by hand, or lower `--min-length`.
 
+A third table, **UNSCOPED**, can also print: every `KEY=value` / `KEY: value` assignment
+found in the scope paths' history whose key is **not** in the generator's fixed key-name
+set, whose value is at least `--min-length` characters, and which is not a variable
+reference. It exists because a fixed allowlist can only ever catch a key somebody already
+thought of — this issue (#495) is the second time an inventory gap was found in the same
+purge tooling, first with the WordPress salts below. UNSCOPED entries are reported by
+fingerprint, character count and key name only, exactly like INCLUDED and EXCLUDED, and
+they are never written to the expressions file. **Review the UNSCOPED table before
+continuing to step 4.** A non-empty table does not fail the script (see the Decision
+section's operator judgement call on this); it is a prompt to decide, by key name, whether
+each entry belongs in `SCOPE_KEYS` and needs a follow-up run.
+
 Sanity-check the count against the scope table above: the expected shape is several
 distinct 51-character `APP_KEY` values, one 60-character cluster host, the 16-character
-password and username, and the Mailgun and Passport values.
+password and username, the admin production database name (`DB_DATABASE` **and**
+`CARDS_DB_DATABASE` — present in the scope table above, so its absence from this shape
+should not go unnoticed), eight 64-character `WP_*` values, and the Mailgun and Passport
+values.
 
 ### 4. Rewrite
 
