@@ -34,6 +34,9 @@ untracked `.env`:
 echo "APP_KEY=base64:$(head -c 32 /dev/urandom | base64)"
 ```
 
+`docker-compose.yml` passes `APP_KEY` through to the app container, overriding the
+blank value from `.env.local`; recreate the container (`make up`) after pinning it.
+
 The `tcapi` and `admin` services in the full stack no longer receive an `APP_KEY`
 from this repository at all. Each runs another project's image, and each of those
 images ships its own local key in its own baked `.env`; setting the variable here

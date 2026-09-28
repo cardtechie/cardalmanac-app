@@ -12,6 +12,10 @@ services:
         env_file:
             - ./.env.local
         environment:
+            # `environment:` overrides `env_file: ./.env.local`, so a key pinned in the
+            # untracked root `.env` wins; unset stays empty so ensure-app-key.sh still
+            # generates an ephemeral one (#502).
+            APP_KEY: "${APP_KEY:-}"
             TRADINGCARDAPI_URL: "https://host.docker.internal:8243"
             TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
             TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
