@@ -245,9 +245,20 @@ belong in your untracked root `.env`. The rule is stated in a header comment at
 the top of the file, and CI enforces it: the `env-local-credential-assignment`
 rule in `.gitleaks.toml` fails the Secret Scan workflow on any non-empty value
 assigned to a credential-shaped key (`*_KEY`, `*_SECRET`, `*_TOKEN`,
-`*_PASSWORD`, `*_CLIENT_ID`, `*_DSN`, ...) in this file. The one exception is
-`DB_PASSWORD=password`, the local-only MySQL literal `docker-compose.yml` also
-defaults to.
+`*_PASSWORD`, `*_CLIENT_ID`, `*_DSN`, ...) in this file. The only values CI
+accepts on such a key are deliberate non-secrets, each matched as the whole
+value:
+
+- the local-only MySQL literal `password` (bare, or in double or single quotes),
+  or a `${VAR:-password}` default, on `DB_PASSWORD`, `MYSQL_PASSWORD`, or
+  `MYSQL_ROOT_PASSWORD`. `docker-compose.yml` defaults to the same literal.
+- the documentation placeholders `base64:REDACTED` and `base64:your-key-here`,
+  on any key.
+
+Only `DB_PASSWORD=password` is actually used. The others are admitted because the
+same global allowlist in `.gitleaks.toml` also covers the compose files and feeds
+`build/secret-purge-expressions.sh`. None of them is a credential, and any
+longer or different value on these keys is still flagged.
 
 A selection of its values:
 
