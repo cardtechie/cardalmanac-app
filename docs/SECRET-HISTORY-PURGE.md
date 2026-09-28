@@ -333,9 +333,9 @@ A business planning document, not developer documentation. Deleted from `main` b
 - A HEAD-only delete leaves the full document readable in every earlier commit, and history
   is published with the repository.
 - #507 directs that the file be folded into the single planned rewrite rather than run as a
-  second one. Step 4 above therefore carries `--path .claude/PROJECT-OVERVIEW.md
-  --invert-paths`, and `build/verify-secret-purge.sh` check 4 (`removed-paths`) fails if any
-  commit on any ref still touches the path.
+  second one. Step 4 above therefore removes the path with `--invert-paths`, and
+  `build/verify-secret-purge.sh` check 4 (`removed-paths`) fails if any commit on any ref
+  still touches it.
 - The file has only ever existed at that one path (no renames), so a single `--path` covers
   its entire history.
 
