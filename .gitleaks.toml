@@ -62,8 +62,12 @@ description = "Non-empty value on a credential-shaped key in the tracked .env.lo
 path = '''(^|/)\.env\.local$'''
 regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"]+"|'[^']+'|[^\s"'#][^\s"']*)'''
 
-  # The local MySQL literal is the one credential-shaped default the file is
-  # allowed to carry (see the global allowlist below, and #463). Targets the
+  # The local MySQL literal is the one credential-shaped default the file
+  # actually carries (#463). The global [allowlist] below ALSO applies to this
+  # rule, so CI additionally accepts the same literal or `${VAR:-password}` on
+  # MYSQL_PASSWORD / MYSQL_ROOT_PASSWORD and the exact base64:REDACTED /
+  # base64:your-key-here placeholders -- all non-secrets, all whole-value
+  # anchored (see docs/LOCAL-ENVIRONMENTS.md). Targets the
   # MATCH, anchored at both ends, so only the exact value is exempt:
   # `DB_PASSWORD=passwordhunter22` or `=xpassword` is still flagged. (A "line"
   # target never matched under v8.28.0, so this exemption was previously dead
