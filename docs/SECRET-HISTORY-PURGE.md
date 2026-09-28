@@ -176,8 +176,16 @@ values.
 ```bash
 cp -R /path/to/scratch/cam-backup.git /path/to/scratch/cam-rewritten.git
 git -C /path/to/scratch/cam-rewritten.git filter-repo \
-    --force --replace-text /path/to/scratch/purge/replace-text.txt
+    --force --replace-text /path/to/scratch/purge/replace-text.txt \
+    --path .claude/PROJECT-OVERVIEW.md --invert-paths
 ```
+
+`--path ... --invert-paths` removes that whole file from every commit, in the same single
+pass as the credential substitution. It is a non-secret document that must not be
+published (#507 — see [Non-secret content removed before publish](#non-secret-content-removed-before-publish-507)),
+and `--replace-text` cannot remove a file. The file must already be deleted on `main`
+before this step runs, or check 2 below fails. Every path added here must also be added to
+`REMOVED_PATHS` in `build/verify-secret-purge.sh`, and vice versa.
 
 `git filter-repo` is not bundled with git — install it separately
 (`brew install git-filter-repo`). It removes the `origin` remote as it runs; that is
@@ -189,13 +197,16 @@ expected and is why the push in step 6 names the URL explicitly.
 build/verify-secret-purge.sh /path/to/scratch/cam-backup.git /path/to/scratch/cam-rewritten.git
 ```
 
-Three checks, all of which must pass:
+Four checks, all of which must pass:
 
 1. **literal-hits** — zero occurrences of every in-scope literal across all refs of the
    rewritten mirror, covering commit messages as well as file contents.
 2. **head-tree** — `HEAD^{tree}` is byte-identical between the two mirrors, proving the
    rewrite changed history and nothing else.
 3. **refs** — every branch and tag present before the rewrite is present after.
+4. **removed-paths** — no commit on any ref of the rewritten mirror touches a path listed in
+   the script's `REMOVED_PATHS` array (#507). Check 1 scans for credential literals and
+   cannot see a whole non-secret file surviving the rewrite; this check can.
 
 The verifier **rebuilds the literal set from the backup mirror** rather than reading the
 expressions file `filter-repo` was run with. That is deliberate, and it is the specific
@@ -208,7 +219,7 @@ an unrewritten repository is worthless:
 
 ```bash
 build/verify-secret-purge.sh /path/to/scratch/cam-backup.git /path/to/scratch/cam-backup.git
-# MUST fail check 1 and exit non-zero
+# MUST fail checks 1 and 4 and exit non-zero
 ```
 
 ### 6. Handle open PRs, then force-push
@@ -304,3 +315,49 @@ only the removal of the evidence — real value when the repository goes public,
 less than the rotation it depends on.
 
 Record the decision in this section when it is made, with the date and the reasoning.
+
+## Non-secret content removed before publish (#507)
+
+The gate conditions above ask whether history contains _secrets_. #507 asks a different
+question — whether committed content is appropriate to publish at all — and this section
+records its answer. It deliberately does not restate any of the removed content, because
+this document will itself be published.
+
+### `.claude/PROJECT-OVERVIEW.md`
+
+A business planning document, not developer documentation. Deleted from `main` by #507.
+`.claude/CLAUDE.md` is genuine developer documentation and stays.
+
+**History decision: fold into the #494 rewrite.** Recorded 2026-09-28.
+
+- A HEAD-only delete leaves the full document readable in every earlier commit, and history
+  is published with the repository.
+- #507 directs that the file be folded into the single planned rewrite rather than run as a
+  second one. Step 4 above therefore carries `--path .claude/PROJECT-OVERVIEW.md
+  --invert-paths`, and `build/verify-secret-purge.sh` check 4 (`removed-paths`) fails if any
+  commit on any ref still touches the path.
+- The file has only ever existed at that one path (no renames), so a single `--path` covers
+  its entire history.
+
+**If the go/no-go above lands on "Rotate and accept"** — no rewrite — this file stays in
+public history. That is a different decision from the one recorded here, and it must be
+recorded in this section as an explicit acceptance, with its rationale, **before** the
+repository flips public.
+
+### Sweep for other publish-unsuitable content
+
+Performed 2026-09-28 against `main` at the time of #507. Covered:
+
+- every tracked Markdown file at HEAD (`.claude/`, `docs/`, `README.md`, `SECURITY.md`,
+  `CHANGELOG.md`, `resources/content/blog/`) and `docs/gtm/`;
+- code comments under `app/`, `resources/`, `routes/`, `config/`, and `.github/`;
+- files that exist only in history (`git log --all --diff-filter=D`).
+
+Searched for strategy and exit notes, revenue, pricing and investment figures, competitor
+commentary, internal self-assessments, confidentiality markers, and customer names.
+
+**Result: nothing else found.** The only hits were card-manufacturer names in public set
+data (`public/sitemap.xml`, test fixtures), which are product data, not commentary. The
+history-only files are the self-signed dev TLS keys under `.docker/` (a credential
+question, owned by #425 per the scope table above — not a publish-suitability one) and a
+routine CI troubleshooting note (`.github/BUILD-STATUS.md`).
