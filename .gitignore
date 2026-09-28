@@ -21,5 +21,12 @@ auth.json
 # See docs/SECRET-HISTORY-PURGE.md.
 /.secret-purge/
 
+# Dev TLS certs, generated locally by .docker/scripts/generate-dev-certs.sh
+# (via `make certs`) instead of being committed (#425). Scoped to .docker/ so
+# nothing else in the repo is affected.
+.docker/**/*.key
+.docker/**/*.crt
+.docker/**/*.csr
+
 # Written into the image by the Dockerfile runtime stage; never committed.
 /VERSION

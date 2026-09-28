@@ -87,17 +87,16 @@ gh run list --workflow security-settings-guard.yaml --repo cardtechie/cardalmana
 
 ## Expected first-scan triage
 
-The first scan after enabling will flag the committed self-signed development TLS private keys under `.docker/cert/`, `.docker/api/`, and `.docker/admin/` (`*.key`).
+The first scan after enabling may flag the self-signed development TLS private keys under `.docker/cert/`, `.docker/api/`, and `.docker/admin/` (`*.key`) in **git history**. They were committed before [#425](https://github.com/cardtechie/cardalmanac-app/issues/425); since #425 they are generated locally by `make certs`, ignored by `.gitignore` and `.dockerignore`, and no longer allowlisted in `.gitleaks.toml`.
 
-**These are benign.** They are self-signed certificates for the local-only development hostnames `cardalmanac.dev`, `api.tradingcardapi.dev`, and `admin.tradingcardapi.dev`; they are valid for no public hostname, and no production certificate is tracked in this repository — production certs live on the host and are mounted at runtime. They are already allowlisted in `.gitleaks.toml` for the same reason.
+**These are benign.** They are self-signed certificates for the local-only development hostnames `cardalmanac.dev`, `api.tradingcardapi.dev`, and `admin.tradingcardapi.dev`; they are valid for no public hostname, and no production certificate is tracked in this repository — production certs live on the host and are mounted at runtime.
 
 Disposition:
 
-- Close the alerts as **used in tests** / not a real credential.
-- [#425](https://github.com/cardtechie/cardalmanac-app/issues/425) removes the committed keys, which retires the alerts at the source.
+- Close history-only alerts on those keys as **used in tests** / not a real credential.
 - The explanatory note for readers belongs in `SECURITY.md`, which [#469](https://github.com/cardtechie/cardalmanac-app/issues/469) owns. Do not add it here.
 
-Anything flagged that is **not** one of those `.key` files should be treated as a live secret: rotate first, then remove it from the tracked tree.
+Anything flagged that is **not** one of those historical `.key` files — including a `.key` file in the current tree — should be treated as a live secret: rotate first, then remove it from the tracked tree.
 
 ## Known limitation
 

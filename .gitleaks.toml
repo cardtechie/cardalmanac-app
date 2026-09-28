@@ -45,13 +45,6 @@ paths = [
   '''(^|/)public/mix-manifest\.json$''',
   '''(^|/)storage/''',
   '''(^|/)\.git/''',
-  # Self-signed TLS keys for the local-only development hostnames
-  # (cardalmanac.dev, api.tradingcardapi.dev, admin.tradingcardapi.dev). They
-  # are committed on purpose so `make up` serves HTTPS with no per-developer
-  # setup, they are not valid for any public hostname, and no production
-  # certificate is stored in this repository -- prod certs live on the host in
-  # /var/www/cardalmanac.com/certs, mounted at runtime.
-  '''(^|/)\.docker/(cert|api|admin)/[^/]+\.key$''',
 ]
 regexes = [
   # Documentation and template placeholders, not real values.

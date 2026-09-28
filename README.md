@@ -64,9 +64,16 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
     make upd-full
     ```
 
+    Both targets depend on `make certs`, which generates the self-signed dev TLS
+    certificates on first run (see [Local TLS
+    certificates](docs/LOCAL-ENVIRONMENTS.md#local-tls-certificates)). A bare
+    `docker compose up`, run directly instead of through `make`, will fail fast
+    with a missing-path error until you run `make certs` yourself.
+
 4. **Access the Application**
     - Navigate to https://cardalmanac.dev:8541/
-    - Type `thisisunsafe` if prompted about certificate warnings
+    - The certificate is self-signed and generated locally by `make certs` —
+      type `thisisunsafe` if Chrome prompts about certificate warnings
 
 For detailed setup options and troubleshooting, see **[docs/LOCAL-ENVIRONMENTS.md](docs/LOCAL-ENVIRONMENTS.md)**. For release and deployment information, see **[docs/RELEASE-AUTOMATION.md](docs/RELEASE-AUTOMATION.md)**.
 
