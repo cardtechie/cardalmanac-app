@@ -2,7 +2,7 @@
 
 # verify-secret-purge.sh - Post-rewrite gate for the #462 history purge.
 #
-# Takes the pre-rewrite backup mirror and the rewritten mirror and proves three
+# Takes the pre-rewrite backup mirror and the rewritten mirror and proves four
 # things before the force-push:
 #
 #   1. Every in-scope literal that exists in the pre-rewrite history has ZERO
@@ -10,6 +10,10 @@
 #   2. The HEAD tree is byte-identical between the two mirrors, so the rewrite
 #      provably changed history and nothing else.
 #   3. Every branch and tag present before the rewrite is still present after.
+#   4. Every whole file listed in REMOVED_PATHS is absent from every commit on
+#      every ref of the rewritten mirror (#507). These are non-secret files
+#      removed with `filter-repo --path ... --invert-paths`, which check 1's
+#      literal scan cannot see.
 #
 # The literal set is REBUILT from the pre-rewrite mirror at verification time
 # rather than read from whatever expressions file the operator happened to run
@@ -36,6 +40,14 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 GENERATOR="$SCRIPT_DIR/secret-purge-expressions.sh"
+
+# Whole files removed from history by the rewrite (#507). Must match the
+# `--path ... --invert-paths` list in docs/SECRET-HISTORY-PURGE.md step 4.
+# Each path must already be deleted at HEAD before the rewrite runs, or
+# check 2 (head-tree) fails.
+REMOVED_PATHS=(
+    ".claude/PROJECT-OVERVIEW.md"
+)
 
 # Colors for output
 RED='\033[0;31m'
@@ -64,15 +76,17 @@ Checks (all must pass; any failure exits non-zero):
                       refs of the rewritten mirror
     2. head-tree      HEAD^{tree} identical between the two mirrors
     3. refs           Every branch and tag present before is present after
+    4. removed-paths  No commit on any ref of the rewritten mirror touches a
+                      path listed in REMOVED_PATHS
 
 Negative test:
-    Running with the SAME mirror as both arguments MUST fail check 1. A
+    Running with the SAME mirror as both arguments MUST fail checks 1 and 4. A
     verifier that passes on an unrewritten repository is worthless -- run this
     once before trusting a green result.
 
 Examples:
     $0 /tmp/cam-backup.git /tmp/cam-rewritten.git
-    $0 /tmp/cam-backup.git /tmp/cam-backup.git   # expect FAIL on check 1
+    $0 /tmp/cam-backup.git /tmp/cam-backup.git   # expect FAIL on checks 1 and 4
 EOF
 }
 
@@ -310,12 +324,47 @@ main() {
     echo ""
 
     # ------------------------------------------------------------------
+    # Check 4: whole files removed from every commit on every ref
+    # ------------------------------------------------------------------
+    echo "== Check 4: removed paths absent from the rewritten history =="
+
+    local path path_commits path_count survived=0
+    for path in "${REMOVED_PATHS[@]}"; do
+        # Fail closed: a git error must never read as "0 commits touch it".
+        # --full-history disables merge simplification, which would otherwise
+        # hide side-branch commits touching $path behind a TREESAME merge.
+        if ! path_commits="$(git -C "$post" log --all --full-history --format=%H -- "$path" 2>&1)"; then
+            log_fail "check 4 removed-paths: could not read history for $path"
+            printf '%s\n' "$path_commits" | sed 's/^/    /'
+            survived=$((survived + 1))
+            continue
+        fi
+        path_count="$(printf '%s' "$path_commits" | grep -c . || true)"
+        if [[ "$path_count" -eq 0 ]]; then
+            log_info "absent from rewritten history: $path"
+        else
+            log_fail "check 4 removed-paths: $path is still touched by $path_count commit(s)"
+            survived=$((survived + 1))
+        fi
+    done
+
+    if [[ "$survived" -eq 0 ]]; then
+        log_pass "check 4 removed-paths: all ${#REMOVED_PATHS[@]} path(s) absent from every ref"
+    else
+        echo "    Add each surviving path to the filter-repo --path ... --invert-paths"
+        echo "    list in docs/SECRET-HISTORY-PURGE.md step 4 and re-run the rewrite."
+        failures=$((failures + 1))
+    fi
+    echo ""
+
+    # ------------------------------------------------------------------
     echo "======================================================================"
     if [[ "$failures" -eq 0 ]]; then
-        log_pass "All 3 checks passed."
+        log_pass "All 4 checks passed."
         echo ""
         echo "The rewritten mirror is clean of every literal derivable from the"
-        echo "pre-rewrite history, its HEAD content is unchanged, and no ref was lost."
+        echo "pre-rewrite history, its HEAD content is unchanged, no ref was lost,"
+        echo "and every removed path is gone from history."
         echo ""
         log_warn "This gate proves only that the KNOWN literal set is gone. Run the"
         log_warn "independent secret scan from docs/SECRET-HISTORY-PURGE.md before"
