@@ -63,11 +63,15 @@ path = '''(^|/)\.env\.local$'''
 regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"]+"|'[^']+'|[^\s"'#][^\s"']*)'''
 
   # The local MySQL literal is the one credential-shaped default the file is
-  # allowed to carry (see the global allowlist below, and #463).
+  # allowed to carry (see the global allowlist below, and #463). Targets the
+  # MATCH, anchored at both ends, so only the exact value is exempt:
+  # `DB_PASSWORD=passwordhunter22` or `=xpassword` is still flagged. (A "line"
+  # target never matched under v8.28.0, so this exemption was previously dead
+  # and the global allowlist was doing all the work.)
   [[rules.allowlists]]
   description = "Local-only MySQL password literal"
-  regexTarget = "line"
-  regexes = ['''^[ \t]*DB_PASSWORD[ \t]*=[ \t]*["']?password["']?[ \t]*$''']
+  regexTarget = "match"
+  regexes = ['''^[ \t]*DB_PASSWORD[ \t]*=[ \t]*(?:password|"password"|'password')$''']
 
 [allowlist]
 description = "Paths and values that are not credentials"
@@ -93,5 +97,8 @@ regexes = [
   '''base64:your-key-here''',
   # The local MySQL password in the dev compose files is the literal string
   # "password" on a container that is never exposed off the developer's machine.
-  '''(?i)(DB_PASSWORD|MYSQL_(ROOT_)?PASSWORD)\s*[:=]\s*["']?\$?\{?[A-Z_]*:?-?password\}?["']?''',
+  # Anchored at both ends and with no free-text prefix, so it exempts only the
+  # exact literal (or a `${VAR:-password}` default), never a longer real
+  # password that merely starts or ends with "password" (PR #500).
+  '''(?i)^(?:DB_PASSWORD|MYSQL_(?:ROOT_)?PASSWORD)\s*[:=]\s*(?:password|"password"|'password'|["']?\$\{[A-Z_]+:?-password\}["']?)$''',
 ]
