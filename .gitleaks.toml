@@ -93,11 +93,14 @@ paths = [
 ]
 regexes = [
   # Documentation and template placeholders, not real values.
-  # Anchored to the WHOLE value, so a placeholder cannot be appended to, or
-  # embedded in, a real secret to suppress a finding: `X_SECRET=realbase64:REDACTED`
-  # or `X_SECRET="real base64:REDACTED"` in .env.local is still flagged (PR #500).
-  '''[:=]\s*["']?base64:REDACTED["']?$''',
-  '''[:=]\s*["']?base64:your-key-here["']?$''',
+  # Anchored to the WHOLE assignment at both ends, so a placeholder cannot be
+  # appended to, or embedded in, a real secret to suppress a finding:
+  # `X_SECRET=realbase64:REDACTED`, `X_SECRET="real base64:REDACTED"` and
+  # `X_SECRET=real=base64:REDACTED` in .env.local are all still flagged
+  # (PR #500). The key must be the first thing in the match, so a `=` or `:`
+  # inside a value cannot pose as the assignment delimiter.
+  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:REDACTED["']?$''',
+  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:your-key-here["']?$''',
   # The local MySQL password in the dev compose files is the literal string
   # "password" on a container that is never exposed off the developer's machine.
   # Anchored at both ends and with no free-text prefix, so it exempts only the
