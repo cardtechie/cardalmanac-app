@@ -22,8 +22,22 @@ services:
             - ./.docker/config/local.supervisord-watch.conf:/etc/supervisor/conf.d/watch.conf
             - ./.docker/scripts/local.provision-packages.sh:/var/www/app/.docker/init.d/01-init.sh
             - ./.docker/scripts/local.provision-database.sh:/var/www/app/.docker/init.d/02-init.sh
-            - ./.docker/cert/cardalmanac.dev.crt:/etc/nginx/ssl/cert.crt
-            - ./.docker/cert/cardalmanac.dev.key:/etc/nginx/ssl/key.pem
+            # Long bind-mount syntax with create_host_path: false, so a missing
+            # cert fails fast with "path does not exist" instead of Docker
+            # silently creating a directory at the source path. Run `make certs`
+            # (or any `make up*` target, which depends on it) first (#425).
+            - type: bind
+              source: ./.docker/cert/cardalmanac.dev.crt
+              target: /etc/nginx/ssl/cert.crt
+              read_only: true
+              bind:
+                  create_host_path: false
+            - type: bind
+              source: ./.docker/cert/cardalmanac.dev.key
+              target: /etc/nginx/ssl/key.pem
+              read_only: true
+              bind:
+                  create_host_path: false
             - ./.docker/config/nginx-site-dev.conf:/etc/nginx/conf.d/default.conf
         entrypoint: /var/www/app/.docker/scripts/local.entrypoint.sh
         command:

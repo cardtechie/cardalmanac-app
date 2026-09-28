@@ -3,8 +3,4 @@ basicConstraints=CA:FALSE
 keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 [alt_names]
-DNS.1 = cardalmanac.dev
-DNS.2 = *.cardalmanac.dev
-DNS.3 = localhost
-IP.1 = 127.0.0.1
-IP.2 = ::1
+DNS.1 = admin.tradingcardapi.dev

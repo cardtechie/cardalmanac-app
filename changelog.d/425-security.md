@@ -1,0 +1,2 @@
+- **[Issue #425]** Add an MIT LICENSE, rewrite `.env.example` around the real variables, and generate dev TLS certs locally instead of committing them.
+    - Run `make certs` (or any `make up*` target) once after pulling; a bare `docker compose up` now fails until certs exist.
