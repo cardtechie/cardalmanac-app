@@ -331,7 +331,9 @@ main() {
     local path path_commits path_count survived=0
     for path in "${REMOVED_PATHS[@]}"; do
         # Fail closed: a git error must never read as "0 commits touch it".
-        if ! path_commits="$(git -C "$post" log --all --format=%H -- "$path" 2>&1)"; then
+        # --full-history disables merge simplification, which would otherwise
+        # hide side-branch commits touching $path behind a TREESAME merge.
+        if ! path_commits="$(git -C "$post" log --all --full-history --format=%H -- "$path" 2>&1)"; then
             log_fail "check 4 removed-paths: could not read history for $path"
             printf '%s\n' "$path_commits" | sed 's/^/    /'
             survived=$((survived + 1))
