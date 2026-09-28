@@ -71,6 +71,44 @@ MAILGUN_SECRET=<your mailgun api key>
 Compose substitutes them into the `admin` service; leaving them unset keeps the
 `log` default.
 
+## Local TLS certificates
+
+The self-signed dev TLS certificates for `cardalmanac.dev`, `api.tradingcardapi.dev`,
+and `admin.tradingcardapi.dev` are **generated locally, not committed to the repo**
+(#425). Committing them meant every developer shared the same private key, and
+the certs expired silently in the tree (the api/admin certs sat expired since
+2022; `cardalmanac.dev` expires 2026-10-08).
+
+```bash
+make certs
+```
+
+`make up`, `upd`, `up-full`, and `upd-full` all depend on `certs`, so a plain
+`make upd` generates them automatically on first run — this is a one-command
+setup, not an extra step. The generator (`.docker/scripts/generate-dev-certs.sh`)
+is idempotent: an existing cert/key pair is left alone. Pass `--force` to
+regenerate (e.g. after the `cardalmanac.dev` cert expires):
+
+```bash
+.docker/scripts/generate-dev-certs.sh --force
+```
+
+**Directory-mount guard.** `docker-compose.yml` and
+`.docker/docker-compose.full.yml` bind-mount each cert as an individual file
+using the long bind syntax with `create_host_path: false`. If you run
+`docker compose up` directly (bypassing `make`) before certs exist, this makes
+the container fail fast with a clear "path does not exist" error, instead of
+Docker silently creating a directory at the cert's path and nginx failing
+confusingly inside the container.
+
+**Local gitleaks caveat.** CI's secret scan (`secret-scan.yaml`) runs
+`gitleaks dir` against a **fresh checkout**, which has no generated certs on
+disk and stays green. If you run `gitleaks dir` locally _after_ `make certs`,
+it will flag the generated `.key` files in your own working tree — this is
+expected, not a regression, since the keys are real (if locally-scoped)
+private key material sitting on disk. Scan a fresh clone or `git worktree`
+instead of your working dev tree if you need a clean local read.
+
 ## Environment Overview
 
 The Card Almanac project supports multiple local development configurations to match different development needs:
@@ -147,7 +185,7 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 | --------------------------------- | ------------------------------- | ---------------- |
 | `docker-compose.yml`              | Base almanac services (minimal) | Minimal Almanac  |
 | `.docker/docker-compose.full.yml` | Adds API + Admin                | Full Development |
-| `.env.local`                      | Default configuration           | Development      |
+| `.env.local`                      | Tracked repository defaults     | Development      |
 | `.gitleaks.toml`                  | Secret-scanning rules (CI gate) | All              |
 
 ### Browser tests and the removed Dusk stack
@@ -236,16 +274,46 @@ make upd
 
 ### Minimal Almanac (.env.local)
 
+`.env.local` is **tracked on purpose**. It holds repository defaults so that
+`make up`, the image build, and GitHub Actions work from a clean clone with no
+per-developer setup. Do not re-file it as something to untrack or replace with
+an `.env.example` template -- that was proposed and ruled out on #463.
+
+The rule for editing it: **repository defaults only, never a key or a secret.**
+The file is published with the repository, and it is also baked into the image
+as `.env` (`Dockerfile:195`), so anything added to it ships in both. Real values
+belong in your untracked root `.env`. The rule is stated in a header comment at
+the top of the file, and CI enforces it: the `env-local-credential-assignment`
+rule in `.gitleaks.toml` fails the Secret Scan workflow on any non-empty value
+assigned to a credential-shaped key (`*_KEY`, `*_SECRET`, `*_TOKEN`,
+`*_PASSWORD`, `*_CLIENT_ID`, `*_DSN`, ...) in this file. The only values CI
+accepts on such a key are deliberate non-secrets, each matched as the whole
+value:
+
+- the local-only MySQL literal `password` (bare, or in double or single quotes),
+  or a `${VAR:-password}` default, on `DB_PASSWORD`, `MYSQL_PASSWORD`, or
+  `MYSQL_ROOT_PASSWORD`. `docker-compose.yml` defaults to the same literal.
+- the documentation placeholders `base64:REDACTED` and `base64:your-key-here`,
+  on any key.
+
+Only `DB_PASSWORD=password` is actually used. The others are admitted because the
+same global allowlist in `.gitleaks.toml` also covers the compose files and feeds
+`build/secret-purge-expressions.sh`. None of them is a credential, and any
+longer or different value on these keys is still flagged.
+
+A selection of its values:
+
 ```bash
-APP_KEY=                                              # Blank: generated per container
-TRADINGCARDAPI_URL=https://host.docker.internal:8243  # External API
+APP_KEY=                            # Blank on purpose: generated per container
+TRADINGCARDAPI_URL=https://tcapi    # Local API hostname (docker-compose.yml overrides it for the minimal stack)
 DB_HOST=mysql
-DB_DATABASE=tradingcards
+DB_DATABASE=cardadmin
+DB_PASSWORD=password                # Local-only literal, allowlisted in .gitleaks.toml
 ```
 
-`.env.local` is baked into the image as `.env` (`Dockerfile:195`), so a value
-committed there would become every container's fallback key. It is deliberately
-left blank -- see [Application Keys](#application-keys).
+`APP_KEY` is the value most at risk: a key committed here would become every
+container's fallback key. It is deliberately left blank -- see
+[Application Keys](#application-keys).
 
 ### Full Development (values seen by the containers)
 
@@ -265,6 +333,35 @@ MAILGUN_SECRET=                       # From root .env; blank unless opting into
 
 To change a `MAIL_*` value, edit your root `.env` -- not the compose file. See
 [Local Mail](#local-mail) for the Mailgun opt-in.
+
+### `.env.example` reference
+
+The full set of variables `.env.example` groups and documents, alongside their
+requirement level:
+
+| Variable(s)                                                                                                     | Required?    | Notes                                                                                            |
+| --------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------ |
+| `APP_NAME`, `APP_ENV`, `APP_KEY`, `APP_DEBUG`, `APP_URL`                                                        | Required     | See [Application Keys](#application-keys) for `APP_KEY`                                          |
+| `LOG_CHANNEL`, `LOG_DEPRECATIONS_CHANNEL`, `LOG_LEVEL`                                                          | Required     |                                                                                                  |
+| `DB_*`                                                                                                          | Required     |                                                                                                  |
+| `BROADCAST_DRIVER`, `CACHE_DRIVER`, `FILESYSTEM_DISK`, `QUEUE_CONNECTION`, `SESSION_DRIVER`, `SESSION_LIFETIME` | Required     | Driver selection, not credentials                                                                |
+| `TRADINGCARDAPI_URL`, `TRADINGCARDAPI_CLIENT_ID`, `TRADINGCARDAPI_CLIENT_SECRET`                                | **Required** | No card data / API auth without these                                                            |
+| `TRADINGCARDAPI_SSL_VERIFY`                                                                                     | Required     | `true` unless pointed at a local self-signed API instance                                        |
+| `MIX_APP_URL`                                                                                                   | **Required** | Inlined at build time; a missing value silently breaks nav links (renders `undefined/app`, etc.) |
+| `MAIL_*`, `MAILGUN_DOMAIN`, `MAILGUN_SECRET`                                                                    | Optional     | See [Local Mail](#local-mail)                                                                    |
+| `BREVO_API_KEY`                                                                                                 | Optional     | Newsletter double opt-in; never MIX\_-prefix (#426)                                              |
+| `PRODUCT_CTA_API_ENABLED`, `PRODUCT_CTA_API_URL`                                                                | Optional     |                                                                                                  |
+
+Three variables `config/blog.php` reads are **deliberately left out** of
+`.env.example`: `BLOG_SOURCE_PATH`, `BLOG_ARTICLE_BASE_TEMPLATE`, and
+`BLOG_LIST_BASE_TEMPLATE`. All three have working defaults, so listing them
+would only re-pad the file. Set them in your own untracked `.env` if you need
+to override the blog source path or templates.
+
+The stock Laravel `AWS_*`, `PUSHER_*` / `MIX_PUSHER_*`, `MEMCACHED_*`, and
+`REDIS_*` blocks are intentionally **not** in `.env.example` — the app does not
+use those drivers (Pusher is commented out in `resources/js/bootstrap.js`), and
+their `config/*.php` defaults keep working without them being set at all.
 
 ## Pointing the App at a Live or Staging API
 

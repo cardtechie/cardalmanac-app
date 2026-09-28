@@ -74,11 +74,17 @@ client — please report findings in that service through its own channels.
 
 ## Development TLS certificates (not a vulnerability)
 
-This repository commits self-signed TLS certificates and their private keys for local
-development. Secret scanners flag the keys, but they are **not credentials for any
+Earlier revisions of this repository committed self-signed TLS certificates and their
+private keys for local development, so they remain in git history. Since
+[#425](https://github.com/cardtechie/cardalmanac-app/issues/425) they are no longer
+committed: each developer generates their own with `make certs`
+(`.docker/scripts/generate-dev-certs.sh`), and the generated files are excluded by
+`.gitignore` and `.dockerignore`.
+
+Secret scanners may flag the historical keys, but they are **not credentials for any
 real service** and grant access to nothing:
 
-| File                                               | Hostname                   | Status                     |
+| File (history only)                                | Hostname                   | Status                     |
 | -------------------------------------------------- | -------------------------- | -------------------------- |
 | `.docker/cert/cardalmanac.dev.{crt,key}`           | `cardalmanac.dev`          | Valid until **2026-10-08** |
 | `.docker/api/api.tradingcardapi.dev.{crt,key}`     | `api.tradingcardapi.dev`   | Expired **2022-10-27**     |
@@ -89,9 +95,5 @@ machine (see [docs/LOCAL-ENVIRONMENTS.md](docs/LOCAL-ENVIRONMENTS.md)). They are
 issued by any certificate authority, are not trusted by any browser or client by
 default, and are unrelated to the production certificate, which is issued by Let's
 Encrypt and lives only on the production host (see
-[docs/TLS-CERTIFICATES.md](docs/TLS-CERTIFICATES.md)).
-
-Committing them is still a practice we intend to change — generating them locally
-instead is tracked in
-[#425](https://github.com/cardtechie/cardalmanac-app/issues/425). Reports that these
+[docs/TLS-CERTIFICATES.md](docs/TLS-CERTIFICATES.md)). Reports that these historical
 keys are exposed secrets will be closed with a pointer to this section.
