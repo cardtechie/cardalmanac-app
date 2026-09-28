@@ -110,7 +110,7 @@ The app works with these key entities from the Trading Card API:
 
 ### Custom Helper Functions (`helpers/helpers.php`)
 
-- **getVersion()**: Returns git branch in development or version in production
+- **getVersion()**: Resolves the running application's version, in precedence order: the `APP_VERSION` environment variable, then the `VERSION` file the Dockerfile's runtime stage stamps with the release calculated by `build/version.sh`, then the checked-out git branch (local development only — `.git` is excluded by `.dockerignore`), then `'N/A'`. Surfaced by the `/health` route and the site footer
 - **renderTitle()**: Consistent page title formatting across the application
 
 ### Navigation & Breadcrumbs
@@ -139,3 +139,14 @@ The app works with these key entities from the Trading Card API:
 - **JavaScript Quality**: Prettier for code formatting
 - **PHP Linting**: Parallel linting for syntax checking
 - **Docker Testing**: Isolated test environment with dedicated compose file
+
+## Issue Creation
+
+**Always use the `create_cross_repo_issues` MCP tool** instead of raw `gh issue create` when creating GitHub issues. This applies to all contexts: post-merge follow-ups, ad-hoc work, and any other issue creation.
+
+The tool automatically handles:
+
+- Duplicate checking before creation
+- Cross-repo impact analysis to detect downstream repos that need changes
+- Label creation if labels don't exist
+- Project board integration with the Type field
