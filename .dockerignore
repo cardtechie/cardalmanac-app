@@ -13,6 +13,13 @@ storage/logs/
 # Docker storage (database, logs, etc - HUGE 5GB directory)
 .docker/storage/
 
+# Dev TLS certs generated per developer by .docker/scripts/generate-dev-certs.sh
+# (#425). Mirrors .gitignore: without this, `COPY . .` bakes each developer's
+# private key into an image layer. The dev stack bind-mounts them at runtime.
+.docker/**/*.key
+.docker/**/*.crt
+.docker/**/*.csr
+
 # Development files (exclude local development env files)
 .env
 # Note: .env.local is needed by Dockerfile for production builds
