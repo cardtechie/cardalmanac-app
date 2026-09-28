@@ -59,23 +59,22 @@ description = "Non-empty value on a credential-shaped key in the tracked .env.lo
 # not flagged -- `APP_KEY=`, `APP_KEY=""`, `X_SECRET=#comment`,
 # `DB_PASSWORD=password`, `DB_PASSWORD="password"`, a blank key followed by a
 # multiline quoted value on a non-credential key.
+#
+# The trailing `[^\r\n]*` makes the match run to the end of the value's line.
+# Without it the match stopped at the first space (unquoted) or closing quote,
+# so `DB_PASSWORD=password hunter22` or `DB_PASSWORD="password"hunter22`
+# produced the partial match `DB_PASSWORD=password`, which the allowlist then
+# accepted. The allowlist entries below tolerate only trailing whitespace and a
+# ` # comment`, so the full line has to be the exact literal (PR #500).
 path = '''(^|/)\.env\.local$'''
-regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"]+"|'[^']+'|[^\s"'#][^\s"']*)'''
+regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"]+"|'[^']+'|[^\s"'#][^\s"']*)[^\r\n]*'''
 
-  # The local MySQL literal is the one credential-shaped default the file
-  # actually carries (#463). The global [allowlist] below ALSO applies to this
-  # rule, so CI additionally accepts the same literal or `${VAR:-password}` on
-  # MYSQL_PASSWORD / MYSQL_ROOT_PASSWORD and the exact base64:REDACTED /
-  # base64:your-key-here placeholders -- all non-secrets, all whole-value
-  # anchored (see docs/LOCAL-ENVIRONMENTS.md). Targets the
-  # MATCH, anchored at both ends, so only the exact value is exempt:
-  # `DB_PASSWORD=passwordhunter22` or `=xpassword` is still flagged. (A "line"
-  # target never matched under v8.28.0, so this exemption was previously dead
-  # and the global allowlist was doing all the work.)
-  [[rules.allowlists]]
-  description = "Local-only MySQL password literal"
-  regexTarget = "match"
-  regexes = ['''^[ \t]*DB_PASSWORD[ \t]*=[ \t]*(?:password|"password"|'password')$''']
+  # No rule-local allowlist: the global [allowlist] below applies to this rule
+  # too and is the single place its exemptions live -- the exact local MySQL
+  # literal (or `${VAR:-password}`) on DB_PASSWORD / MYSQL_PASSWORD /
+  # MYSQL_ROOT_PASSWORD, and the exact base64:REDACTED / base64:your-key-here
+  # placeholders (see docs/LOCAL-ENVIRONMENTS.md). A second, rule-local copy
+  # only gave the two a chance to drift apart (PR #500).
 
 [allowlist]
 description = "Paths and values that are not credentials"
@@ -103,8 +102,8 @@ regexes = [
   # `X_SECRET=real=base64:REDACTED` in .env.local are all still flagged
   # (PR #500). The key must be the first thing in the match, so a `=` or `:`
   # inside a value cannot pose as the assignment delimiter.
-  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:REDACTED["']?$''',
-  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:your-key-here["']?$''',
+  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:REDACTED["']?(\s+#.*)?\s*$''',
+  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:your-key-here["']?(\s+#.*)?\s*$''',
   # The local MySQL password in the dev compose files is the literal string
   # "password" on a container that is never exposed off the developer's machine.
   # Anchored at both ends and with no free-text prefix, so it exempts only the
@@ -113,5 +112,7 @@ regexes = [
   # capturing groups, never `(?:`: build/secret-purge-expressions.sh feeds these
   # regexes to `grep -E`, and GNU grep does not understand `(?:`, so it would
   # silently stop allowlisting the literal and put `password` on the purge list.
-  '''(?i)^(DB_PASSWORD|MYSQL_(ROOT_)?PASSWORD)\s*[:=]\s*(password|"password"|'password'|["']?\$\{[A-Z_]+:?-password\}["']?)$''',
+  # All three entries allow only trailing whitespace or a ` # comment` after the
+  # value, because the .env.local rule's match now runs to the end of the line.
+  '''(?i)^\s*(export\s+)?(DB_PASSWORD|MYSQL_(ROOT_)?PASSWORD)\s*[:=]\s*(password|"password"|'password'|["']?\$\{[A-Z_]+:?-password\}["']?)(\s+#.*)?\s*$''',
 ]
