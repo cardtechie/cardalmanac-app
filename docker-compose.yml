@@ -2,6 +2,10 @@ services:
     caapp:
         build:
             context: ./
+            # Local development needs the full toolchain, Xdebug and the
+            # /var/www/{vendor,node_modules} layout that
+            # .docker/scripts/local.provision-packages.sh rsyncs from.
+            target: dev
             secrets:
                 - composer_token
         image: picklewagon/cardalmanac-app:${DOCKER_TAG_CAAPP:-latest}
@@ -85,7 +89,7 @@ networks:
     overlay:
 
 secrets:
-    # Mounted into the build for `composer config github-oauth.github.com` and
+    # Passed to `composer config github-oauth.github.com` inside the build and
     # never written to a layer, so it cannot leak through `docker history`.
     # Optional: the build succeeds without it, at the cost of anonymous GitHub
     # API rate limits on the two VCS repositories in composer.json.

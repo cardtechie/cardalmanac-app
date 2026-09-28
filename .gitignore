@@ -27,3 +27,6 @@ auth.json
 .docker/**/*.key
 .docker/**/*.crt
 .docker/**/*.csr
+
+# Written into the image by the Dockerfile runtime stage; never committed.
+/VERSION
