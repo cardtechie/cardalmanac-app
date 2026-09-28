@@ -93,12 +93,18 @@ paths = [
 ]
 regexes = [
   # Documentation and template placeholders, not real values.
-  '''base64:REDACTED''',
-  '''base64:your-key-here''',
+  # Anchored to the WHOLE value, so a placeholder cannot be appended to, or
+  # embedded in, a real secret to suppress a finding: `X_SECRET=realbase64:REDACTED`
+  # or `X_SECRET="real base64:REDACTED"` in .env.local is still flagged (PR #500).
+  '''[:=]\s*["']?base64:REDACTED["']?$''',
+  '''[:=]\s*["']?base64:your-key-here["']?$''',
   # The local MySQL password in the dev compose files is the literal string
   # "password" on a container that is never exposed off the developer's machine.
   # Anchored at both ends and with no free-text prefix, so it exempts only the
   # exact literal (or a `${VAR:-password}` default), never a longer real
-  # password that merely starts or ends with "password" (PR #500).
-  '''(?i)^(?:DB_PASSWORD|MYSQL_(?:ROOT_)?PASSWORD)\s*[:=]\s*(?:password|"password"|'password'|["']?\$\{[A-Z_]+:?-password\}["']?)$''',
+  # password that merely starts or ends with "password" (PR #500). Plain
+  # capturing groups, never `(?:`: build/secret-purge-expressions.sh feeds these
+  # regexes to `grep -E`, and GNU grep does not understand `(?:`, so it would
+  # silently stop allowlisting the literal and put `password` on the purge list.
+  '''(?i)^(DB_PASSWORD|MYSQL_(ROOT_)?PASSWORD)\s*[:=]\s*(password|"password"|'password'|["']?\$\{[A-Z_]+:?-password\}["']?)$''',
 ]
