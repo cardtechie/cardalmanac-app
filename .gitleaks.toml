@@ -35,6 +35,47 @@ regex = '''(?i)\b[a-z0-9_]*secret[a-z0-9_]*\s*[:=]\s*["']?base64:[A-Za-z0-9+/]{4
 keywords = ["base64:"]
 entropy = 3.5
 
+[[rules]]
+id = "env-local-credential-assignment"
+description = "Non-empty value on a credential-shaped key in the tracked .env.local (#463)"
+# .env.local is tracked and published on purpose, and may hold repository
+# defaults only -- never a real key or secret (operator ruling on #463). The
+# rules above only catch secrets of a known shape; this one catches ANY
+# non-empty value assigned to a credential-shaped key in this one file, so a
+# hand-edited real secret fails CI instead of relying on review.
+#
+# `[ \t]*` rather than `\s*` around `=` is load-bearing: `\s` spans newlines,
+# so the deliberately blank `APP_KEY=` would otherwise match the NEXT line's
+# text as its value. An UNQUOTED value starting with `#` is a comment, not a
+# value; inside quotes `#` and leading whitespace are part of the value, so a
+# non-empty quoted value is matched as its own alternative. The quoted
+# alternatives deliberately DO span newlines: dotenv allows a quoted value to
+# continue across lines, so excluding \r\n there let a multiline secret pass.
+# They cannot reach into a later assignment, because the quote must follow the
+# `=` directly and `[^"]+` needs at least one character, so an empty `""` stops
+# where it is. Verified against zricethezav/gitleaks:v8.28.0 (PR #500):
+# flagged -- `X_SECRET=abc`, `X_SECRET="#abc"`, `X_SECRET=" abc"`,
+# `X_SECRET='#abc'`, a double- or single-quoted value split across lines;
+# not flagged -- `APP_KEY=`, `APP_KEY=""`, `X_SECRET=#comment`,
+# `DB_PASSWORD=password`, `DB_PASSWORD="password"`, a blank key followed by a
+# multiline quoted value on a non-credential key.
+#
+# The trailing `[^\r\n]*` makes the match run to the end of the value's line.
+# Without it the match stopped at the first space (unquoted) or closing quote,
+# so `DB_PASSWORD=password hunter22` or `DB_PASSWORD="password"hunter22`
+# produced the partial match `DB_PASSWORD=password`, which the allowlist then
+# accepted. The allowlist entries below tolerate only trailing whitespace and a
+# ` # comment`, so the full line has to be the exact literal (PR #500).
+path = '''(^|/)\.env\.local$'''
+regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"]+"|'[^']+'|[^\s"'#][^\s"']*)[^\r\n]*'''
+
+  # No rule-local allowlist: the global [allowlist] below applies to this rule
+  # too and is the single place its exemptions live -- the exact local MySQL
+  # literal (or `${VAR:-password}`) on DB_PASSWORD / MYSQL_PASSWORD /
+  # MYSQL_ROOT_PASSWORD, and the exact base64:REDACTED / base64:your-key-here
+  # placeholders (see docs/LOCAL-ENVIRONMENTS.md). A second, rule-local copy
+  # only gave the two a chance to drift apart (PR #500).
+
 [allowlist]
 description = "Paths and values that are not credentials"
 paths = [
@@ -48,9 +89,23 @@ paths = [
 ]
 regexes = [
   # Documentation and template placeholders, not real values.
-  '''base64:REDACTED''',
-  '''base64:your-key-here''',
+  # Anchored to the WHOLE assignment at both ends, so a placeholder cannot be
+  # appended to, or embedded in, a real secret to suppress a finding:
+  # `X_SECRET=realbase64:REDACTED`, `X_SECRET="real base64:REDACTED"` and
+  # `X_SECRET=real=base64:REDACTED` in .env.local are all still flagged
+  # (PR #500). The key must be the first thing in the match, so a `=` or `:`
+  # inside a value cannot pose as the assignment delimiter.
+  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:REDACTED["']?(\s+#.*)?\s*$''',
+  '''^\s*(export\s+)?[A-Za-z0-9_]+\s*[:=]\s*["']?base64:your-key-here["']?(\s+#.*)?\s*$''',
   # The local MySQL password in the dev compose files is the literal string
   # "password" on a container that is never exposed off the developer's machine.
-  '''(?i)(DB_PASSWORD|MYSQL_(ROOT_)?PASSWORD)\s*[:=]\s*["']?\$?\{?[A-Z_]*:?-?password\}?["']?''',
+  # Anchored at both ends and with no free-text prefix, so it exempts only the
+  # exact literal (or a `${VAR:-password}` default), never a longer real
+  # password that merely starts or ends with "password" (PR #500). Plain
+  # capturing groups, never `(?:`: build/secret-purge-expressions.sh feeds these
+  # regexes to `grep -E`, and GNU grep does not understand `(?:`, so it would
+  # silently stop allowlisting the literal and put `password` on the purge list.
+  # All three entries allow only trailing whitespace or a ` # comment` after the
+  # value, because the .env.local rule's match now runs to the end of the line.
+  '''(?i)^\s*(export\s+)?(DB_PASSWORD|MYSQL_(ROOT_)?PASSWORD)\s*[:=]\s*(password|"password"|'password'|["']?\$\{[A-Z_]+:?-password\}["']?)(\s+#.*)?\s*$''',
 ]

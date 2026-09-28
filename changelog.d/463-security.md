@@ -1,0 +1,1 @@
+- **[Issue #463]** Audit the tracked `.env.local`, document that it is intentionally tracked with repository-default values only, and add a gitleaks rule scoped to the file so a real secret added later is caught by CI.
