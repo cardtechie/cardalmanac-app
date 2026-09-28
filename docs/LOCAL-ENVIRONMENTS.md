@@ -144,7 +144,7 @@ make upd-full  # Uses .docker/docker-compose.full.yml
 | --------------------------------- | ------------------------------- | ---------------- |
 | `docker-compose.yml`              | Base almanac services (minimal) | Minimal Almanac  |
 | `.docker/docker-compose.full.yml` | Adds API + Admin                | Full Development |
-| `.env.local`                      | Default configuration           | Development      |
+| `.env.local`                      | Tracked repository defaults     | Development      |
 | `.gitleaks.toml`                  | Secret-scanning rules (CI gate) | All              |
 
 ### Browser tests and the removed Dusk stack
@@ -233,16 +233,35 @@ make upd
 
 ### Minimal Almanac (.env.local)
 
+`.env.local` is **tracked on purpose**. It holds repository defaults so that
+`make up`, the image build, and GitHub Actions work from a clean clone with no
+per-developer setup. Do not re-file it as something to untrack or replace with
+an `.env.example` template -- that was proposed and ruled out on #463.
+
+The rule for editing it: **repository defaults only, never a key or a secret.**
+The file is published with the repository, and it is also baked into the image
+as `.env` (`Dockerfile:195`), so anything added to it ships in both. Real values
+belong in your untracked root `.env`. The rule is stated in a header comment at
+the top of the file, and CI enforces it: the `env-local-credential-assignment`
+rule in `.gitleaks.toml` fails the Secret Scan workflow on any non-empty value
+assigned to a credential-shaped key (`*_KEY`, `*_SECRET`, `*_TOKEN`,
+`*_PASSWORD`, `*_CLIENT_ID`, `*_DSN`, ...) in this file. The one exception is
+`DB_PASSWORD=password`, the local-only MySQL literal `docker-compose.yml` also
+defaults to.
+
+A selection of its values:
+
 ```bash
-APP_KEY=                                              # Blank: generated per container
-TRADINGCARDAPI_URL=https://host.docker.internal:8243  # External API
+APP_KEY=                            # Blank on purpose: generated per container
+TRADINGCARDAPI_URL=https://tcapi    # Local API hostname (docker-compose.yml overrides it for the minimal stack)
 DB_HOST=mysql
-DB_DATABASE=tradingcards
+DB_DATABASE=cardadmin
+DB_PASSWORD=password                # Local-only literal, allowlisted in .gitleaks.toml
 ```
 
-`.env.local` is baked into the image as `.env` (`Dockerfile:195`), so a value
-committed there would become every container's fallback key. It is deliberately
-left blank -- see [Application Keys](#application-keys).
+`APP_KEY` is the value most at risk: a key committed here would become every
+container's fallback key. It is deliberately left blank -- see
+[Application Keys](#application-keys).
 
 ### Full Development (values seen by the containers)
 
