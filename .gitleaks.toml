@@ -48,13 +48,19 @@ description = "Non-empty value on a credential-shaped key in the tracked .env.lo
 # so the deliberately blank `APP_KEY=` would otherwise match the NEXT line's
 # text as its value. An UNQUOTED value starting with `#` is a comment, not a
 # value; inside quotes `#` and leading whitespace are part of the value, so a
-# non-empty quoted value is matched as its own alternative. Verified against
-# zricethezav/gitleaks:v8.28.0 (PR #500): flagged -- `X_SECRET=abc`,
-# `X_SECRET="#abc"`, `X_SECRET=" abc"`, `X_SECRET='#abc'`; not flagged --
-# `APP_KEY=`, `APP_KEY=""`, `X_SECRET=#comment`, `DB_PASSWORD=password`,
-# `DB_PASSWORD="password"`.
+# non-empty quoted value is matched as its own alternative. The quoted
+# alternatives deliberately DO span newlines: dotenv allows a quoted value to
+# continue across lines, so excluding \r\n there let a multiline secret pass.
+# They cannot reach into a later assignment, because the quote must follow the
+# `=` directly and `[^"]+` needs at least one character, so an empty `""` stops
+# where it is. Verified against zricethezav/gitleaks:v8.28.0 (PR #500):
+# flagged -- `X_SECRET=abc`, `X_SECRET="#abc"`, `X_SECRET=" abc"`,
+# `X_SECRET='#abc'`, a double- or single-quoted value split across lines;
+# not flagged -- `APP_KEY=`, `APP_KEY=""`, `X_SECRET=#comment`,
+# `DB_PASSWORD=password`, `DB_PASSWORD="password"`, a blank key followed by a
+# multiline quoted value on a non-credential key.
 path = '''(^|/)\.env\.local$'''
-regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"\r\n]+"|'[^'\r\n]+'|[^\s"'#][^\s"']*)'''
+regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"]+"|'[^']+'|[^\s"'#][^\s"']*)'''
 
   # The local MySQL literal is the one credential-shaped default the file is
   # allowed to carry (see the global allowlist below, and #463).
