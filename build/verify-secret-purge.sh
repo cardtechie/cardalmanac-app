@@ -330,7 +330,13 @@ main() {
 
     local path path_commits path_count survived=0
     for path in "${REMOVED_PATHS[@]}"; do
-        path_commits="$(git -C "$post" log --all --format=%H -- "$path" 2>/dev/null || true)"
+        # Fail closed: a git error must never read as "0 commits touch it".
+        if ! path_commits="$(git -C "$post" log --all --format=%H -- "$path" 2>&1)"; then
+            log_fail "check 4 removed-paths: could not read history for $path"
+            printf '%s\n' "$path_commits" | sed 's/^/    /'
+            survived=$((survived + 1))
+            continue
+        fi
         path_count="$(printf '%s' "$path_commits" | grep -c . || true)"
         if [[ "$path_count" -eq 0 ]]; then
             log_info "absent from rewritten history: $path"
