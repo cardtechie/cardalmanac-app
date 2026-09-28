@@ -46,9 +46,15 @@ description = "Non-empty value on a credential-shaped key in the tracked .env.lo
 #
 # `[ \t]*` rather than `\s*` around `=` is load-bearing: `\s` spans newlines,
 # so the deliberately blank `APP_KEY=` would otherwise match the NEXT line's
-# text as its value. A value starting with `#` is a comment, not a value.
+# text as its value. An UNQUOTED value starting with `#` is a comment, not a
+# value; inside quotes `#` and leading whitespace are part of the value, so a
+# non-empty quoted value is matched as its own alternative. Verified against
+# zricethezav/gitleaks:v8.28.0 (PR #500): flagged -- `X_SECRET=abc`,
+# `X_SECRET="#abc"`, `X_SECRET=" abc"`, `X_SECRET='#abc'`; not flagged --
+# `APP_KEY=`, `APP_KEY=""`, `X_SECRET=#comment`, `DB_PASSWORD=password`,
+# `DB_PASSWORD="password"`.
 path = '''(^|/)\.env\.local$'''
-regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*["']?[^\s"'#][^\s"']*'''
+regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*(?:"[^"\r\n]+"|'[^'\r\n]+'|[^\s"'#][^\s"']*)'''
 
   # The local MySQL literal is the one credential-shaped default the file is
   # allowed to carry (see the global allowlist below, and #463).
