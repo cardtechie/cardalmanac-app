@@ -10,11 +10,14 @@ load-env:
 	fi
 
 # Dev TLS certs are generated locally rather than committed (#425). Idempotent:
-# an existing cert/key pair is left alone. Run `make certs -- --force` (or call
-# the script directly with --force) to regenerate.
-.PHONY: certs
+# an existing cert/key pair is left alone. Run `make certs-force` (or call
+# ./.docker/scripts/generate-dev-certs.sh --force directly) to regenerate.
+.PHONY: certs certs-force
 certs:
 	@./.docker/scripts/generate-dev-certs.sh
+
+certs-force:
+	@./.docker/scripts/generate-dev-certs.sh --force
 
 # COMPOSER_TOKEN is no longer passed with --build-arg: `docker history`
 # renders ARG values in plaintext, so an ARG publishes the credential in the
