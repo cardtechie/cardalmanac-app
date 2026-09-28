@@ -35,6 +35,28 @@ regex = '''(?i)\b[a-z0-9_]*secret[a-z0-9_]*\s*[:=]\s*["']?base64:[A-Za-z0-9+/]{4
 keywords = ["base64:"]
 entropy = 3.5
 
+[[rules]]
+id = "env-local-credential-assignment"
+description = "Non-empty value on a credential-shaped key in the tracked .env.local (#463)"
+# .env.local is tracked and published on purpose, and may hold repository
+# defaults only -- never a real key or secret (operator ruling on #463). The
+# rules above only catch secrets of a known shape; this one catches ANY
+# non-empty value assigned to a credential-shaped key in this one file, so a
+# hand-edited real secret fails CI instead of relying on review.
+#
+# `[ \t]*` rather than `\s*` around `=` is load-bearing: `\s` spans newlines,
+# so the deliberately blank `APP_KEY=` would otherwise match the NEXT line's
+# text as its value. A value starting with `#` is a comment, not a value.
+path = '''(^|/)\.env\.local$'''
+regex = '''(?im)^[ \t]*(?:export[ \t]+)?[a-z0-9_]*(?:key|secret|token|passw(?:or)?d|pwd|client_id|credential|dsn|auth)[a-z0-9_]*[ \t]*=[ \t]*["']?[^\s"'#][^\s"']*'''
+
+  # The local MySQL literal is the one credential-shaped default the file is
+  # allowed to carry (see the global allowlist below, and #463).
+  [[rules.allowlists]]
+  description = "Local-only MySQL password literal"
+  regexTarget = "line"
+  regexes = ['''^[ \t]*DB_PASSWORD[ \t]*=[ \t]*["']?password["']?[ \t]*$''']
+
 [allowlist]
 description = "Paths and values that are not credentials"
 paths = [
