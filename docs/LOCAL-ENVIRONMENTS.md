@@ -298,7 +298,7 @@ value:
 
 Only `DB_PASSWORD=password` is actually used. The others are admitted because the
 same global allowlist in `.gitleaks.toml` also covers the compose files and feeds
-`build/secret-purge-expressions.sh`. None of them is a credential, and any
+the history-purge generator. None of them is a credential, and any
 longer or different value on these keys is still flagged.
 
 A selection of its values:
