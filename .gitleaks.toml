@@ -102,7 +102,7 @@ regexes = [
   # Anchored at both ends and with no free-text prefix, so it exempts only the
   # exact literal (or a `${VAR:-password}` default), never a longer real
   # password that merely starts or ends with "password" (PR #500). Plain
-  # capturing groups, never `(?:`: build/secret-purge-expressions.sh feeds these
+  # capturing groups, never `(?:`: the history-purge generator feeds these
   # regexes to `grep -E`, and GNU grep does not understand `(?:`, so it would
   # silently stop allowlisting the literal and put `password` on the purge list.
   # All three entries allow only trailing whitespace or a ` # comment` after the
