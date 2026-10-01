@@ -13,17 +13,20 @@
 #     https://developers.digitalocean.com/documentation/v2/#update-firewall-rules--trusted-sources--for-a-database-cluster
 #
 # Params:
-#  Digital Ocean token
 #  Droplet name
+#
+# Env:
+#  DIGITALOCEAN_ACCESS_TOKEN - read from the environment rather than argv, so
+#  it does not appear in process listings on the runner.
 #
 
 set -e
 
-token="$1"
-droplet_name="$2"
+token="${DIGITALOCEAN_ACCESS_TOKEN:?}"
+droplet_name="$1"
 
 if [[ -z "${token}" ]]; then
-    # token must be passed in as an argument
+    # token must be set via the DIGITALOCEAN_ACCESS_TOKEN environment variable
     echo "No token defined."
     exit 1
 fi
