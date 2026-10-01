@@ -1,2 +1,2 @@
 - **[Issue #513]** Record the accept-in-history decision for three benign dev TLS private keys left in git history after the #494 purge.
-  - Documentation only — no purge, no code change; the decision replaces the now-relocated `docs/SECRET-HISTORY-PURGE.md` runbook as the durable record.
+    - Documentation only — no purge, no code change; the decision replaces the now-relocated `docs/SECRET-HISTORY-PURGE.md` runbook as the durable record.

@@ -104,11 +104,11 @@ Anything flagged that is **not** one of those historical `.key` files — includ
 
 The [#494](https://github.com/cardtechie/cardalmanac-app/issues/494) purge succeeded for its four primary targets (`.claude/PROJECT-OVERVIEW.md`, `prod.docker-compose.yaml`, `docker-compose.full.yml`, `dusk.docker-compose.yaml` — all now 0 commits on `origin/main`'s history). Three self-signed development TLS private keys still have commits on `origin/main`'s history (re-verified via `git log --follow`):
 
-| Path | Commits on `origin/main` history |
-| --- | --- |
-| `.docker/cert/cardalmanac.dev.key` | 3 |
-| `.docker/api/api.tradingcardapi.dev.key` | 2 |
-| `.docker/admin/admin.tradingcardapi.dev.key` | 2 |
+| Path                                         | Commits on `origin/main` history |
+| -------------------------------------------- | -------------------------------- |
+| `.docker/cert/cardalmanac.dev.key`           | 3                                |
+| `.docker/api/api.tradingcardapi.dev.key`     | 2                                |
+| `.docker/admin/admin.tradingcardapi.dev.key` | 2                                |
 
 **Why accept rather than purge:**
 
