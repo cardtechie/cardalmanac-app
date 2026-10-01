@@ -23,6 +23,7 @@ updates:
     labels:
       - "dependencies"
       - "security"
+      - "skip-changelog"
     ignore:
       # Ignore dev-main dependencies that should be manually managed
       - dependency-name: "cardtechie/tradingcardapi-sdk-php"
@@ -48,6 +49,7 @@ updates:
     labels:
       - "dependencies"
       - "security"
+      - "skip-changelog"
     groups:
       # Group Vue.js related dependencies together
       vue-ecosystem:
@@ -90,3 +92,4 @@ updates:
     labels:
       - "dependencies"
       - "security"
+      - "skip-changelog"

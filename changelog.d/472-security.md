@@ -1,0 +1,2 @@
+- **[Issue #472]** Bump composer and npm lock files to clear known high-severity advisories, and exempt Dependabot PRs from the changelog-fragment CI gate.
+    - Advisories cleared: `laravel/framework`, `symfony/http-foundation`, `symfony/mime`, `guzzlehttp/guzzle`, `league/commonmark`, `phpunit/phpunit` (composer); `fast-uri`, `brace-expansion`, `minimatch`, `node-forge`, `immutable`, `nanoid`, `browserslist`, `postcss`, `svgo`, `serialize-javascript` (npm).
