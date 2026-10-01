@@ -9,15 +9,14 @@ you find.
 Please do **not** report security vulnerabilities through public GitHub issues,
 discussions, or pull requests.
 
-Instead, email [security@cardtechie.com](mailto:security@cardtechie.com). This is the
-same address used for every CardTechie project, and it is the channel to use today.
+Instead, use one of these private channels:
 
-> **A note on GitHub private vulnerability reporting.** This repository is currently
-> private, and GitHub's private vulnerability reporting (Security tab → **Report a
-> vulnerability**) is only available on public repositories. It is therefore **not**
-> available here yet. When this repository is made public, that flow becomes the
-> preferred channel and this policy will be updated to say so; until then, email is
-> the only private channel.
+- **GitHub Private Vulnerability Reporting (preferred).** Open the repository's
+  [**Security** tab](https://github.com/cardtechie/cardalmanac-app/security) and
+  click **Report a vulnerability**. This opens a private advisory visible only to
+  you and the maintainers.
+- **Email.** If you cannot use GitHub's reporting flow, email
+  [security@cardtechie.com](mailto:security@cardtechie.com).
 
 When reporting, please include as much of the following as you can:
 
