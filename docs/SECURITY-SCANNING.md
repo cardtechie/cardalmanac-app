@@ -98,6 +98,30 @@ Disposition:
 
 Anything flagged that is **not** one of those historical `.key` files — including a `.key` file in the current tree — should be treated as a live secret: rotate first, then remove it from the tracked tree.
 
+## Git history purge: these three keys are out of scope (#513)
+
+**Decision: accept in history** — these three keys were deliberately excluded from the [#494](https://github.com/cardtechie/cardalmanac-app/issues/494) history purge, not an oversight.
+
+The [#494](https://github.com/cardtechie/cardalmanac-app/issues/494) purge succeeded for its four primary targets (`.claude/PROJECT-OVERVIEW.md`, `prod.docker-compose.yaml`, `docker-compose.full.yml`, `dusk.docker-compose.yaml` — all now 0 commits on `origin/main`'s history). Three self-signed development TLS private keys still have commits on `origin/main`'s history (re-verified via `git log --follow`):
+
+| Path | Commits on `origin/main` history |
+| --- | --- |
+| `.docker/cert/cardalmanac.dev.key` | 3 |
+| `.docker/api/api.tradingcardapi.dev.key` | 2 |
+| `.docker/admin/admin.tradingcardapi.dev.key` | 2 |
+
+**Why accept rather than purge:**
+
+- These are **self-signed development certificates** for local `.dev` hostnames ([#469](https://github.com/cardtechie/cardalmanac-app/issues/469), `SECURITY.md` → [Development TLS certificates](../SECURITY.md#development-tls-certificates-not-a-vulnerability)). They are valid for no public hostname.
+- They were **removed from the working tree** by [#425](https://github.com/cardtechie/cardalmanac-app/issues/425); developers now generate their own via `.docker/scripts/generate-dev-certs.sh` (see [`docs/TLS-CERTIFICATES.md`](TLS-CERTIFICATES.md)).
+- **No production certificate has ever been committed** — production certs are mounted from the host.
+- **GitHub secret scanning reports zero alerts** on this repository.
+- Purging `origin/main`'s history on a now-public repository is itself the higher-cost operation — a forced rewrite invalidates every existing clone and fork and breaks any external reference to the affected commit SHAs — for a reduction in risk that is already close to zero.
+
+**Where this decision now lives.** [#509](https://github.com/cardtechie/cardalmanac-app/issues/509) drafted this exact answer, but was closed `NOT_PLANNED` because the runbook that would have recorded it, `docs/SECRET-HISTORY-PURGE.md`, is moving to the private `cardtechie-ops` repo and is already gone from `main`. This section is the durable, public replacement for that record — recording the disposition decision here adds no new exposure, since the paths, the historical commit counts, and the "these are benign" explanation are already public via `SECURITY.md` and the triage section above.
+
+Any future purge of `origin/main`'s history should include these three paths in its `REMOVED_PATHS` / `--invert-paths` scope only if this section is explicitly revisited and updated.
+
 ## Known limitation
 
 Pattern-based native scanning would not have caught three of the four secrets the public-release audit found. The DigitalOcean database password, the Mailgun key ([#460](https://github.com/cardtechie/cardalmanac-app/issues/460)), and the Passport client secret ([#461](https://github.com/cardtechie/cardalmanac-app/issues/461)) were plain `KEY: value` pairs in YAML rather than recognisable token formats, so no provider pattern matched them.
