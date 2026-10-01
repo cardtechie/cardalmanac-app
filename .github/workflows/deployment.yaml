@@ -38,7 +38,7 @@ jobs:
     needs: docker-tag-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09  # v5
       - name: Create environment file
         run: |
           echo "TRADINGCARDAPI_CLIENT_ID=${{ secrets.TRADINGCARDAPI_CLIENT_ID }}" > cardalmanac.env
