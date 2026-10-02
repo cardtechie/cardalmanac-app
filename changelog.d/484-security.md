@@ -1,2 +1,2 @@
 - **[Issue #484]** Promote GitHub Private Vulnerability Reporting to the preferred disclosure channel in `SECURITY.md`, now that the repo is public and the feature is enabled.
-  - Email remains the fallback channel for anyone who cannot use GitHub's reporting flow.
+    - Email remains the fallback channel for anyone who cannot use GitHub's reporting flow.
