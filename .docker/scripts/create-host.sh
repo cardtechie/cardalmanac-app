@@ -13,17 +13,20 @@
 #     https://developers.digitalocean.com/documentation/v2/#update-firewall-rules--trusted-sources--for-a-database-cluster
 #
 # Params:
-#  Digital Ocean token
 #  Droplet name
+#
+# Env:
+#  DIGITALOCEAN_ACCESS_TOKEN - read from the environment rather than argv, so
+#  it does not appear in process listings on the runner.
 #
 
 set -e
 
-token="$1"
-droplet_name="$2"
+token="${DIGITALOCEAN_ACCESS_TOKEN:?}"
+droplet_name="$1"
 
 if [[ -z "${token}" ]]; then
-    # token must be passed in as an argument
+    # token must be set via the DIGITALOCEAN_ACCESS_TOKEN environment variable
     echo "No token defined."
     exit 1
 fi
@@ -35,14 +38,14 @@ if [[ -z "${droplet_name}" ]]; then
 fi
 
 # Get the current droplets
-droplets_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet list -o json)
+droplets_json=$(docker run --rm --env DIGITALOCEAN_ACCESS_TOKEN digitalocean/doctl compute droplet list -o json)
 # Get the existing droplets and put into an array
 existing_droplets=$(echo ${droplets_json} | jq .[].name)
 
 # Search the array
 if [[ " ${existing_droplets[@]} " =~ "${droplet_name}" ]]; then
     # The droplet we were going to create has already been created
-    droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet get ${droplet_name} -o json)
+    droplet_json=$(docker run --rm --env DIGITALOCEAN_ACCESS_TOKEN digitalocean/doctl compute droplet get ${droplet_name} -o json)
     droplet_ip_address=$(echo ${droplet_json} | jq .[0].networks.v4[0].ip_address)
     droplet_ip_address=$(echo ${droplet_ip_address} | xargs echo)
     echo "droplet ${droplet_name} (${droplet_ip_address}) already exists"
@@ -55,12 +58,12 @@ fi
 # Since the server does not exist yet, we are assuming everything else needs to be created.
 
 # Create a volume
-volume_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute volume create ${droplet_name} --size 1GiB --fs-type ext4 --region sfo2 --tag volume,cardtechie,cardalmanac,prod,cardalmanac-com -o json || echo "error creating volume")
+volume_json=$(docker run --rm --env DIGITALOCEAN_ACCESS_TOKEN digitalocean/doctl compute volume create ${droplet_name} --size 1GiB --fs-type ext4 --region sfo2 --tag volume,cardtechie,cardalmanac,prod,cardalmanac-com -o json || echo "error creating volume")
 volume_id=$(echo ${volume_json} | jq .[0].id)
 echo "Volume ${volume_id} created"
 
 # Create the droplet
-create_droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet create ${droplet_name} --region sfo2 --image 107250531 --size s-1vcpu-1gb --enable-monitoring --tag-names app,cardtechie,docker,nginx,laravel,prod,cardalmanac,cardalmanac-com,tradingcardapi --volumes ${volume_id} -o json)
+create_droplet_json=$(docker run --rm --env DIGITALOCEAN_ACCESS_TOKEN digitalocean/doctl compute droplet create ${droplet_name} --region sfo2 --image 107250531 --size s-1vcpu-1gb --enable-monitoring --tag-names app,cardtechie,docker,nginx,laravel,prod,cardalmanac,cardalmanac-com,tradingcardapi --volumes ${volume_id} -o json)
 droplet_id=$(echo ${create_droplet_json} | jq .[0].id)
 echo "Droplet ${droplet_id} created"
 
@@ -68,7 +71,7 @@ echo "Droplet ${droplet_id} created"
 # we can't get the IP address until the droplet is active so we need to
 droplet_ip_address=null
 while [ "${droplet_ip_address}" = null ]; do
-    droplet_json=$(docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute droplet get ${droplet_id} -o json)
+    droplet_json=$(docker run --rm --env DIGITALOCEAN_ACCESS_TOKEN digitalocean/doctl compute droplet get ${droplet_id} -o json)
     droplet_ip_address=$(echo ${droplet_json} | jq .[0].networks.v4[0].ip_address)
     if [[ "${droplet_ip_address}" == null ]]; then
         sleep 5
@@ -79,10 +82,10 @@ echo "IP Address: ${droplet_ip_address}"
 echo "::set-output name=ip_address::${droplet_ip_address}"
 
 # Add the droplet to the cardtechie project
-docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl projects resources assign 414b5efb-debd-4e91-bc5f-b81949522392 --resource=do:droplet:${droplet_id}
+docker run --rm --env DIGITALOCEAN_ACCESS_TOKEN digitalocean/doctl projects resources assign 414b5efb-debd-4e91-bc5f-b81949522392 --resource=do:droplet:${droplet_id}
 
 # Create the A DNS records for the new site
-docker run --rm --env=DIGITALOCEAN_ACCESS_TOKEN=${token} digitalocean/doctl compute domain records create --record-type A --record-name @ --record-data ${droplet_ip_address} cardalmanac.com
+docker run --rm --env DIGITALOCEAN_ACCESS_TOKEN digitalocean/doctl compute domain records create --record-type A --record-name @ --record-data ${droplet_ip_address} cardalmanac.com
 
 # Mount the volume
 # When we attempt to connect to our new droplet, the connection will timeout until the server is ready

@@ -1,0 +1,2 @@
+- **[Issue #431]** Pin every third-party GitHub Action that receives a deployment secret to an immutable commit SHA, and move the DigitalOcean API token from a command-line argument to an environment variable.
+    - Two actions (`avakar/set-deployment-status@v1`, `avakar/create-deployment@v1`) were pinned to a branch named `v1`, not a tag — same mutable-ref risk as `@master`.
