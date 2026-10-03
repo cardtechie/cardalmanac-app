@@ -50,3 +50,20 @@ docs/
 
 # CI/CD
 .github/
+
+# Local development TLS material. These are self-signed dev certificates whose
+# PRIVATE KEYS are committed; docker-compose.yml and .docker/docker-compose.full.yml
+# bind-mount them from the host, so nothing needs them inside an image.
+.docker/admin/
+.docker/api/
+.docker/cert/
+
+# Release tooling (shell scripts run on the CI runner, never in the container)
+build/
+makefile
+
+# Note: .prettierrc.json, .prettierignore, changelog.d/ and CHANGELOG.md are
+# deliberately NOT excluded. CI runs `npm test` inside the dev image, whose
+# pretest hook is `prettier --check .` -- it reads its config and ignore list
+# from the image, and excluding them would both break the check (prettier would
+# descend into vendor/ and node_modules/) and silently drop files from its scope.

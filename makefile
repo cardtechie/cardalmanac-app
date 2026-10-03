@@ -19,11 +19,10 @@ certs:
 certs-force:
 	@./.docker/scripts/generate-dev-certs.sh --force
 
-# COMPOSER_TOKEN is no longer passed with --build-arg: `docker history`
-# renders ARG values in plaintext, so an ARG publishes the credential in the
-# image's layer metadata. docker-compose.yml declares it as a build secret
-# sourced from the COMPOSER_TOKEN environment variable, which the exports
-# below provide.
+# COMPOSER_TOKEN is no longer passed with --build-arg: `docker history` renders
+# ARG values in plaintext, so an ARG publishes the credential in the image's
+# layer metadata. docker-compose.yml declares it as a build secret sourced from
+# the COMPOSER_TOKEN environment variable, which the exports below provide.
 up: certs
 	@if [ -f .env ]; then \
 		export $$(grep -vE "^(#.*|\s*)$$" .env); \
@@ -109,12 +108,18 @@ version-patch:
 	@./build/version.sh next-patch
 
 # Changelog management
+# collate-changelog.sh folds changelog.d/ fragments into "## [Unreleased]"
+# before update-changelog.sh runs; it is a clean no-op with no fragments.
 changelog-preview:
+	@./build/collate-changelog.sh --preview
 	@./build/update-changelog.sh preview
 
 changelog-update:
+	@./build/collate-changelog.sh
 	@./build/update-changelog.sh update
 
+# Legacy manual path: for entries not tied to a PR. Routine per-PR entries go to
+# changelog.d/<issue>-<type>.md instead (see changelog.d/README.md).
 changelog-add:
 	@read -p "Enter changelog entry: " entry; \
 	read -p "Enter type (Added/Changed/Fixed/Security/etc): " type; \
@@ -151,6 +156,7 @@ release-notes-text:
 # Combined release workflow
 release-prepare:
 	@echo "Preparing release..."
+	@./build/collate-changelog.sh
 	@./build/update-changelog.sh finalize
 	@./build/generate-release-notes.sh > RELEASE_NOTES.md
 	@echo "Release prepared! Review CHANGELOG.md and RELEASE_NOTES.md"
