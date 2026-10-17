@@ -40,6 +40,8 @@ Route::get('/complete-newsletter-signup', 'NewsletterController@confirmed')
 
 Route::prefix('app')->name('app.')->group(function () {
     Route::get('/', 'AppController@index')->name('index');
+    Route::get('/recent-sets', 'RecentSetsController@index')->name('recent-sets');
+    Route::get('/recent-sets.atom', 'RecentSetsController@feed')->name('recent-sets.feed');
     Route::controller(SetController::class)->group(function () {
         Route::get('/sets', 'index')->name('sets');
         Route::get('/sets/list', 'list')->name('set.list');
