@@ -119,7 +119,8 @@ class RecentSetsTest extends TestCase
         $this->assertNotFalse($xml);
         $xml->registerXPathNamespace('a', 'http://www.w3.org/2005/Atom');
         $this->assertCount(2, $xml->xpath('//a:entry'));
-        $this->assertStringContainsString('/app/sets/id-new/newest-set', (string) $xml->xpath('//a:entry/a:id')[0]);
+        $this->assertSame('urn:cardalmanac:set:id-new', (string) $xml->xpath('//a:entry/a:id')[0]);
+        $this->assertStringContainsString('/app/sets/id-new/newest-set', (string) $xml->xpath('//a:entry/a:link/@href')[0]);
         $this->assertSame('2026-10-10T12:00:00+00:00', (string) $xml->updated);
     }
 

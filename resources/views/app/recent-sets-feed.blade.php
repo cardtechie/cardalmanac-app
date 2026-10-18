@@ -6,7 +6,7 @@
     <link rel="alternate" type="text/html" href="{{ route('app.recent-sets') }}" />
 @foreach ($sets as $set)
     <entry>
-        <id>{{ $set['url'] }}</id>
+        <id>urn:cardalmanac:set:{{ $set['id'] }}</id>
         <title>{{ $set['name'] }}</title>
         <link rel="alternate" type="text/html" href="{{ $set['url'] }}" />
         <updated>{{ $set['created_at'] ?? $updated }}</updated>
