@@ -17,7 +17,7 @@
                 @if ($set['year'])
                     ({{ $set['year'] }})
                 @endif
-                @if ($set['card_count'])
+                @if (! is_null($set['card_count']))
                     &middot; {{ number_format($set['card_count']) }} cards
                 @endif
             </li>

@@ -10,7 +10,7 @@
         <title>{{ $set['name'] }}</title>
         <link rel="alternate" type="text/html" href="{{ $set['url'] }}" />
         <updated>{{ $set['created_at'] ?? $updated }}</updated>
-        <summary>{{ trim(($set['year'] ? $set['year'].' ' : '').$set['name']) }}@if ($set['card_count']) ({{ number_format($set['card_count']) }} cards)@endif</summary>
+        <summary>{{ trim(($set['year'] ? $set['year'].' ' : '').$set['name']) }}@if (! is_null($set['card_count'])) ({{ number_format($set['card_count']) }} cards)@endif</summary>
     </entry>
 @endforeach
 </feed>

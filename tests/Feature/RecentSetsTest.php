@@ -97,6 +97,14 @@ class RecentSetsTest extends TestCase
         $response->assertSee('rel="alternate" type="application/atom+xml"', false);
     }
 
+    public function test_zero_card_counts_are_rendered_on_the_page_and_in_the_feed(): void
+    {
+        $this->fakeApiReturning([$this->fakeSet('id-empty', 'Empty Set', 2026, 0, '2026-10-11T12:00:00+00:00')]);
+
+        $this->get('/app/recent-sets')->assertStatus(200)->assertSee('0 cards');
+        $this->get('/app/recent-sets.atom')->assertStatus(200)->assertSee('(0 cards)', false);
+    }
+
     public function test_empty_list_shows_the_empty_state(): void
     {
         $this->fakeApiReturning([]);
