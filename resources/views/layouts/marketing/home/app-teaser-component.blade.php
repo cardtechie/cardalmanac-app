@@ -23,6 +23,12 @@
                         data-analytics-cta-location="homepage_app_teaser"
                     >View app</a>
                 </p>
+                <p class="text-center mt-2">
+                    <a
+                        href="{{ route('app.recent-sets') }}"
+                        class="hover:underline"
+                    >See recently added checklists</a>
+                </p>
             </div>
         </div>
     </div>

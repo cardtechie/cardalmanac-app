@@ -2,10 +2,6 @@
     'title' => isset($title) ? $title : 'Recently Added Checklists',
 ])
 
-@push('head')
-    <link rel="alternate" type="application/atom+xml" title="Recently added checklists" href="{{ route('app.recent-sets.feed') }}" />
-@endpush
-
 @section('content')
     <div class="mt-8">
     @forelse ($sets as $set)
