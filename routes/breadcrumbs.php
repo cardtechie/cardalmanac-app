@@ -26,6 +26,12 @@ Breadcrumbs::for('app.sets', function (BreadcrumbTrail $trail) {
     $trail->push('Trading Card Checklists', route('app.sets'));
 });
 
+// Recently added sets
+Breadcrumbs::for('app.recent-sets', function (BreadcrumbTrail $trail) {
+    $trail->parent('app.index');
+    $trail->push('Recently Added Checklists', route('app.recent-sets'));
+});
+
 // Set List
 Breadcrumbs::for('app.set.list', function (BreadcrumbTrail $trail) {
     $trail->parent('app.index');
