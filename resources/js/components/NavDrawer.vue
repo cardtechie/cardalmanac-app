@@ -70,6 +70,11 @@ export default {
         icon: "mdi-cards-variant",
       },
       {
+        title: "Recently added",
+        link: process.env.MIX_APP_URL + "/app/recent-sets",
+        icon: "mdi-new-box",
+      },
+      {
         title: "About",
         link: process.env.MIX_APP_URL + "/about",
         icon: "mdi-comment-account",

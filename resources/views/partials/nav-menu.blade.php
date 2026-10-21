@@ -10,6 +10,9 @@
                     <a href="{{ route('app.index') }}">App</a>
                 </li>
                 <li class="float-right pl-5 text-right uppercase">
+                    <a href="{{ route('app.recent-sets') }}">Recently added</a>
+                </li>
+                <li class="float-right pl-5 text-right uppercase">
                     <a href="{{ config('app.url') }}/about">About</a>
                 </li>
                 <li class="float-right pl-5 text-right uppercase">

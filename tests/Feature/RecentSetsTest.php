@@ -97,6 +97,46 @@ class RecentSetsTest extends TestCase
         $response->assertSee('rel="alternate" type="application/atom+xml"', false);
     }
 
+    public function test_feed_link_is_emitted_exactly_once_on_the_page(): void
+    {
+        $this->fakeApiReturning($this->twoSets());
+
+        $content = $this->get('/app/recent-sets')->assertStatus(200)->getContent();
+
+        $this->assertSame(1, substr_count($content, 'rel="alternate" type="application/atom+xml"'));
+    }
+
+    public function test_header_nav_menu_links_to_the_recent_sets_page(): void
+    {
+        $html = view('partials.nav-menu')->render();
+
+        $this->assertStringContainsString('href="'.route('app.recent-sets').'"', $html);
+        $this->assertStringContainsString('Recently added', $html);
+    }
+
+    public function test_home_teaser_links_to_the_recent_sets_page(): void
+    {
+        $html = view('layouts.marketing.home.app-teaser-component')->render();
+
+        $this->assertStringContainsString('href="'.route('app.recent-sets').'"', $html);
+    }
+
+    public function test_head_partial_advertises_the_atom_feed(): void
+    {
+        $html = view('partials.head-feed')->render();
+
+        $this->assertStringContainsString('rel="alternate" type="application/atom+xml"', $html);
+        $this->assertStringContainsString(route('app.recent-sets.feed'), $html);
+    }
+
+    public function test_mobile_drawer_links_to_the_recent_sets_page(): void
+    {
+        $this->assertStringContainsString(
+            '/app/recent-sets',
+            file_get_contents(resource_path('js/components/NavDrawer.vue'))
+        );
+    }
+
     public function test_zero_card_counts_are_rendered_on_the_page_and_in_the_feed(): void
     {
         $this->fakeApiReturning([$this->fakeSet('id-empty', 'Empty Set', 2026, 0, '2026-10-11T12:00:00+00:00')]);
