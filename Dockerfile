@@ -17,7 +17,14 @@
 ##############################################################################
 # base
 ##############################################################################
-FROM php:8.2-fpm AS base
+# PHP2Shell (CVE-2026-109618/109619): the patch level is pinned on purpose.
+# Do not loosen this back to the floating php:8.2-fpm tag.
+FROM php:8.2.35-fpm AS base
+
+# Fail the build if the base image is below the PHP2Shell fix (8.2.35). Kept in
+# this stage so vendor, dev and runtime all inherit the check.
+RUN php -r 'exit(version_compare(PHP_VERSION, "8.2.35", "<") ? 1 : 0);' \
+    || { echo "PHP $(php -r 'echo PHP_VERSION;') is below 8.2.35 (PHP2Shell)"; exit 1; }
 
 ENV MIX_APP_URL="https://cardalmanac.com"
 

@@ -6,7 +6,7 @@ wants; nothing relies on "whatever the file happens to end with".
 ## Stage graph
 
 ```text
-php:8.2-fpm ──> base ──┬──> vendor ──┐
+php:8.2.35-fpm ─> base ┬──> vendor ──┐
                        │             │
                        ├──> dev      ├──> runtime   (final stage; what ships)
                        │             │
@@ -15,7 +15,7 @@ node:20-bookworm-slim ─┴──> assets ──┘
 
 | Stage     | Built from              | Contains                                                                                                                        | Who builds it                                    |
 | --------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `base`    | `php:8.2-fpm`           | PHP extensions, nginx, supervisor, certbot, curl, the nginx/php/supervisor config. No compilers we added, no Node, no Composer. | Nothing directly — the shared parent.            |
+| `base`    | `php:8.2.35-fpm`        | PHP extensions, nginx, supervisor, certbot, curl, the nginx/php/supervisor config. No compilers we added, no Node, no Composer. | Nothing directly — the shared parent.            |
 | `assets`  | `node:20-bookworm-slim` | The front-end toolchain and the compiled bundle. Discarded after its output is copied out.                                      | Nothing directly — an input to `runtime`.        |
 | `vendor`  | `base`                  | Composer plus a `--no-dev` vendor tree and the optimized autoloader. Discarded after its output is copied out.                  | Nothing directly — an input to `runtime`.        |
 | `dev`     | `base`                  | The full toolchain: compilers, `-dev` headers, Xdebug, Node, Composer, dev Composer deps, `node_modules`.                       | Local development (`make up`) and CI's test job. |
@@ -66,6 +66,13 @@ rate limits. This is a change from the old build, which hard-failed without one.
 
 ## Decisions recorded
 
+- **PHP2Shell pin (CVE-2026-109618 / CVE-2026-109619).** `base` is built from
+  `php:8.2.35-fpm`, not the floating `php:8.2-fpm` tag, and must not go back to
+  it. A `RUN` step directly after the `FROM` fails the build if
+  `PHP_VERSION` is below 8.2.35, so a downgraded base image cannot slip through
+  silently. Both live in `base`, so `vendor`, `dev` and `runtime` inherit them.
+  `.docker/config/php.app.ini` also sets `session.upload_progress.enabled=Off`;
+  the app does not use upload progress, so it stays off permanently.
 - **certbot stays in the runtime image.** `.github/workflows/renew-certificate.yaml`
   runs `docker exec <container> certbot renew` against the running production
   container, `.docker/prod.docker-compose.yaml` mounts `/etc/letsencrypt` into

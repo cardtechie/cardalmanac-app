@@ -1,0 +1,1 @@
+- **[Issue #539]** Pin develop's base image to PHP 8.2.35 and disable session upload progress to carry the PHP2Shell fix over from main.
