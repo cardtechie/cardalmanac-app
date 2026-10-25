@@ -28,8 +28,11 @@
 #
 # --preview mode is non-destructive: it collates into a scratch copy of the
 # changelog, prints the resulting "## [Unreleased]" section to stdout, and
-# leaves CHANGELOG.md and the fragments untouched. `make changelog-preview`
-# uses it to show what the next release's Unreleased section will contain.
+# leaves CHANGELOG.md and the fragments untouched. Run it directly
+# (`build/collate-changelog.sh --preview`) to see what the next release's
+# Unreleased section will contain. No Make target wraps it: the existing
+# `make changelog-preview` drives the older build/update-changelog.sh and
+# does not read changelog.d/.
 #
 # Avoids bash 4 associative arrays (macOS ships bash 3.2) — buckets are six
 # plain variables keyed by the fixed type set.
