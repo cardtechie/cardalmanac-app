@@ -1,1 +1,0 @@
-- **[Issue #526]** Add a Recently added sets page and Atom feed for newly published sets.

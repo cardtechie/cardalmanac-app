@@ -1,1 +1,0 @@
-- **[Issue #406]** Add the assign-sprint workflow so newly opened issues are assigned the current Sprint on the project board.

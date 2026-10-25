@@ -1,1 +1,0 @@
-- **[Issue #534]** Link the Recently added sets page from the header navigation and home page, and advertise its Atom feed on every page.

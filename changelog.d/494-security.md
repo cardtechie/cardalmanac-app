@@ -1,1 +1,0 @@
-- **[Issue #494]** Remove the one-time history-purge tooling from the repository ahead of the public release.

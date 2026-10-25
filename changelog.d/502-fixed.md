@@ -1,1 +1,0 @@
-- **[Issue #502]** Pass a root `.env` `APP_KEY` through to the local app container so a pinned key survives restarts.

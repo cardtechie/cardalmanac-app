@@ -1,1 +1,0 @@
-- **[Issue #523]** Run the build-and-test and secret-scan workflows on `merge_group` events so a merge queue can require their checks.

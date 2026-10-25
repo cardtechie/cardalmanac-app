@@ -1,1 +1,0 @@
-- **[Issue #537]** Pin PHP to 8.2.35 and disable session upload progress to fix PHP2Shell (CVE-2026-109618/109619).
