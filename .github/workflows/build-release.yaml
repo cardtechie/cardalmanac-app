@@ -13,35 +13,113 @@ jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
+    # Serialize release runs (issue #542). Collation reads main, commits back,
+    # and pushes, so two merges landing close together would otherwise compute
+    # the same version and the second push would be rejected as a
+    # non-fast-forward. cancel-in-progress is false on purpose: an in-flight run
+    # may already have pushed its commit-back, and cancelling it would strand a
+    # collated CHANGELOG on main with no tag or release.
+    concurrency:
+      group: build-release-main
+      cancel-in-progress: false
+    # Self-trigger guard (issue #542). The commit-back below deliberately carries
+    # no [skip ci] — its push must start the back-merge workflow so develop
+    # receives the collated CHANGELOG — so this guard is what stops the push
+    # from starting a second release. BOTH halves are required: the subject is an
+    # anchored prefix (startsWith), never a substring, and the push must come
+    # from the cardtechie-ops-bot App. The identity half reads
+    # github.event.sender.login (the authenticated pusher), NOT the commit's
+    # author name, which is free text a PR author could spoof. Even if this
+    # guard were bypassed, the commit-back drains changelog.d/, so a run on that
+    # push reports release=false and publishes nothing.
+    # Subject format: build/commit-changelog-back.sh.
+    if: >-
+      ${{ !(startsWith(github.event.head_commit.message, 'chore(release): collate CHANGELOG for ')
+      && github.event.sender.login == 'cardtechie-ops-bot[bot]') }}
+    permissions:
+      contents: write
     outputs:
       version: ${{ steps.version.outputs.version }}
+      release: ${{ steps.commit_back.outputs.release }}
     steps:
+      # cardtechie-ops-bot App installation token (issue #542). The commit-back
+      # pushes to main as the App, which is the identity a future main ruleset
+      # would list as a bypass actor.
+      - name: Create CardTechie App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.CARDTECHIE_BOT }}
+          private-key: ${{ secrets.CARDTECHIE_BOT_PRIVATE_KEY }}
+          # Least privilege, scoped to this repository only.
+          permission-contents: write
       - name: Checkout
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0 # Fetch full history for version calculation
-      - name: Calculate Next Version
+          token: ${{ steps.app-token.outputs.token }}
+          # Never persist the App token into .git/config: the image build below
+          # sends the workspace as its context. The commit-back step supplies
+          # the token to its own push only, through the environment.
+          persist-credentials: false
+          # The branch tip, not github.sha, so the commit-back push fast-forwards
+          # even when main moved after this run was queued.
+          ref: main
+      - name: Generate Version
         id: version
         run: |
-          # Make version script executable and calculate next version
           chmod +x build/version.sh
           VERSION=$(./build/version.sh next)
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Next release version: $VERSION"
+      # Collation (issue #542): changelog.d/ fragments become a versioned
+      # `## [VERSION]` section here, AFTER the merge — never in a PR. This step
+      # precedes the image build, Extract Changelog, and Create Release, so the
+      # image, the tag, and the release notes all include the new section. A
+      # refused push fails the release loudly rather than shipping it without
+      # notes.
+      #
+      # The script reports `release=true|false`. Every later step, and the
+      # deploy job, runs only on `true`: nothing pending means no release and no
+      # deploy. A rerun after a failure past the commit-back reports `true`
+      # without re-collating, because the section on main is the script's own.
+      - name: Collate changelog and commit back
+        id: commit_back
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          # Push credential for this step only, as cardtechie-ops-bot. Set via
+          # GIT_CONFIG_* so it lives in this process's environment and is never
+          # written to .git/config (checkout runs with persist-credentials: false).
+          export GIT_CONFIG_COUNT=1
+          export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader
+          basic_auth=$(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)
+          # The runner masks the raw token, not its base64 form.
+          echo "::add-mask::${basic_auth}"
+          export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${basic_auth}"
+          bash ./build/commit-changelog-back.sh "${VERSION}" --branch main --output "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Set up Docker Buildx
         id: buildx
+        if: steps.commit_back.outputs.release == 'true'
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
         with:
           install: true
       - name: Login to Docker Hub
+        if: steps.commit_back.outputs.release == 'true'
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and Push Image
+        if: steps.commit_back.outputs.release == 'true'
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
         with:
+          # The checked-out workspace, not the action's default Git context at
+          # github.sha, so the image carries the commit-back's collated
+          # CHANGELOG.md and fragment deletions. .dockerignore keeps .git out.
+          context: .
           builder: ${{ steps.buildx.outputs.name }}
           tags: "picklewagon/${{ env.SERVICE_NAME }}:${{ env.VERSION }}"
           push: true
@@ -51,23 +129,23 @@ jobs:
           # renders ARG values in plaintext, and this image is published.
           secrets: |
             composer_token=${{ secrets.COMPOSER_TOKEN }}
-      - name: Set Release Version
+      - name: Extract Changelog
+        if: steps.commit_back.outputs.release == 'true'
         run: |
-          echo "RELEASE_VERSION=${{ env.VERSION }}" >> $GITHUB_ENV
-          echo "RELEASE_TAG=${{ env.VERSION }}" >> $GITHUB_ENV
-      - name: Generate Release Notes
-        run: |
-          # Make release scripts executable
-          chmod +x build/*.sh
-          # Generate release notes using our automation system (without AI to avoid API key dependency)
-          ./build/generate-release-notes.sh --format github --no-ai ${{ env.VERSION }} > release_notes.md
+          # The body of this version's section, as written by the commit-back.
+          sed -n "/^## \[${VERSION}\]/,/^## \[/p" CHANGELOG.md | sed '$d' | tail -n +2 > release_notes.md
+          cat release_notes.md
       - name: Create Release
+        if: steps.commit_back.outputs.release == 'true'
         uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1
         env:
           GITHUB_TOKEN: ${{ secrets.CARDALMANAC_APP_TOKEN }}
         with:
-          tag_name: ${{ env.RELEASE_TAG }}
+          tag_name: ${{ env.VERSION }}
           release_name: "Release ${{ env.VERSION }}"
+          # Tag the commit-back, not the triggering merge, so the tag carries
+          # the collated section (and trigger-deploy deploys it).
+          commitish: ${{ steps.commit_back.outputs.sha }}
           body_path: release_notes.md
           draft: false
           prerelease: false
@@ -76,6 +154,8 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: create-release
+    # No release, nothing to deploy (see the commit_back step).
+    if: needs.create-release.outputs.release == 'true'
     steps:
       - uses: avakar/create-deployment@8711a60d47672e4d77a3d1298802410a9edc877e # v1.0.2
         id: deployment

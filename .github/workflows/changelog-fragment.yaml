@@ -21,11 +21,48 @@ jobs:
         run: |
           echo "::notice::'skip-changelog' label present — skipping the changelog-fragment gate."
 
+      # Unconditional: the version-section gate and the release-script test
+      # below run even on a `skip-changelog` PR, so they need the checkout too.
       - name: Checkout
-        if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changelog') }}
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           fetch-depth: 0
+
+      # Issue #542: `## [X.Y.Z]` sections are written only by Build Release's
+      # post-merge collation (build/commit-changelog-back.sh), never by a PR.
+      # A PR-time version is wrong whenever two PRs are open, because both
+      # compute the same next version, and the commit-back's resume path relies
+      # on no PR ever introducing a version heading. This gate deliberately
+      # ignores `skip-changelog`. The bot commit-back is a push, not a PR, so it
+      # never reaches this gate; the back-merge sync PR legitimately carries
+      # CI-written sections and is exempted by its head ref, but only when that
+      # head lives in THIS repository (a fork can reuse the branch name).
+      - name: Assert PR adds no hand-written version section
+        if: github.event.pull_request.head.ref != 'auto/sync-main-to-develop' || github.event.pull_request.head.repo.full_name != github.repository
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          added=$(git diff "${BASE_SHA}...${HEAD_SHA}" -- CHANGELOG.md \
+            | grep -E '^\+ {0,3}##[[:space:]]+\[[0-9]+\.[0-9]+\.[0-9]+([-+][0-9A-Za-z.-]+)?\]' \
+            || true)
+          if [ -n "${added}" ]; then
+            echo "::error::This PR adds a versioned section to CHANGELOG.md:"
+            echo "${added}"
+            echo ""
+            echo "Version sections are written by Build Release after the merge to"
+            echo "main. Record the change as a changelog.d/<issue>-<type>.md fragment"
+            echo "instead."
+            exit 1
+          fi
+          echo "::notice::No hand-written version section in CHANGELOG.md."
+
+      # Issue #542: exercise the release-time collation and commit-back
+      # scripts on every PR, so a broken script fails here rather than in
+      # Build Release after the merge.
+      - name: Test changelog commit-back scripts
+        run: bash tests/build/commit-changelog-back.test.sh
 
       - name: Assert PR adds a changelog.d/ fragment
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changelog') }}
