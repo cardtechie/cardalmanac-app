@@ -36,8 +36,12 @@ jobs:
     if: >-
       ${{ !(startsWith(github.event.head_commit.message, 'chore(release): collate CHANGELOG for ')
       && github.event.sender.login == 'cardtechie-ops-bot[bot]') }}
-    permissions:
-      contents: write
+    # Every repository operation in this job authenticates as the
+    # cardtechie-ops-bot App token or CARDALMANAC_APP_TOKEN, so the default
+    # GITHUB_TOKEN needs no permissions. Dropping them keeps a compromised step
+    # from holding a second write credential (matches
+    # back-merge-stable-to-develop.yml).
+    permissions: {}
     outputs:
       version: ${{ steps.version.outputs.version }}
       release: ${{ steps.commit_back.outputs.release }}
