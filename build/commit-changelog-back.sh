@@ -196,6 +196,16 @@ fi
 #   - HEAD touches nothing outside CHANGELOG.md and changelog.d/, so tagging
 #     it releases exactly its parent's code plus the notes, which is what the
 #     failed run would have released.
+#
+# Trust boundary: this check does not prove the App authored HEAD, and it
+# does not need to. Forging a matching commit takes write access to main, and
+# write access to main can already start a release (every push to main runs
+# Build Release) with any notes it likes. A forged commit-back also cannot ship
+# new code: the diff check above limits it to its parent's code, which is
+# already on main. So a forged resume grants nothing that a plain push to main
+# does not already grant. If that changes (for example, if main becomes
+# protected while release reruns stay open to more people), add a real
+# provenance check, such as a signed commit-back verified through the API.
 head_is_own_collation_commit() {
     local author subject parents path
     IFS=$'\t' read -r author subject < <(git log -1 --format='%an%x09%s' HEAD 2>/dev/null) || return 1
