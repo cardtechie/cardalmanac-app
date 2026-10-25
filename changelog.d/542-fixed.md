@@ -1,0 +1,2 @@
+- **[Issue #542]** Collate `changelog.d/` fragments into a versioned `CHANGELOG.md` section after each merge to `main` and tag the release on that commit.
+    - The first release after this ships collates the whole fragment backlog under its own version.
