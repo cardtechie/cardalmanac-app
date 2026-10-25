@@ -14,7 +14,9 @@
 #   1. build/collate-changelog.sh folds every changelog.d/ fragment into
 #      `## [Unreleased]` and removes the consumed fragments.
 #   2. `## [Unreleased]` is promoted to `## [VERSION] - <UTC date>` and a fresh,
-#      empty `## [Unreleased]` is added above it.
+#      empty `## [Unreleased]` is added above it. The `[Unreleased]:` link
+#      reference is moved to compare from VERSION, and a `[VERSION]:` reference
+#      is added below it.
 #   3. CHANGELOG.md plus the fragment deletions are committed as
 #      cardtechie-ops-bot[bot] with the subject
 #      `chore(release): collate CHANGELOG for VERSION`, and pushed. There is
@@ -320,6 +322,36 @@ sed -i.tmp "/^## \[${VERSION_RE}\] - ${RELEASE_DATE}/i\\
 ## [Unreleased]\\
 " "$CHANGELOG_FILE"
 rm -f "${CHANGELOG_FILE}.tmp"
+
+# Keep the Keep-a-Changelog link references in step with the new heading:
+# `[Unreleased]: <repo>/compare/PREV...HEAD` becomes `.../compare/VERSION...HEAD`
+# and `[VERSION]: <repo>/compare/PREV...VERSION` is added directly below it.
+# Tags carry no `v` prefix, so VERSION is used verbatim. A changelog with no
+# (or an unrecognized) [Unreleased] reference is left alone with a warning
+# rather than failing the release over a link.
+UNRELEASED_LINK_RE='^\[Unreleased\]: (.+)/compare/([^/[:space:]]+)\.\.\.HEAD[[:space:]]*$'
+UNRELEASED_LINK=$(grep -m1 '^\[Unreleased\]: ' "$CHANGELOG_FILE" || true)
+if [[ -z "$UNRELEASED_LINK" ]]; then
+    echo "⚠️  No [Unreleased] link reference in ${CHANGELOG_FILE} — leaving link references unchanged."
+elif [[ ! "$UNRELEASED_LINK" =~ $UNRELEASED_LINK_RE ]]; then
+    echo "⚠️  Unrecognized [Unreleased] link reference '${UNRELEASED_LINK}' — leaving link references unchanged."
+elif grep -q "^\[${VERSION_RE}\]: " "$CHANGELOG_FILE"; then
+    echo "⚠️  ${CHANGELOG_FILE} already defines a [${VERSION}] link reference — leaving link references unchanged."
+else
+    REPO_URL="${BASH_REMATCH[1]}"
+    PREV_TAG="${BASH_REMATCH[2]}"
+    awk -v repo="$REPO_URL" -v prev="$PREV_TAG" -v ver="$VERSION" '
+        !done && /^\[Unreleased\]: / {
+            print "[Unreleased]: " repo "/compare/" ver "...HEAD"
+            print "[" ver "]: " repo "/compare/" prev "..." ver
+            done = 1
+            next
+        }
+        { print }
+    ' "$CHANGELOG_FILE" > "${CHANGELOG_FILE}.tmp"
+    mv -f "${CHANGELOG_FILE}.tmp" "$CHANGELOG_FILE"
+    echo "🔗 Updated link references: [Unreleased] now compares from ${VERSION}; added [${VERSION}] (${PREV_TAG}...${VERSION})."
+fi
 
 # When committing, clear the index first so nothing a caller staged earlier
 # rides along in the commit-back. Under --no-commit (the manual / recovery

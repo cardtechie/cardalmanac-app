@@ -232,6 +232,28 @@ elif [[ "$RESULT" == "true" ]]; then fail "reported release=true"
 else pass; fi
 
 # ---------------------------------------------------------------------------
+CASE="promotion updates the Keep-a-Changelog link references"
+new_repo
+cat >> CHANGELOG.md <<'LINKS'
+
+[Unreleased]: https://github.com/example/repo/compare/0.0.0...HEAD
+[0.0.0]: https://github.com/example/repo/releases/tag/0.0.0
+LINKS
+git commit -q -am "add link references"
+git push -q origin HEAD:main
+add_fragment 1-added.md "- **[Issue #1]** Add a thing."
+run_script 0.0.1 --branch main
+links="$(grep '^\[' CHANGELOG.md)"
+expected="[Unreleased]: https://github.com/example/repo/compare/0.0.1...HEAD
+[0.0.1]: https://github.com/example/repo/compare/0.0.0...0.0.1
+[0.0.0]: https://github.com/example/repo/releases/tag/0.0.0"
+if [[ $RC -ne 0 ]]; then fail "exit $RC: $LOG"
+elif [[ "$RESULT" != "true" ]]; then fail "release=$RESULT"
+elif [[ "$links" != "$expected" ]]; then fail "unexpected link references: $links"
+elif [[ -n "$(git status --porcelain)" ]]; then fail "working tree not clean after commit-back"
+else pass; fi
+
+# ---------------------------------------------------------------------------
 CASE="--is-collation-commit matches only prefix plus bot"
 ok=true
 bash "$SCRIPT" --is-collation-commit "${SUBJECT_PREFIX}1.2.3" "$BOT_NAME" || ok=false
