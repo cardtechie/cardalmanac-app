@@ -109,6 +109,37 @@ expected, not a regression, since the keys are real (if locally-scoped)
 private key material sitting on disk. Scan a fresh clone or `git worktree`
 instead of your working dev tree if you need a clean local read.
 
+## Upgrading an existing MySQL 8.0 volume
+
+The local `mysql` service runs MySQL 8.4 to match production. MySQL 8.4 removed the
+`--default-authentication-plugin` option and no longer loads `mysql_native_password`
+by default, so a data directory created under the old `mysql:8.0` image fails after
+an in-place upgrade with:
+
+```text
+ERROR 1524 (HY000): Plugin 'mysql_native_password' is not loaded
+```
+
+Pick one of the two fixes.
+
+**Recreate the volume (recommended).** Local data is disposable and the init scripts
+rebuild the schema:
+
+```bash
+docker compose down
+rm -rf ./.docker/storage/db/   # or the path in DOCKER_VOLUME_MYSQL_STORAGE
+make upd
+```
+
+**Keep your data.** Convert each affected account to `caching_sha2_password`. Start
+the container with the existing volume, connect as root, and run:
+
+```sql
+ALTER USER '<user>'@'%' IDENTIFIED WITH caching_sha2_password BY '<password>';
+```
+
+Fresh volumes need neither step.
+
 ## Environment Overview
 
 The Card Almanac project supports multiple local development configurations to match different development needs:
