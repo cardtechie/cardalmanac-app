@@ -1,0 +1,2 @@
+- **[Issue #548]** Run local MySQL on 8.4 to match production.
+    - Existing local 8.0 volumes must be converted or recreated; see docs/LOCAL-ENVIRONMENTS.md.

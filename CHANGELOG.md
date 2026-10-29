@@ -7,11 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
-
-- **[Issue #548]** Run local MySQL on 8.4 to match production.
-    - Existing local 8.0 volumes must be converted or recreated; see docs/LOCAL-ENVIRONMENTS.md.
-
 ## [0.2.37] - 2026-10-25
 
 ### Added
