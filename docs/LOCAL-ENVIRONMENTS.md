@@ -131,12 +131,29 @@ rm -rf ./.docker/storage/db/   # or the path in DOCKER_VOLUME_MYSQL_STORAGE
 make upd
 ```
 
-**Keep your data.** Convert each affected account to `caching_sha2_password`. Start
-the container with the existing volume, connect as root, and run:
+**Keep your data.** MySQL 8.4 cannot log in to an account that still uses the
+disabled plugin, and that includes `root`, so the container has to be started once
+with the plugin re-enabled. Add `--mysql-native-password=ON` as a temporary `command`
+on the `mysql` service in `docker-compose.yml`:
+
+```yaml
+mysql:
+    image: mysql:8.4
+    command: ["--mysql-native-password=ON"]
+```
+
+Start the container with the existing volume, connect as root, and convert each
+affected account to `caching_sha2_password`, using the host that account actually has.
+Check with `SELECT user, host, plugin FROM mysql.user;`. Compose does not set
+`MYSQL_ROOT_HOST`, so `root` is `'root'@'localhost'`, not `'root'@'%'`:
 
 ```sql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY '<root-password>';
 ALTER USER '<user>'@'%' IDENTIFIED WITH caching_sha2_password BY '<password>';
 ```
+
+Then remove the temporary `command` line and run `docker compose up -d` again so the
+server returns to the 8.4 defaults.
 
 Fresh volumes need neither step.
 
