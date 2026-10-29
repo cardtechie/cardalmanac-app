@@ -126,12 +126,12 @@ A zero delta has **two possible readings**, and they are not interchangeable:
 
 1. **Nothing consumed** — this app reads no gated entity, which is what the
    static inventory above predicts.
-2. **Nothing gated** — this app's OAuth client
-   (`TRADINGCARDAPI_CLIENT_ID`) holds a scope that bypasses the gate, so the
+2. **Nothing gated** — this app's credential
+   (`TRADINGCARDAPI_API_KEY`) holds a scope that bypasses the gate, so the
    gate never applied to these requests in the first place.
 
 Confirm which one you are looking at **before** the "after" run, by asking the
-API operator what scopes this app's client holds. Reading (2) as (1) would
+API operator what scopes this app's key holds. Reading (2) as (1) would
 retire the task while leaving the risk in place.
 
 ## Do not close #437 on the "before" capture alone

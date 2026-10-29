@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **[Issue #524]** Authenticate catalog reads with a portal-issued API key instead of OAuth client credentials.
+    - Deploy needs the `TRADINGCARDAPI_API_KEY` repository secret; `TRADINGCARDAPI_CLIENT_ID` and `TRADINGCARDAPI_CLIENT_SECRET` are no longer read.
+
 ## [0.2.37] - 2026-10-25
 
 ### Added

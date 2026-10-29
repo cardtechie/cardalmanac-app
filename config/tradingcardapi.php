@@ -24,25 +24,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Trading Card API Client ID
+    | Trading Card API Key
     |--------------------------------------------------------------------------
     |
-    | The ID of the client used to connect to the API. It is recommended
-    | that you do not add your client ID to the line below. Instead, add
-    | it to your environment file, so it doesn't get checked into your
-    | code repo.
+    | A portal-issued API key (tc_live_... or tc_test_...) used to read the
+    | catalog. It is sent as a bearer token and needs no OAuth round trip.
+    | Do not supply a client ID or secret alongside it: when both are set the
+    | SDK authenticates with OAuth instead of the key. Add the key to your
+    | environment file so it doesn't get checked into your code repo.
     */
-    'client_id' => env('TRADINGCARDAPI_CLIENT_ID', ''),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Trading Card API Secret
-    |--------------------------------------------------------------------------
-    |
-    | The secret of the client used to connect to the API .It is recommended
-    | that you do not add your client secret to the line below. Instead, add
-    | it to your environment file, so it doesn't get checked into your
-    | code repo.
-    */
-    'client_secret' => env('TRADINGCARDAPI_CLIENT_SECRET', ''),
+    'api_key' => env('TRADINGCARDAPI_API_KEY', ''),
 ];

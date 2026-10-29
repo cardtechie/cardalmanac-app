@@ -41,8 +41,7 @@ jobs:
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - name: Create environment file
         run: |
-          echo "TRADINGCARDAPI_CLIENT_ID=${{ secrets.TRADINGCARDAPI_CLIENT_ID }}" > cardalmanac.env
-          echo "TRADINGCARDAPI_CLIENT_SECRET=${{ secrets.TRADINGCARDAPI_CLIENT_SECRET }}" >> cardalmanac.env
+          echo "TRADINGCARDAPI_API_KEY=${{ secrets.TRADINGCARDAPI_API_KEY }}" > cardalmanac.env
           echo "APP_KEY=${{ secrets.APP_KEY }}" >> cardalmanac.env
       - name: Deploy server
         id: deploy_server
@@ -64,19 +63,17 @@ jobs:
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.5
         env:
           APP_KEY: ${{ secrets.APP_KEY }}
-          TRADINGCARDAPI_CLIENT_ID: ${{ secrets.TRADINGCARDAPI_CLIENT_ID }}
-          TRADINGCARDAPI_CLIENT_SECRET: ${{ secrets.TRADINGCARDAPI_CLIENT_SECRET }}
+          TRADINGCARDAPI_API_KEY: ${{ secrets.TRADINGCARDAPI_API_KEY }}
         with:
           #host: ${{ steps.deploy_server.outputs.ip_address }}
           host: cardalmanac.com
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script_stop: true
-          envs: APP_KEY,TRADINGCARDAPI_CLIENT_ID,TRADINGCARDAPI_CLIENT_SECRET
+          envs: APP_KEY,TRADINGCARDAPI_API_KEY
           script: |
             export APP_KEY="$APP_KEY"
-            export TRADINGCARDAPI_CLIENT_ID="$TRADINGCARDAPI_CLIENT_ID"
-            export TRADINGCARDAPI_CLIENT_SECRET="$TRADINGCARDAPI_CLIENT_SECRET"
+            export TRADINGCARDAPI_API_KEY="$TRADINGCARDAPI_API_KEY"
             ~/deploy/.docker/scripts/deploy.sh
       - uses: avakar/set-deployment-status@578b982d2ad5f56e50864f9e21ec354a073cd6f5 # v1.1.0
         name: "Deployment: Failed"

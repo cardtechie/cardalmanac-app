@@ -50,8 +50,8 @@ The definitive digital trading card almanac - comprehensive data, interactive ch
     # echo "COMPOSER_TOKEN=<your real github token>" >> .env
 
     # Add Trading Card API credentials (optional for basic browsing)
-    echo "TRADINGCARDAPI_CLIENT_ID=your_client_id" >> .env
-    echo "TRADINGCARDAPI_CLIENT_SECRET=your_client_secret" >> .env
+    # A read-only portal API key; a tc_test_ key suits local runs
+    echo "TRADINGCARDAPI_API_KEY=your_api_key" >> .env
     ```
 
 3. **Start Development Environment**

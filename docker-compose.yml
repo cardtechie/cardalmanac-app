@@ -13,8 +13,7 @@ services:
             # generates an ephemeral one (#502).
             APP_KEY: "${APP_KEY:-}"
             TRADINGCARDAPI_URL: "https://host.docker.internal:8243"
-            TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
-            TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
+            TRADINGCARDAPI_API_KEY: "${TRADINGCARDAPI_API_KEY}"
             BREVO_API_KEY: "${BREVO_API_KEY}"
         working_dir: /var/www/app
         volumes:

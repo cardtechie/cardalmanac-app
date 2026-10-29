@@ -8,8 +8,8 @@ To setup the Card Almanac to work with the Trading Card API, create a `.env` fil
 
 ```dotenv
 # Trading Card API Configuration
-TRADINGCARDAPI_CLIENT_ID=<your client ID>
-TRADINGCARDAPI_CLIENT_SECRET=<your client secret>
+# A read-only portal API key. A tc_test_ key suits local runs.
+TRADINGCARDAPI_API_KEY=<your portal API key>
 
 # Brevo (formerly SendinBlue) Integration (for the newsletter signup).
 # Deliberately not MIX_-prefixed: Laravel Mix inlines every MIX_* variable
@@ -197,7 +197,7 @@ of their bind mounts pointed at paths that do not exist here. They were removed
 in #461. Browser coverage for the Trading Card API lives in
 `cardtechie/tradingcardapi-admin`.
 
-The `TRADINGCARDAPI_CLIENT_ID` / `TRADINGCARDAPI_CLIENT_SECRET` pair formerly
+The OAuth client ID / secret pair (since replaced by `TRADINGCARDAPI_API_KEY`) formerly
 committed in that compose file was a fixture for the API's `ClientTokenSeeder`,
 which refuses to run unless `APP_ENV=testing` — no automated path could insert
 it into a production database. The literals themselves were replaced with
@@ -345,7 +345,7 @@ requirement level:
 | `LOG_CHANNEL`, `LOG_DEPRECATIONS_CHANNEL`, `LOG_LEVEL`                                                          | Required     |                                                                                                  |
 | `DB_*`                                                                                                          | Required     |                                                                                                  |
 | `BROADCAST_DRIVER`, `CACHE_DRIVER`, `FILESYSTEM_DISK`, `QUEUE_CONNECTION`, `SESSION_DRIVER`, `SESSION_LIFETIME` | Required     | Driver selection, not credentials                                                                |
-| `TRADINGCARDAPI_URL`, `TRADINGCARDAPI_CLIENT_ID`, `TRADINGCARDAPI_CLIENT_SECRET`                                | **Required** | No card data / API auth without these                                                            |
+| `TRADINGCARDAPI_URL`, `TRADINGCARDAPI_API_KEY`                                                                  | **Required** | No card data / API auth without these                                                            |
 | `TRADINGCARDAPI_SSL_VERIFY`                                                                                     | Required     | `true` unless pointed at a local self-signed API instance                                        |
 | `MIX_APP_URL`                                                                                                   | **Required** | Inlined at build time; a missing value silently breaks nav links (renders `undefined/app`, etc.) |
 | `MAIL_*`, `MAILGUN_DOMAIN`, `MAILGUN_SECRET`                                                                    | Optional     | See [Local Mail](#local-mail)                                                                    |
@@ -375,8 +375,7 @@ Set these in your untracked `.env` and restart the container:
 
 ```dotenv
 TRADINGCARDAPI_URL=https://api.tradingcardapi.com
-TRADINGCARDAPI_CLIENT_ID=<the client id for that environment>
-TRADINGCARDAPI_CLIENT_SECRET=<the client secret for that environment>
+TRADINGCARDAPI_API_KEY=<the portal API key for that environment>
 ```
 
 Then run the capture inside the app container:
@@ -431,7 +430,7 @@ Notes:
 If the minimal environment can't connect to the external API:
 
 1. Ensure the external API is running at `host.docker.internal:8243`
-2. Check your `.env` file has correct `TRADINGCARDAPI_CLIENT_ID` and `TRADINGCARDAPI_CLIENT_SECRET`
+2. Check your `.env` file has a valid `TRADINGCARDAPI_API_KEY`
 3. Verify firewall settings allow Docker to access host network
 
 ### Full Stack Issues
