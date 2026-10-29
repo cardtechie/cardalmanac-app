@@ -1,0 +1,112 @@
+name: Dependabot Changelog Fragment
+
+# Commit a changelog.d/ fragment to each Dependabot PR (issue #543).
+#
+# Build Release only cuts a release when a fragment is pending (issue #542), so
+# a Dependabot merge with no fragment would ship nothing. This workflow adds
+# changelog.d/<pr>-security.md (security update) or <pr>-changed.md (version
+# update) to the PR branch, which also satisfies the changelog-fragment gate.
+#
+# SECURITY: pull_request_target runs with this repository's secrets, so this job
+# must NEVER execute code from the PR. The head branch is checked out only so
+# one file can be added; the script that adds it is read from the trusted base
+# checkout, not from the PR head. Dependabot-derived values (package names,
+# versions) reach the script through environment variables only, never through
+# an inline expression in a run: body.
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+# One run per PR; a newer push supersedes a queued run but never cancels one
+# that is mid-push.
+concurrency:
+  group: dependabot-changelog-fragment-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  fragment:
+    name: Add changelog fragment
+    runs-on: ubuntu-latest
+    # Dependabot-authored PRs whose head lives in THIS repository (a fork cannot
+    # be pushed to with the App token).
+    if: >-
+      ${{ github.event.pull_request.user.login == 'dependabot[bot]'
+      && github.event.pull_request.head.repo.full_name == github.repository }}
+    # The App token does every write; the default token only reads PR metadata.
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2.5.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # A non-empty ghsa-id marks a security update. If the lookup is
+          # unavailable the output is empty and the fragment type is `changed`.
+          alert-lookup: true
+
+      - name: Create CardTechie App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.CARDTECHIE_BOT }}
+          private-key: ${{ secrets.CARDTECHIE_BOT_PRIVATE_KEY }}
+          # Least privilege, scoped to this repository only.
+          permission-contents: write
+
+      # Trusted code: the base branch, holding the script this job runs.
+      - name: Checkout base (trusted scripts)
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+
+      # Untrusted content: the PR head. Used only as a place to add one file.
+      - name: Checkout PR head
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: head
+          token: ${{ steps.app-token.outputs.token }}
+          # Never persist the App token into .git/config; the push step below
+          # supplies it through the environment.
+          persist-credentials: false
+
+      - name: Write the fragment
+        id: write
+        working-directory: head
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          DEP_NAMES: ${{ steps.metadata.outputs.dependency-names }}
+          NEW_VERSION: ${{ steps.metadata.outputs.new-version }}
+          GHSA_ID: ${{ steps.metadata.outputs.ghsa-id }}
+        run: OUTPUT_FILE="$GITHUB_OUTPUT" bash "$GITHUB_WORKSPACE/trusted/build/write-dependabot-fragment.sh"
+
+      - name: Commit and push as cardtechie-ops-bot
+        if: steps.write.outputs.created == 'true'
+        working-directory: head
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          # Push credential for this step only, via GIT_CONFIG_* so it lives in
+          # this process's environment and is never written to .git/config.
+          export GIT_CONFIG_COUNT=1
+          export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader
+          basic_auth=$(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)
+          # The runner masks the raw token, not its base64 form.
+          echo "::add-mask::${basic_auth}"
+          export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${basic_auth}"
+          git add changelog.d
+          git -c user.name="cardtechie-ops-bot[bot]" \
+              -c user.email="cardtechie-ops-bot[bot]@users.noreply.github.com" \
+              commit -m "chore: add changelog fragment for #${PR_NUMBER}"
+          # A push by the App, unlike GITHUB_TOKEN, re-runs CI on this commit.
+          git push origin "HEAD:refs/heads/${HEAD_REF}"
