@@ -1,0 +1,2 @@
+- **[Issue #540]** Upgrade the PHP runtime from 8.2.35 to 8.5.12.
+    - OPcache is built into PHP 8.5, so the Dockerfile no longer builds it as an extension.
