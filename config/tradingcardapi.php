@@ -29,9 +29,22 @@ return [
     |
     | A portal-issued API key (tc_live_... or tc_test_...) used to read the
     | catalog. It is sent as a bearer token and needs no OAuth round trip.
-    | Do not supply a client ID or secret alongside it: when both are set the
-    | SDK authenticates with OAuth instead of the key. Add the key to your
-    | environment file so it doesn't get checked into your code repo.
+    | Add the key to your environment file so it doesn't get checked into
+    | your code repo.
     */
     'api_key' => env('TRADINGCARDAPI_API_KEY', ''),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Authentication Type
+    |--------------------------------------------------------------------------
+    |
+    | Pinned to 'api_key' rather than left to the SDK's auto-detection. The
+    | SDK's own package config still reads TRADINGCARDAPI_CLIENT_ID and
+    | TRADINGCARDAPI_CLIENT_SECRET, so an environment that kept those legacy
+    | variables would otherwise silently switch back to OAuth, and a missing
+    | key would fail through the OAuth path instead of the SDK's clear
+    | "API key is required" error.
+    */
+    'auth_type' => 'api_key',
 ];

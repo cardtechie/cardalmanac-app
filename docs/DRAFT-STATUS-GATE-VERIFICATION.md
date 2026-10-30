@@ -127,11 +127,13 @@ A zero delta has **two possible readings**, and they are not interchangeable:
 1. **Nothing consumed** — this app reads no gated entity, which is what the
    static inventory above predicts.
 2. **Nothing gated** — this app's credential
-   (`TRADINGCARDAPI_API_KEY`) holds a scope that bypasses the gate, so the
+   (`TRADINGCARDAPI_API_KEY`, a read-only portal key) belongs to a portal
+   account whose permissions or account policy let it see draft content, so the
    gate never applied to these requests in the first place.
 
 Confirm which one you are looking at **before** the "after" run, by asking the
-API operator what scopes this app's key holds. Reading (2) as (1) would
+API operator which portal account issued this app's key and what that
+account's draft-visibility policy is. OAuth scopes do not apply to an API key. Reading (2) as (1) would
 retire the task while leaving the risk in place.
 
 ## Do not close #437 on the "before" capture alone

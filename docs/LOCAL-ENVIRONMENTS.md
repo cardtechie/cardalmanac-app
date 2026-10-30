@@ -11,6 +11,11 @@ To setup the Card Almanac to work with the Trading Card API, create a `.env` fil
 # A read-only portal API key. A tc_test_ key suits local runs.
 TRADINGCARDAPI_API_KEY=<your portal API key>
 
+# Full stack only: the admin service writes to the API, so it keeps OAuth
+# client credentials (portal keys are read-only).
+TRADINGCARDAPI_CLIENT_ID=<admin client ID>
+TRADINGCARDAPI_CLIENT_SECRET=<admin client secret>
+
 # Brevo (formerly SendinBlue) Integration (for the newsletter signup).
 # Deliberately not MIX_-prefixed: Laravel Mix inlines every MIX_* variable
 # into the public JS bundle, which would publish the key (#426).
@@ -249,10 +254,12 @@ The OAuth client ID / secret pair (since replaced by `TRADINGCARDAPI_API_KEY`) f
 committed in that compose file was a fixture for the API's `ClientTokenSeeder`,
 which refuses to run unless `APP_ENV=testing` — no automated path could insert
 it into a production database. The literals themselves were replaced with
-environment substitutions in #430. Local and full-stack runs read both values
-from the developer's `.env`, as **Initial Setup** above describes. The
-`make up` / `upd` / `up-full` / `upd-full` targets fall back to `.env.local`
-when no `.env` is present, so either file can supply the pair.
+environment substitutions in #430. Card Almanac itself now reads a single
+`TRADINGCARDAPI_API_KEY` from the developer's `.env`, as **Initial Setup** above
+describes. The `make up` / `upd` / `up-full` / `upd-full` targets fall back to
+`.env.local` when no `.env` is present, so either file can supply the key. (The
+full stack's `admin` service still reads its own OAuth client ID and secret,
+because it writes to the API and portal keys are read-only.)
 
 ## Port Reference
 
@@ -436,8 +443,9 @@ docker compose exec caapp php artisan browse:capture-counts \
 
 Notes:
 
-- **Credentials are per environment.** A local client id will authenticate
-  against a local API and fail against a remote one; the capture records the
+- **Credentials are per environment.** An API key issued by a local API's
+  portal will authenticate against that local API and fail against a remote
+  one; the capture records the
   failure rather than aborting, so check the artifact's `failures` map before
   trusting a run.
 - **`TRADINGCARDAPI_SSL_VERIFY` should stay `true`** against a real API. It
