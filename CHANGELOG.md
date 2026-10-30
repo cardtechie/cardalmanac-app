@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.38] - 2026-10-30
+
 ### Changed
 
-- **[Issue #524]** Authenticate catalog reads with a portal-issued API key instead of OAuth client credentials.
-    - Deploy needs the `TRADINGCARDAPI_API_KEY` repository secret; `TRADINGCARDAPI_CLIENT_ID` and `TRADINGCARDAPI_CLIENT_SECRET` are no longer read.
+- **[Issue #548]** Run local MySQL on 8.4 to match production.
+    - Existing local 8.0 volumes must be converted or recreated; see docs/LOCAL-ENVIRONMENTS.md.
 
 ## [0.2.37] - 2026-10-25
 
@@ -168,7 +170,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated postcss from 8.4.31 to 8.4.47 (security fix)
 - Resolved 12 npm security vulnerabilities including 3 critical and 1 high severity
 
-[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.37...HEAD
+[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.38...HEAD
+[0.2.38]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.37...0.2.38
 [0.2.37]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.7...0.2.37
 [0.2.7]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.6...0.2.7
 [0.2.6]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.5...0.2.6
