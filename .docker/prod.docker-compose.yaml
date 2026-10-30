@@ -21,8 +21,7 @@ services:
       NODE_ENV: production
       PHP_OPCACHE_ENABLE: 1
       TRADINGCARDAPI_URL: https://api.tradingcardapi.com
-      TRADINGCARDAPI_CLIENT_ID: "${TRADINGCARDAPI_CLIENT_ID}"
-      TRADINGCARDAPI_CLIENT_SECRET: "${TRADINGCARDAPI_CLIENT_SECRET}"
+      TRADINGCARDAPI_API_KEY: "${TRADINGCARDAPI_API_KEY:?TRADINGCARDAPI_API_KEY must be supplied via cardalmanac.env}"
     working_dir: /var/www/app
     volumes:
       - /var/www/cardalmanac.com/storage:/var/www/app/storage:delegated
