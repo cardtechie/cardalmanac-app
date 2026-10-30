@@ -1,0 +1,1 @@
+- **[Issue #543]** Write a changelog.d fragment on Dependabot PRs instead of labeling them skip-changelog.
