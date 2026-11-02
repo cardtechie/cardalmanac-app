@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **[Issue #439]** Serve TLS on the nginx IPv6 :443 listener and drop the healthcheck `-4` workaround.
+
 ## [0.2.38] - 2026-10-30
 
 ### Changed
