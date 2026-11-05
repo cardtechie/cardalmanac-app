@@ -1,0 +1,1 @@
+- **[Issue #439]** Serve TLS on the nginx IPv6 :443 listener and drop the healthcheck `-4` workaround.
