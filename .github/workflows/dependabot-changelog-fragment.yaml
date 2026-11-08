@@ -35,28 +35,35 @@ jobs:
     if: >-
       ${{ github.event.pull_request.user.login == 'dependabot[bot]'
       && github.event.pull_request.head.repo.full_name == github.repository }}
-    # The App token does every write; the default token only reads PR metadata.
+    # The App token does every write and the alert lookup; the default token
+    # needs no more than read access.
     permissions:
       contents: read
       pull-requests: read
     steps:
-      - name: Fetch Dependabot metadata
-        id: metadata
-        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2.5.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          # A non-empty ghsa-id marks a security update. If the lookup is
-          # unavailable the output is empty and the fragment type is `changed`.
-          alert-lookup: true
-
+      # Minted first: the metadata lookup below needs it too.
       - name: Create CardTechie App token
         id: app-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
           app-id: ${{ secrets.CARDTECHIE_BOT }}
           private-key: ${{ secrets.CARDTECHIE_BOT_PRIVATE_KEY }}
-          # Least privilege, scoped to this repository only.
+          # Least privilege, scoped to this repository only. contents: write
+          # pushes the fragment; vulnerability-alerts: read lets fetch-metadata
+          # read Dependabot alerts, which GITHUB_TOKEN cannot do at all.
           permission-contents: write
+          permission-vulnerability-alerts: read
+
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2.5.0
+        with:
+          # The App token, not GITHUB_TOKEN: alert-lookup reads Dependabot
+          # alerts, which no GITHUB_TOKEN permission grants.
+          github-token: ${{ steps.app-token.outputs.token }}
+          # A security update's alert supplies a ghsa-id, which makes the
+          # fragment `security`; a version update has none and gets `changed`.
+          alert-lookup: true
 
       # Trusted code: the base branch, holding the script this job runs.
       - name: Checkout base (trusted scripts)
