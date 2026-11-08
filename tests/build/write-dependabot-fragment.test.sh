@@ -75,6 +75,26 @@ first=$(cat "${TMP_ROOT}/o1")
 second=$(cat "${TMP_ROOT}/o2")
 if [ "$first" = "created=true" ] && [ "$second" = "created=false" ]; then pass; else fail "first=${first} second=${second}"; fi
 
+CASE="separator-only dependency list is rejected"
+run_case PR_NUMBER=19 'DEP_NAMES=, ,' NEW_VERSION=1.0.0
+if [ "$RC" -ne 0 ] && [ -z "$(ls "${WORK}/changelog.d" 2>/dev/null)" ]; then pass; else fail "rc=${RC}: $(cat "${WORK}"/changelog.d/* 2>&1)"; fi
+
+CASE="symlinked changelog.d is rejected"
+WORK="$(mktemp -d "${TMP_ROOT}/case.XXXXXX")"
+mkdir -p "${WORK}/outside"
+ln -s "${WORK}/outside" "${WORK}/changelog.d"
+RC=0
+(cd "$WORK" && env -i PATH="$PATH" PR_NUMBER=20 DEP_NAMES=foo NEW_VERSION=1.0.0 bash "$SCRIPT") > "${WORK}/out.log" 2>&1 || RC=$?
+if [ "$RC" -ne 0 ] && [ -z "$(ls "${WORK}/outside")" ]; then pass; else fail "rc=${RC}"; fi
+
+CASE="symlinked destination fragment is rejected"
+WORK="$(mktemp -d "${TMP_ROOT}/case.XXXXXX")"
+mkdir -p "${WORK}/changelog.d"
+ln -s "${WORK}/target" "${WORK}/changelog.d/21-changed.md"
+RC=0
+(cd "$WORK" && env -i PATH="$PATH" PR_NUMBER=21 DEP_NAMES=foo NEW_VERSION=1.0.0 bash "$SCRIPT") > "${WORK}/out.log" 2>&1 || RC=$?
+if [ "$RC" -ne 0 ] && [ ! -e "${WORK}/target" ]; then pass; else fail "rc=${RC}"; fi
+
 echo ""
 echo "${PASSED} passed, ${FAILED} failed"
 [ "$FAILED" -eq 0 ]

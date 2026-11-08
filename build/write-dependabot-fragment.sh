@@ -55,7 +55,22 @@ if [ -n "$GHSA_ID" ] && ! [[ "$GHSA_ID" =~ ^GHSA(-[a-z0-9]{4}){3}$ ]]; then
     exit 1
 fi
 
+# The working directory is the untrusted PR checkout, so a symlink there could
+# redirect the write below outside changelog.d. Refuse a symlinked directory or
+# any non-regular <pr>-*.md entry, as the release scripts refuse symlinked
+# fragments.
+if [ -L changelog.d ]; then
+    echo "❌ Error: changelog.d is a symlink; refusing to write through it." >&2
+    exit 1
+fi
+
 mkdir -p changelog.d
+
+suspect=$(find changelog.d -maxdepth 1 -name "${PR_NUMBER}-*.md" ! -type f | head -n 1)
+if [ -n "$suspect" ]; then
+    echo "❌ Error: ${suspect} is not a regular file; refusing to continue." >&2
+    exit 1
+fi
 
 existing=$(find changelog.d -maxdepth 1 -type f -name "${PR_NUMBER}-*.md" | head -n 1)
 if [ -n "$existing" ]; then
@@ -71,6 +86,11 @@ fi
 
 # Normalize "a, b,c" to one name per line, dropping empties.
 names=$(printf '%s' "$DEP_NAMES" | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sed '/^$/d')
+# A value of separators only (", ,") passes the allowlist but names nothing.
+if [ -z "$names" ]; then
+    echo "❌ Error: DEP_NAMES names no dependency once separators are removed." >&2
+    exit 1
+fi
 count=$(printf '%s\n' "$names" | wc -l | tr -d ' ')
 
 if [ "$count" -eq 1 ] && [ -n "$NEW_VERSION" ]; then
@@ -83,6 +103,9 @@ else
 fi
 
 fragment="changelog.d/${PR_NUMBER}-${type}.md"
+# noclobber opens with O_EXCL, which also refuses any symlink at the
+# destination, dangling or not.
+set -o noclobber
 printf '%s\n' "$body" > "$fragment"
 echo "Wrote ${fragment}"
 report true

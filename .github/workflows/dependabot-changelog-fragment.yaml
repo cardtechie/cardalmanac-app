@@ -50,8 +50,12 @@ jobs:
           private-key: ${{ secrets.CARDTECHIE_BOT_PRIVATE_KEY }}
           # Least privilege, scoped to this repository only. contents: write
           # pushes the fragment; vulnerability-alerts: read lets fetch-metadata
-          # read Dependabot alerts, which GITHUB_TOKEN cannot do at all.
+          # read Dependabot alerts, which GITHUB_TOKEN cannot do at all;
+          # pull-requests: read lets fetch-metadata list the PR's commits to
+          # verify Dependabot authored it (the job-level pull-requests grant
+          # covers GITHUB_TOKEN only, never this App token).
           permission-contents: write
+          permission-pull-requests: read
           permission-vulnerability-alerts: read
 
       - name: Fetch Dependabot metadata
