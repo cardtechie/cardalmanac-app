@@ -64,6 +64,11 @@ jobs:
       - name: Test changelog commit-back scripts
         run: bash tests/build/commit-changelog-back.test.sh
 
+      # Issue #543: the Dependabot fragment writer runs in a privileged
+      # pull_request_target workflow, so its input validation is tested here.
+      - name: Test Dependabot fragment writer
+        run: bash tests/build/write-dependabot-fragment.test.sh
+
       - name: Assert PR adds a changelog.d/ fragment
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changelog') }}
         env:
