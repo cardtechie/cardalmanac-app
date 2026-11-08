@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.39] - 2026-11-08
+
+### Fixed
+
+- **[Issue #439]** Serve TLS on the nginx IPv6 :443 listener and drop the healthcheck `-4` workaround.
+
 ## [0.2.38] - 2026-10-30
 
 ### Changed
@@ -170,7 +176,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated postcss from 8.4.31 to 8.4.47 (security fix)
 - Resolved 12 npm security vulnerabilities including 3 critical and 1 high severity
 
-[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.38...HEAD
+[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.39...HEAD
+[0.2.39]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.38...0.2.39
 [0.2.38]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.37...0.2.38
 [0.2.37]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.7...0.2.37
 [0.2.7]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.6...0.2.7
