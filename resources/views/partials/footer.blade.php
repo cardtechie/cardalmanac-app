@@ -7,6 +7,6 @@
     </div>
     <div class="text-xs mt-2">
         &copy; Copyright {{ date('Y') }}
-        <a href="https://cardtechie.com/">CardTechie</a> {{ config('app.version') }}
+        <a href="https://cardtechie.com/">CardTechie</a> {{ getVersion() }}
     </div>
 </footer>

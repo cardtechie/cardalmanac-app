@@ -20,4 +20,6 @@
         @endforeach
         </ul>
     </div>
+
+    @include('partials.product-cta')
 @endsection

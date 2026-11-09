@@ -1,0 +1,2 @@
+- **[Issue #47]** Report the running application's version via a new `/health` endpoint and the site footer, stamped into the image at build time.
+    - The version is baked into the image as a `VERSION` file; set `APP_VERSION` in the container environment to override it.
