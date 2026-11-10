@@ -1,0 +1,1 @@
+- **[Issue #555]** Clear the remaining Composer audit advisories on symfony/yaml, symfony/mime, psy/psysh and spatie/schema-org.
