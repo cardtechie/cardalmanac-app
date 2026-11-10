@@ -119,7 +119,7 @@ npm test           # Run all linting
 - **Frontend**: Vue.js 3.5.16 with Vuetify 3.8.7
 - **CSS**: Bootstrap 5.1.3 + Tailwind CSS 3.0.23
 - **Build**: Laravel Mix with Webpack
-- **Database**: MySQL 8.0+
+- **Database**: MySQL 8.4 (existing 8.0 volumes: see [Upgrading an existing MySQL 8.0 volume](docs/LOCAL-ENVIRONMENTS.md#upgrading-an-existing-mysql-80-volume))
 - **API Integration**: Custom Trading Card API SDK
 - **Blog**: Laravel CommonMark for content management
 - **Deployment**: Docker with docker-compose

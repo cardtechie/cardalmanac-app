@@ -1,2 +1,0 @@
-- **[Issue #462]** Add the operator tooling and runbook for purging historical secrets from git history before the repo is made public.
-    - Ships tooling and documentation only; the rewrite and force-push remain a manual operator step, gated on rotation of the credentials still live in history.

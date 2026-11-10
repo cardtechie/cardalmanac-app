@@ -118,6 +118,17 @@ if [[ ${#FRAGMENTS[@]} -eq 0 ]]; then
     exit 0
 fi
 
+# Only regular, checked-out files are fragments. A symlink named like a
+# fragment would make the reads below follow it, publishing whatever it points
+# at (a runner file, /proc/self/environ) as release notes. Refuse before
+# touching anything. -L is tested first because -f follows symlinks.
+for frag in "${FRAGMENTS[@]}"; do
+    if [[ -L "$frag" || ! -f "$frag" ]]; then
+        echo "❌ Error: changelog fragment '${frag}' is not a regular file (symlink or other) — refusing to collate." >&2
+        exit 1
+    fi
+done
+
 if [[ ! -f "$CHANGELOG_FILE" ]]; then
     echo "❌ Error: ${CHANGELOG_FILE} not found" >&2
     exit 1

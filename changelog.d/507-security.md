@@ -1,1 +1,0 @@
-- **[Issue #507]** Remove the business strategy document from the repository and fold its history removal into the #494 purge run.

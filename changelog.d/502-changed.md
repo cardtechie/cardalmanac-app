@@ -1,1 +1,0 @@
-- **[Issue #502]** Point the `.env.local` header at the root `.env` for pinning a stable `APP_KEY`.
