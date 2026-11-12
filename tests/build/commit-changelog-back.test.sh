@@ -215,6 +215,62 @@ elif [[ ! -f changelog.d/1-added.md ]]; then fail "a fragment was consumed"
 else pass; fi
 
 # ---------------------------------------------------------------------------
+# A symlinked changelog.d is refused by both scripts before anything is read,
+# collated or deleted; the directory it points at must be left untouched.
+new_repo
+add_fragment 1-added.md "- **[Issue #1]** Add a thing."
+OUTSIDE_DIR="${TMP_ROOT}/outside-fragments"
+mkdir -p "$OUTSIDE_DIR"
+printf '%s\n' "- **[Issue #9]** Outside note." > "${OUTSIDE_DIR}/9-added.md"
+git rm -q -r changelog.d
+git commit -q -m "drop real fragments dir"
+ln -s "$OUTSIDE_DIR" changelog.d
+
+CASE="symlinked changelog.d is refused by commit-changelog-back.sh"
+before="$(head_sha)"
+changelog_before="$(cat CHANGELOG.md)"
+run_script 0.0.1 --branch main
+if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+elif ! grep -q 'changelog.d is a symlink' <<< "$LOG"; then fail "unexpected message: $LOG"
+elif [[ "$(head_sha)" != "$before" ]]; then fail "a commit was created"
+elif [[ "$(cat CHANGELOG.md)" != "$changelog_before" ]]; then fail "CHANGELOG.md changed"
+elif [[ ! -f "${OUTSIDE_DIR}/9-added.md" ]]; then fail "the outside fragment was consumed"
+else pass; fi
+
+CASE="collate-changelog.sh refuses a symlinked changelog.d"
+changelog_before="$(cat CHANGELOG.md)"
+set +e
+LOG="$(bash build/collate-changelog.sh 2>&1)"
+RC=$?
+set -e
+if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+elif ! grep -q 'is a symlink' <<< "$LOG"; then fail "unexpected message: $LOG"
+elif [[ "$(cat CHANGELOG.md)" != "$changelog_before" ]]; then fail "CHANGELOG.md changed"
+elif [[ ! -f "${OUTSIDE_DIR}/9-added.md" ]]; then fail "the outside fragment was consumed"
+else pass; fi
+
+CASE="collate-changelog.sh refuses a symlinked changelog.d with a trailing slash"
+set +e
+LOG="$(bash build/collate-changelog.sh --fragments-dir changelog.d/ 2>&1)"
+RC=$?
+set -e
+if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+elif ! grep -q 'is a symlink' <<< "$LOG"; then fail "unexpected message: $LOG"
+elif [[ ! -f "${OUTSIDE_DIR}/9-added.md" ]]; then fail "the outside fragment was consumed"
+else pass; fi
+
+CASE="collate-changelog.sh refuses a --fragments-dir symlink"
+ln -s "$OUTSIDE_DIR" "${WORK}/other-fragments"
+set +e
+LOG="$(bash build/collate-changelog.sh --fragments-dir other-fragments 2>&1)"
+RC=$?
+set -e
+if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+elif ! grep -q 'other-fragments is a symlink' <<< "$LOG"; then fail "unexpected message: $LOG"
+elif [[ ! -f "${OUTSIDE_DIR}/9-added.md" ]]; then fail "the outside fragment was consumed"
+else pass; fi
+
+# ---------------------------------------------------------------------------
 CASE="rejected push exits non-zero with the bypass message"
 new_repo
 add_fragment 1-added.md "- **[Issue #1]** Add a thing."

@@ -101,6 +101,20 @@ is_valid_type() {
     return 1
 }
 
+# Refuse a symlinked fragments directory before the glob below expands it. The
+# per-file -L test further down does not cover the directory itself: the glob
+# follows the link, so collation would read notes from outside the checkout and
+# the destructive path would delete files at the link target. A trailing slash
+# is stripped so "changelog.d/" is tested as the link, not followed through it.
+FRAGMENTS_DIR_CHECK="${FRAGMENTS_DIR}"
+while [[ "$FRAGMENTS_DIR_CHECK" == */ && "$FRAGMENTS_DIR_CHECK" != "/" ]]; do
+    FRAGMENTS_DIR_CHECK="${FRAGMENTS_DIR_CHECK%/}"
+done
+if [[ -L "$FRAGMENTS_DIR_CHECK" ]]; then
+    echo "❌ Error: ${FRAGMENTS_DIR_CHECK} is a symlink — refusing to collate. Replace it with a real directory, then re-run." >&2
+    exit 1
+fi
+
 # Nothing to do if the fragments directory is missing or holds no *.md files.
 shopt -s nullglob
 ALL_MD=("$FRAGMENTS_DIR"/*.md)

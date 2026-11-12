@@ -259,6 +259,17 @@ fi
 # with nothing else pending, [Unreleased] stays empty (the count below ignores
 # headings), the no-op path returns without committing, and the deletion never
 # reaches main, so every later push repeats the same no-op.
+# A symlinked changelog.d is refused first, before any fragment is read or the
+# collator runs. The per-file -L test in the loop below does not cover the
+# directory itself: the glob follows the link, so fragments outside the
+# checkout would be read and collated, and the destructive path could delete
+# files at the link target.
+if [[ -L changelog.d ]]; then
+    echo "❌ Error: changelog.d is a symlink — refusing to collate." >&2
+    echo "   Replace it with a real directory holding the fragments, then re-run." >&2
+    exit 1
+fi
+
 shopt -s nullglob
 EMPTY_FRAGMENTS=()
 NON_REGULAR=()
