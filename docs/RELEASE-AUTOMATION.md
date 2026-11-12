@@ -200,8 +200,7 @@ Automatic branch creation based on issue labels:
 
 ### Required
 
-- `TRADINGCARDAPI_CLIENT_ID`: API client ID
-- `TRADINGCARDAPI_CLIENT_SECRET`: API client secret
+- `TRADINGCARDAPI_API_KEY`: portal-issued read-only API key (`tc_live_...`)
 
 ### Optional
 

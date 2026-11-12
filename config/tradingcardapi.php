@@ -24,25 +24,27 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Trading Card API Client ID
+    | Trading Card API Key
     |--------------------------------------------------------------------------
     |
-    | The ID of the client used to connect to the API. It is recommended
-    | that you do not add your client ID to the line below. Instead, add
-    | it to your environment file, so it doesn't get checked into your
-    | code repo.
+    | A portal-issued API key (tc_live_... or tc_test_...) used to read the
+    | catalog. It is sent as a bearer token and needs no OAuth round trip.
+    | Add the key to your environment file so it doesn't get checked into
+    | your code repo.
     */
-    'client_id' => env('TRADINGCARDAPI_CLIENT_ID', ''),
+    'api_key' => env('TRADINGCARDAPI_API_KEY', ''),
 
     /*
     |--------------------------------------------------------------------------
-    | Trading Card API Secret
+    | Authentication Type
     |--------------------------------------------------------------------------
     |
-    | The secret of the client used to connect to the API .It is recommended
-    | that you do not add your client secret to the line below. Instead, add
-    | it to your environment file, so it doesn't get checked into your
-    | code repo.
+    | Pinned to 'api_key' rather than left to the SDK's auto-detection. The
+    | SDK's own package config still reads TRADINGCARDAPI_CLIENT_ID and
+    | TRADINGCARDAPI_CLIENT_SECRET, so an environment that kept those legacy
+    | variables would otherwise silently switch back to OAuth, and a missing
+    | key would fail through the OAuth path instead of the SDK's clear
+    | "API key is required" error.
     */
-    'client_secret' => env('TRADINGCARDAPI_CLIENT_SECRET', ''),
+    'auth_type' => 'api_key',
 ];

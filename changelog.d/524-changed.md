@@ -1,0 +1,2 @@
+- **[Issue #524]** Authenticate catalog reads with a portal-issued API key instead of OAuth client credentials.
+    - Deploy needs the `TRADINGCARDAPI_API_KEY` repository secret; the app no longer reads `TRADINGCARDAPI_CLIENT_ID` or `TRADINGCARDAPI_CLIENT_SECRET` (only the full-stack `admin` service still does).
