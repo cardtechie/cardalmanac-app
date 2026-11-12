@@ -1,11 +1,11 @@
 # syntax=docker/dockerfile:1.7
 # PHP2Shell (CVE-2026-109618/109619): the patch level is pinned on purpose.
-# Do not loosen this back to the floating php:8.2-fpm tag.
-FROM php:8.2.35-fpm AS build
+# Do not loosen this back to the floating php:8.5-fpm tag.
+FROM php:8.5.12-fpm AS build
 
-# Fail the build if the base image is below the PHP2Shell fix (8.2.35).
-RUN php -r 'exit(version_compare(PHP_VERSION, "8.2.35", "<") ? 1 : 0);' \
-    || { echo "PHP $(php -r 'echo PHP_VERSION;') is below 8.2.35 (PHP2Shell)"; exit 1; }
+# Fail the build if the base image is below the PHP2Shell fix (8.5.12).
+RUN php -r 'exit(version_compare(PHP_VERSION, "8.5.12", "<") ? 1 : 0);' \
+    || { echo "PHP $(php -r 'echo PHP_VERSION;') is below 8.5.12 (PHP2Shell)"; exit 1; }
 
 ENV MIX_APP_URL="https://cardalmanac.com"
 
@@ -77,11 +77,11 @@ RUN apt-get update && apt-get install --no-install-recommends --no-install-sugge
     && rm -rf /var/lib/apt/lists/*
 
 #RUN apt-get -y install chromium-browser xvfb gtk2-engines-pixbuf xfonts-cyrillic xfonts-100dpi xfonts-75dpi xfonts-base xfonts-scalable imagemagick x11-apps
-RUN docker-php-ext-configure opcache --enable-opcache
+# OPcache is compiled into PHP 8.5 and is no longer a separately built extension,
+# so it needs neither docker-php-ext-configure nor docker-php-ext-install.
 
 # Install extensions using the helper script provided by the base image
 RUN docker-php-ext-install \
-    opcache \
     pdo \
     pdo_mysql \
 #    readline \

@@ -15,7 +15,7 @@
         "source": "https://github.com/cardtechie/cardalmanac-app"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "cardtechie/tradingcardapi-sdk-php": "^0.1.9",
         "diglactic/laravel-breadcrumbs": "^10.0",
         "guzzlehttp/guzzle": "^7.10.0",

@@ -3,7 +3,7 @@
 The definitive digital trading card almanac - comprehensive data, interactive checklists, and collection tools for trading card collectors and enthusiasts.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.5%2B-blue.svg)](https://php.net)
 [![Laravel](https://img.shields.io/badge/Laravel-12.0-red.svg)](https://laravel.com)
 
 ## Features
@@ -115,7 +115,7 @@ npm test           # Run all linting
 
 ## Technology Stack
 
-- **Backend**: Laravel 12.0 (PHP 8.2+)
+- **Backend**: Laravel 12.0 (PHP 8.5+)
 - **Frontend**: Vue.js 3.5.16 with Vuetify 3.8.7
 - **CSS**: Bootstrap 5.1.3 + Tailwind CSS 3.0.23
 - **Build**: Laravel Mix with Webpack
