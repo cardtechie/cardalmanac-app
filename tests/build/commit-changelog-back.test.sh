@@ -259,6 +259,18 @@ elif ! grep -q 'is a symlink' <<< "$LOG"; then fail "unexpected message: $LOG"
 elif [[ ! -f "${OUTSIDE_DIR}/9-added.md" ]]; then fail "the outside fragment was consumed"
 else pass; fi
 
+for spelling in "changelog.d/." "changelog.d/./" "./changelog.d/." "changelog.d//."; do
+    CASE="collate-changelog.sh refuses a symlinked changelog.d spelled ${spelling}"
+    set +e
+    LOG="$(bash build/collate-changelog.sh --fragments-dir "$spelling" 2>&1)"
+    RC=$?
+    set -e
+    if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+    elif ! grep -q 'is a symlink' <<< "$LOG"; then fail "unexpected message: $LOG"
+    elif [[ ! -f "${OUTSIDE_DIR}/9-added.md" ]]; then fail "the outside fragment was consumed"
+    else pass; fi
+done
+
 CASE="collate-changelog.sh refuses a --fragments-dir symlink"
 ln -s "$OUTSIDE_DIR" "${WORK}/other-fragments"
 set +e

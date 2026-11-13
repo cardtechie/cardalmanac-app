@@ -105,11 +105,22 @@ is_valid_type() {
 # per-file -L test further down does not cover the directory itself: the glob
 # follows the link, so collation would read notes from outside the checkout and
 # the destructive path would delete files at the link target. A trailing slash
-# is stripped so "changelog.d/" is tested as the link, not followed through it.
-FRAGMENTS_DIR_CHECK="${FRAGMENTS_DIR}"
-while [[ "$FRAGMENTS_DIR_CHECK" == */ && "$FRAGMENTS_DIR_CHECK" != "/" ]]; do
-    FRAGMENTS_DIR_CHECK="${FRAGMENTS_DIR_CHECK%/}"
+# is stripped, and "." / empty components are collapsed, so "changelog.d/",
+# "changelog.d/." and "changelog.d/./" are all tested as the link itself rather
+# than followed through it. Only no-op components are dropped; ".." is left
+# alone because removing it lexically would not match what the filesystem does.
+FRAGMENTS_DIR_CHECK=""
+[[ "$FRAGMENTS_DIR" == /* ]] && FRAGMENTS_DIR_CHECK="/"
+_frag_rest="$FRAGMENTS_DIR"
+while [[ -n "$_frag_rest" ]]; do
+    _frag_part="${_frag_rest%%/*}"
+    if [[ "$_frag_rest" == */* ]]; then _frag_rest="${_frag_rest#*/}"; else _frag_rest=""; fi
+    [[ -z "$_frag_part" || "$_frag_part" == "." ]] && continue
+    if [[ -z "$FRAGMENTS_DIR_CHECK" ]]; then FRAGMENTS_DIR_CHECK="$_frag_part"
+    elif [[ "$FRAGMENTS_DIR_CHECK" == "/" ]]; then FRAGMENTS_DIR_CHECK="/${_frag_part}"
+    else FRAGMENTS_DIR_CHECK="${FRAGMENTS_DIR_CHECK}/${_frag_part}"; fi
 done
+[[ -z "$FRAGMENTS_DIR_CHECK" ]] && FRAGMENTS_DIR_CHECK="."
 if [[ -L "$FRAGMENTS_DIR_CHECK" ]]; then
     echo "❌ Error: ${FRAGMENTS_DIR_CHECK} is a symlink — refusing to collate. Replace it with a real directory, then re-run." >&2
     exit 1
