@@ -1,0 +1,1 @@
+- **[Issue #560]** Reject a symlinked fragments directory in the changelog collation scripts.
