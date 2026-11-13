@@ -282,6 +282,47 @@ elif ! grep -q 'other-fragments is a symlink' <<< "$LOG"; then fail "unexpected 
 elif [[ ! -f "${OUTSIDE_DIR}/9-added.md" ]]; then fail "the outside fragment was consumed"
 else pass; fi
 
+# A ".." component would resolve through a symlink's target, so it is refused
+# outright, and a symlinked intermediate component is refused like a symlinked
+# leaf. Neither may read or delete the fragments outside the checkout.
+TRAVERSAL_DIR="${TMP_ROOT}/traversal"
+mkdir -p "${TRAVERSAL_DIR}/target"
+printf '%s\n' "- **[Issue #7]** Traversal note." > "${TRAVERSAL_DIR}/7-added.md"
+printf '%s\n' "- **[Issue #6]** Nested note." > "${TRAVERSAL_DIR}/target/6-added.md"
+
+CASE="collate-changelog.sh refuses a '..' component through a symlink"
+ln -s "${TRAVERSAL_DIR}/target" "${WORK}/trav-link"
+set +e
+LOG="$(bash build/collate-changelog.sh --fragments-dir trav-link/.. 2>&1)"
+RC=$?
+set -e
+if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+elif ! grep -Eq "is a symlink|contains a '\.\.' component" <<< "$LOG"; then fail "unexpected message: $LOG"
+elif [[ ! -f "${TRAVERSAL_DIR}/7-added.md" ]]; then fail "the outside fragment was consumed"
+else pass; fi
+
+CASE="collate-changelog.sh refuses a '..' component with no symlink before it"
+mkdir -p "${WORK}/plain-dir"
+set +e
+LOG="$(bash build/collate-changelog.sh --fragments-dir plain-dir/../trav-link 2>&1)"
+RC=$?
+set -e
+if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+elif ! grep -q "contains a '..' component" <<< "$LOG"; then fail "unexpected message: $LOG"
+elif [[ ! -f "${TRAVERSAL_DIR}/target/6-added.md" ]]; then fail "the outside fragment was consumed"
+else pass; fi
+
+CASE="collate-changelog.sh refuses a symlinked intermediate component"
+ln -s "$TRAVERSAL_DIR" "${WORK}/nested-link"
+set +e
+LOG="$(bash build/collate-changelog.sh --fragments-dir nested-link/target 2>&1)"
+RC=$?
+set -e
+if [[ $RC -eq 0 ]]; then fail "expected a non-zero exit"
+elif ! grep -q 'nested-link is a symlink' <<< "$LOG"; then fail "unexpected message: $LOG"
+elif [[ ! -f "${TRAVERSAL_DIR}/target/6-added.md" ]]; then fail "the outside fragment was consumed"
+else pass; fi
+
 # ---------------------------------------------------------------------------
 CASE="rejected push exits non-zero with the bypass message"
 new_repo
