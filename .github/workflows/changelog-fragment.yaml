@@ -69,6 +69,11 @@ jobs:
       - name: Test Dependabot fragment writer
         run: bash tests/build/write-dependabot-fragment.test.sh
 
+      # Issue #561: the staging step of that workflow pushes with the App token,
+      # so the script that decides what gets staged is tested here too.
+      - name: Test Dependabot fragment staging
+        run: bash tests/build/stage-dependabot-fragment.test.sh
+
       - name: Assert PR adds a changelog.d/ fragment
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-changelog') }}
         env:
