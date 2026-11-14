@@ -1,0 +1,1 @@
+- **[Issue #563]** Update symfony/http-foundation, http-kernel, routing and filesystem to clear composer audit advisories.
