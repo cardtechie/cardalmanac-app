@@ -1,0 +1,1 @@
+- **[PR #569]** Bump laravel/framework to 12.71.0.
