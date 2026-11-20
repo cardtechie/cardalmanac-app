@@ -1,0 +1,1 @@
+- **[PR #557]** Bump node-forge to 1.4.3.
