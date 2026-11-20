@@ -1,0 +1,1 @@
+- **[PR #558]** Bump follow-redirects to 1.16.2.
