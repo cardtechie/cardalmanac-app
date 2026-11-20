@@ -101,6 +101,37 @@ is_valid_type() {
     return 1
 }
 
+# Refuse a symlinked fragments directory before the glob below expands it. The
+# per-file -L test further down does not cover the directory itself: the glob
+# follows the link, so collation would read notes from outside the checkout and
+# the destructive path would delete files at the link target. Every component of
+# the path is checked, not only the last one: "a/changelog.d" with "a" a symlink
+# escapes just as surely. "." and empty components are no-ops and are skipped, so
+# "changelog.d/", "changelog.d/." and "changelog.d/./" are tested as the link
+# itself rather than followed through it. A ".." component is refused outright:
+# "changelog.d/.." resolves through the link's target on the filesystem, so no
+# lexical normalization of it matches what the glob would actually read.
+FRAGMENTS_DIR_CHECK=""
+[[ "$FRAGMENTS_DIR" == /* ]] && FRAGMENTS_DIR_CHECK="/"
+_frag_rest="$FRAGMENTS_DIR"
+while [[ -n "$_frag_rest" ]]; do
+    _frag_part="${_frag_rest%%/*}"
+    if [[ "$_frag_rest" == */* ]]; then _frag_rest="${_frag_rest#*/}"; else _frag_rest=""; fi
+    [[ -z "$_frag_part" || "$_frag_part" == "." ]] && continue
+    if [[ "$_frag_part" == ".." ]]; then
+        echo "❌ Error: --fragments-dir ${FRAGMENTS_DIR} contains a '..' component — refusing to collate. Pass the directory without '..'." >&2
+        exit 1
+    fi
+    if [[ -z "$FRAGMENTS_DIR_CHECK" ]]; then FRAGMENTS_DIR_CHECK="$_frag_part"
+    elif [[ "$FRAGMENTS_DIR_CHECK" == "/" ]]; then FRAGMENTS_DIR_CHECK="/${_frag_part}"
+    else FRAGMENTS_DIR_CHECK="${FRAGMENTS_DIR_CHECK}/${_frag_part}"; fi
+    if [[ -L "$FRAGMENTS_DIR_CHECK" ]]; then
+        echo "❌ Error: ${FRAGMENTS_DIR_CHECK} is a symlink — refusing to collate. Replace it with a real directory, then re-run." >&2
+        exit 1
+    fi
+done
+[[ -z "$FRAGMENTS_DIR_CHECK" ]] && FRAGMENTS_DIR_CHECK="."
+
 # Nothing to do if the fragments directory is missing or holds no *.md files.
 shopt -s nullglob
 ALL_MD=("$FRAGMENTS_DIR"/*.md)
