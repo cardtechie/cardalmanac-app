@@ -11,9 +11,11 @@ on:
   push:
     branches: [main]
 
-# All git and gh operations use the PROJECT_TOKEN PAT (checkout token + GH_TOKEN),
-# so the default GITHUB_TOKEN needs no permissions. Drop them to minimize blast
-# radius, matching the PROJECT_TOKEN pattern used elsewhere in this org.
+# All git and gh operations use a short-lived cardtechie-ops-bot GitHub App token
+# (checkout token + GH_TOKEN), so the default GITHUB_TOKEN needs no permissions.
+# Drop them to minimize blast radius. An App token is used rather than a personal
+# PAT because a repository ruleset (the develop merge queue) can list a GitHub App
+# as a bypass actor but cannot list a personal PAT.
 permissions: {}
 
 concurrency:
@@ -26,13 +28,26 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Create CardTechie App token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.CARDTECHIE_BOT }}
+          private-key: ${{ secrets.CARDTECHIE_BOT_PRIVATE_KEY }}
+          # Least privilege, scoped to this repository only: push develop and the
+          # sync branch, open the conflict PR, and create its label.
+          permission-contents: write
+          permission-pull-requests: write
+
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
         with:
           # Full history for both branches so the merge/ancestor checks work.
           fetch-depth: 0
-          # PAT (not GITHUB_TOKEN) so the direct push to develop triggers
-          # downstream workflows and a conflict PR runs the repo's checks.
-          token: ${{ secrets.PROJECT_TOKEN }}
+          # App token (not GITHUB_TOKEN) so the direct push to develop triggers
+          # downstream workflows and a conflict PR runs the repo's checks, and so
+          # the develop merge queue ruleset can bypass it. Credentials stay
+          # persisted (the default) because the later `git push` relies on them.
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Configure git identity
         run: |
@@ -41,7 +56,7 @@ jobs:
 
       - name: Back-merge main into develop
         env:
-          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
 
@@ -143,8 +158,8 @@ jobs:
             --description "Skip the changelog-fragment check" \
             --color ededed 2>/dev/null || true
 
-          # Open the conflict PR. The label create/apply is best-effort: if the PAT
-          # lacks label permissions the label stays absent and the labeled create
+          # Open the conflict PR. The label create/apply is best-effort: if the App
+          # token lacks label permissions the label stays absent and the labeled create
           # fails, so fall back to creating the PR without --label. Getting the PR
           # opened (so the human can resolve the conflicts) matters more than the
           # changelog-fragment bypass, which a maintainer can re-add by hand.
