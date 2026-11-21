@@ -1,0 +1,1 @@
+- **[Issue #571]** Push the stable-to-develop back-merge as the cardtechie-ops-bot App instead of a personal PAT.
