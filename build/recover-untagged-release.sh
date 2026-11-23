@@ -26,8 +26,8 @@
 # build/commit-changelog-back.sh, applied to a commit that is no longer HEAD.
 # Author and subject are free text, so they only pre-filter. The CONTENT check
 # is what makes tagging safe:
-#   - exactly one parent, and that parent has no `## [X.Y.Z]` section, so the
-#     commit is the one that introduced it;
+#   - exactly one parent, that parent has no `## [X.Y.Z]` section, and the
+#     commit itself has it, so the commit is the one that introduced it;
 #   - the diff touches only CHANGELOG.md and changelog.d/, so tagging it
 #     releases its parent's code plus the notes; and
 #   - it is an ancestor of HEAD, so it is on the branch being released.
@@ -145,6 +145,14 @@ verify_commit_back() {
     if grep -q "^## \[${VERSION_RE}\]" <<< "$parent_changelog"; then
         return 1
     fi
+
+    # The candidate itself must carry the section. Without this a bot-authored
+    # commit with the right subject that only touches CHANGELOG.md or
+    # changelog.d/, followed by a later commit that adds the heading, would be
+    # selected and tagged BEFORE the section existed, releasing empty notes.
+    local own_changelog
+    own_changelog=$(git show "${sha}:${CHANGELOG_FILE}" 2>/dev/null) || return 1
+    grep -q "^## \[${VERSION_RE}\]" <<< "$own_changelog" || return 1
 
     local changed=0
     while IFS= read -r path; do

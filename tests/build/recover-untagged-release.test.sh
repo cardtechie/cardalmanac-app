@@ -212,6 +212,20 @@ git -c user.name="$BOT_NAME" -c user.email="$BOT_EMAIL" commit -q -m "${SUBJECT_
 run_script
 if [[ $RC -ne 1 ]]; then fail "exit $RC: $LOG"; else pass; fi
 
+# ---------------------------------------------------------------------------
+CASE="bot commit with the right subject that precedes the section commit: exit 1"
+new_repo
+# Candidate: right author and subject, touches only changelog.d/, no heading.
+echo "- frag" > changelog.d/2-fixed.md
+git add changelog.d/2-fixed.md
+git -c user.name="$BOT_NAME" -c user.email="$BOT_EMAIL" commit -q -m "${SUBJECT_PREFIX}0.0.1"
+# The section arrives later, from a commit that is not a verifiable commit-back.
+commit_back 0.0.1 "Someone Else" "fix: add "
+run_script
+if [[ $RC -ne 1 ]]; then fail "exit $RC: $LOG"
+elif [[ -n "$(out recover)" ]]; then fail "wrote recover=$(out recover)"
+else pass; fi
+
 echo ""
 echo "${PASSED} passed, ${FAILED} failed"
 [[ $FAILED -eq 0 ]]
