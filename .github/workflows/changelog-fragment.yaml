@@ -64,6 +64,11 @@ jobs:
       - name: Test changelog commit-back scripts
         run: bash tests/build/commit-changelog-back.test.sh
 
+      # Issue #577: exercise the recovery of a collated version that reached
+      # main without its tag.
+      - name: Test untagged release recovery
+        run: bash tests/build/recover-untagged-release.test.sh
+
       # Issue #543: the Dependabot fragment writer runs in a privileged
       # pull_request_target workflow, so its input validation is tested here.
       - name: Test Dependabot fragment writer
