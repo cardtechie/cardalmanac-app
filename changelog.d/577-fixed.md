@@ -1,1 +1,0 @@
-- **[Issue #577]** Recover Build Release automatically when a collated version was committed to main but never tagged.

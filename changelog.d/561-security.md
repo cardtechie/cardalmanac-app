@@ -1,1 +1,0 @@
-- **[Issue #561]** Stage only the validated new fragment in the Dependabot changelog fragment workflow.
