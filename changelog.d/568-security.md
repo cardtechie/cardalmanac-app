@@ -1,0 +1,1 @@
+- **[Issue #568]** Clear the Composer audit advisory on laravel/framework (CVE-2026-128083).
