@@ -10,7 +10,8 @@ name: Dependabot Changelog Fragment
 # SECURITY: pull_request_target runs with this repository's secrets, so this job
 # must NEVER execute code from the PR. The head branch is checked out only so
 # one file can be added; the script that adds it is read from the trusted base
-# checkout, not from the PR head. Dependabot-derived values (package names,
+# checkout, not from the PR head. Only that one validated fragment is staged
+# and pushed (issue #561). Dependabot-derived values (package names,
 # versions) reach the script through environment variables only, never through
 # an inline expression in a run: body.
 
@@ -115,7 +116,9 @@ jobs:
           # The runner masks the raw token, not its base64 form.
           echo "::add-mask::${basic_auth}"
           export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${basic_auth}"
-          git add changelog.d
+          # Stage only the one new fragment, validated by the trusted script;
+          # the head checkout is untrusted, so never `git add` a directory.
+          bash "$GITHUB_WORKSPACE/trusted/build/stage-dependabot-fragment.sh"
           git -c user.name="cardtechie-ops-bot[bot]" \
               -c user.email="cardtechie-ops-bot[bot]@users.noreply.github.com" \
               commit -m "chore: add changelog fragment for #${PR_NUMBER}"

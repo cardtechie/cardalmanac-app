@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.40] - 2026-11-23
+
+### Changed
+
+- **[Issue #543]** Write a changelog.d fragment on Dependabot PRs instead of labeling them skip-changelog.
+
+### Fixed
+
+- **[Issue #577]** Recover Build Release automatically when a collated version was committed to main but never tagged.
+
+### Security
+
+- **[Issue #555]** Clear the remaining Composer audit advisories on symfony/yaml, symfony/mime, psy/psysh and spatie/schema-org.
+- **[Issue #561]** Stage only the validated new fragment in the Dependabot changelog fragment workflow.
+
 ## [0.2.39] - 2026-11-08
 
 ### Fixed
@@ -176,7 +191,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated postcss from 8.4.31 to 8.4.47 (security fix)
 - Resolved 12 npm security vulnerabilities including 3 critical and 1 high severity
 
-[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.39...HEAD
+[Unreleased]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.40...HEAD
+[0.2.40]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.39...0.2.40
 [0.2.39]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.38...0.2.39
 [0.2.38]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.37...0.2.38
 [0.2.37]: https://github.com/cardtechie/cardalmanac-app/compare/0.2.7...0.2.37

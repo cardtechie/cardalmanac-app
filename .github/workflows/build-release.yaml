@@ -69,6 +69,51 @@ jobs:
           # The branch tip, not github.sha, so the commit-back push fast-forwards
           # even when main moved after this run was queued.
           ref: main
+      # Recovery (issue #577): a collated `## [X.Y.Z]` section can reach main
+      # without its tag when a step after the commit-back push fails (the
+      # commit-back is deliberately pushed before tagging). version.sh would then
+      # compute X.Y.Z again and the collation step would refuse to write it
+      # twice, failing every later push. This step runs BEFORE version
+      # calculation: it tags and releases the stranded commit-back, so Generate
+      # Version below yields the next version and the pending changes release
+      # normally. The recovered version gets a tag and GitHub release only: no
+      # image and no deploy, because the next release builds and ships code that
+      # includes it. An untagged section with no verifiable commit-back fails
+      # here once, with the manual command, instead of on every later push.
+      - name: Recover untagged release
+        id: recover
+        env:
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ secrets.CARDALMANAC_APP_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          bash ./build/recover-untagged-release.sh --output "$GITHUB_OUTPUT"
+          RECOVER=$(sed -n 's/^recover=//p' "$GITHUB_OUTPUT" | tail -n 1)
+          if [ "$RECOVER" != "true" ]; then
+            exit 0
+          fi
+          RECOVER_VERSION=$(sed -n 's/^version=//p' "$GITHUB_OUTPUT" | tail -n 1)
+          RECOVER_SHA=$(sed -n 's/^sha=//p' "$GITHUB_OUTPUT" | tail -n 1)
+          echo "Releasing untagged ${RECOVER_VERSION} from ${RECOVER_SHA}"
+          # The notes are the section as written at the commit-back, not HEAD's.
+          git show "${RECOVER_SHA}:CHANGELOG.md" \
+            | awk -v h="## [${RECOVER_VERSION}]" 'index($0, h) == 1 { grab = 1; next } /^## \[/ { grab = 0 } grab' \
+            > recover_notes.md
+          cat recover_notes.md
+          gh release create "${RECOVER_VERSION}" \
+            --target "${RECOVER_SHA}" \
+            --title "Release ${RECOVER_VERSION}" \
+            --notes-file recover_notes.md
+          rm -f recover_notes.md
+          # Same credential handling as the commit-back step: the token lives in
+          # this process's environment only, never in .git/config.
+          export GIT_CONFIG_COUNT=1
+          export GIT_CONFIG_KEY_0=http.https://github.com/.extraheader
+          basic_auth=$(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)
+          echo "::add-mask::${basic_auth}"
+          export GIT_CONFIG_VALUE_0="AUTHORIZATION: basic ${basic_auth}"
+          # Generate Version reads tags, so it must see the one just created.
+          git fetch --tags origin
       - name: Generate Version
         id: version
         run: |
